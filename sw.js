@@ -1,6 +1,6 @@
 /* Service worker — 帳簿 Japan Work Ledger
    Cache app shell biar bisa dibuka walau lagi gak ada sinyal (data tetap di localStorage). */
-const CACHE_NAME = "bocho-jp-v2";
+const CACHE_NAME = "bocho-jp-v12";
 const APP_SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (event) => {
