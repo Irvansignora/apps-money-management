@@ -159,17 +159,27 @@
       if (closing || view !== "chat") return;
       try { ws && ws.close(); } catch (e) {}
       var sock = ws = new WebSocket(API.replace(/^http/, "ws") + "/ws?ticket=" + encodeURIComponent(r.ticket));
-      sock.onopen = function () { if (sock !== ws) return; retry = 0; bar(false); clearInterval(pingT); pingT = setInterval(function () { try { sock.send("ping"); } catch (e) {} }, 25000); };
+      sock.onopen = function () { if (sock !== ws) return; retry = 0; bar(false); };
       sock.onmessage = function (e) {
         if (sock !== ws || e.data === "pong") return;
         var d; try { d = JSON.parse(e.data); } catch (x) { return; }
         if (d.type === "init") {
-          me = d.me; msgs = d.history || [];
-          msgs.forEach(function (m) { if (m.uid !== me && m.lang !== A.user.lang && !(m.tr && m.tr[A.user.lang])) { m.st = "wait"; askTr(m.id); } });
-          online(d.online); drawMsgs(true);
+          me = d.me; var hist = d.history || [], keep = msgs.filter(function (m) { return m.local; });
+          msgs = hist; msgs.forEach(watchTr);
+          keep = keep.filter(function (l) { return !hist.some(function (h) { return h.uid === me && h.text === l.text && h.ts >= l.ts - 5000; }); });
+          keep.forEach(function (l) { l.uid = me; msgs.push(l); });
+          online(d.online); flush(); drawMsgs(true);
         } else if (d.type === "online") online(d.online);
         else if (d.type === "typing") { if (d.uid !== me) { peerTyping = true; clearTimeout(peerTypT); peerTypT = setTimeout(function () { peerTyping = false; online(onl); drawMsgs(); }, 3500); online(onl); } }
-        else if (d.type === "msg") { peerTyping = false; online(onl); if (!msgs.some(function (x) { return x.id === d.msg.id; })) msgs.push(d.msg); drawMsgs(d.msg.uid === me); if (d.msg.uid !== me && d.msg.lang !== A.user.lang) d.msg.st = "wait"; }
+        else if (d.type === "msg") {
+          peerTyping = false; online(onl);
+          if (!msgs.some(function (x) { return x.id === d.msg.id; })) {
+            var li = -1; if (d.msg.uid === me) msgs.some(function (x, i) { if (x.local && x.text === d.msg.text) { li = i; return true; } });
+            if (li >= 0) msgs[li] = d.msg; else msgs.push(d.msg);
+            if (d.msg.uid !== me) watchTr(d.msg);
+          }
+          drawMsgs(d.msg.uid === me);
+        }
         else if (d.type === "tr") { var m = msgs.filter(function (x) { return x.id === d.id; })[0]; if (m) { m.tr = m.tr || {}; if (d.text) { m.tr[d.lang] = d.text; delete m.st; } else m.st = d.quota ? "quota" : "fail"; drawMsgs(); } }
         else if (d.type === "error") { var n = $("#kcTxt"); if (n) toast(T().e[d.code] || T().e.server); }
       };
@@ -177,11 +187,18 @@
       sock.onerror = function () { try { sock.close(); } catch (e) {} };
     }).catch(function (e) { if (e && e.code === "notfound") return go("contacts"); if (!closing && view === "chat") { bar(true); rt = setTimeout(connect, Math.min(1000 * Math.pow(2, retry++), 8000)); } });
   }
-  function askTr(id) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify({ tr: id })); } catch (e) {} }
+  function watchTr(m) { // pesan masuk beda bahasa: kalau 12 dtk terjemahan belum datang, tandai gagal (ada tombol coba lagi)
+    if (m.uid === me || m.lang === A.user.lang || (m.tr && m.tr[A.user.lang])) return;
+    m.st = "wait"; setTimeout(function () { if (m.st === "wait" && !(m.tr && m.tr[A.user.lang])) { m.st = "fail"; drawMsgs(); } }, 12000);
+  }
+  function flush() { // kirim pesan yang tertahan saat offline
+    if (!ws || ws.readyState !== 1) return;
+    msgs.forEach(function (m) { if (m.local && !m.sent) { try { ws.send(JSON.stringify({ text: m.text })); m.sent = true; } catch (e) {} } });
+  }
   function leaveChat() { closing = true; clearTimeout(rt); clearInterval(pingT); try { ws && ws.close(); } catch (e) {} ws = null; peerTyping = false; }
-  function bar(on) { var b = $("#kcBar"); if (b) b.style.display = on ? "" : "none"; var s = $("#kcSend"); if (s && on) s.disabled = true; else upSend(); }
+  function bar(on) { var b = $("#kcBar"); if (b) b.style.display = on ? "" : "none"; if (!on) flush(); upSend(); }
   function online(a) { onl = a || []; var s = $("#kcSt"); if (!s) return; var on = onl.indexOf(peer.id) >= 0; s.textContent = peerTyping ? T().typing : on ? "● " + T().on : T().offl; s.className = "sub" + (on ? " on" : ""); }
-  function upSend() { var s = $("#kcSend"), x = $("#kcTxt"); if (s && x) s.disabled = !x.value.trim() || !ws || ws.readyState !== 1; }
+  function upSend() { var s = $("#kcSend"), x = $("#kcTxt"); if (s && x) s.disabled = !x.value.trim(); }
   function toast(msg) { var n = $("#kcErr") || null; if (n) { n.textContent = msg; n.classList.add("on"); } else { var b = $("#kcBar"); if (b) { b.textContent = msg; b.style.display = ""; setTimeout(function () { b.textContent = T().off; if (ws && ws.readyState === 1) b.style.display = "none"; }, 2500); } } }
 
   function drawMsgs(force) {
@@ -194,11 +211,11 @@
       if (m.lang !== tgt) {
         if (tr) { if (mine) sub = '<div class="kc-o">' + fl(tgt) + " " + esc(tr) + "</div>"; else { main = tr; sub = '<div class="kc-o">' + fl(m.lang) + " " + esc(m.text) + "</div>"; } }
         else if (m.st === "fail" || m.st === "quota") sub = '<div class="kc-st bad">⚠ ' + t[m.st] + (!mine ? ' · <button data-a="retr" data-id="' + esc(m.id) + '">' + t.retry + "</button>" : "") + "</div>";
-        else sub = '<div class="kc-st"><span class="kc-dots"><i></i><i></i><i></i></span>' + t.wait + "</div>";
+        else if (!m.local) sub = '<div class="kc-st"><span class="kc-dots"><i></i><i></i><i></i></span>' + t.wait + "</div>";
       }
       var cont = prev && prev.uid === m.uid && dayKey(prev.ts) === dayKey(m.ts) && m.ts - prev.ts < 120000;
       var nx = msgs[i + 1], last = !(nx && nx.uid === m.uid && dayKey(nx.ts) === dayKey(m.ts) && nx.ts - m.ts < 120000);
-      html += '<div class="kc-m' + (mine ? " me" : "") + (cont ? " cont" : "") + '"><div class="kc-b">' + esc(main) + sub + "</div>" + (last ? '<div class="kc-ts">' + hm(m.ts) + "</div>" : "") + "</div>";
+      html += '<div class="kc-m' + (mine ? " me" : "") + (cont ? " cont" : "") + '"><div class="kc-b">' + esc(main) + sub + "</div>" + (m.local ? '<div class="kc-ts">⏳</div>' : last ? '<div class="kc-ts">' + hm(m.ts) + "</div>" : "") + "</div>";
       prev = m;
     });
     if (peerTyping) html += '<div class="kc-typ"><span class="kc-dots"><i></i><i></i><i></i></span></div>';
@@ -208,10 +225,9 @@
 
   /* ---------- pengaturan ---------- */
   function openSettings() {
-    var u = A.user, t = T(), s = document.createElement("div"); s.className = "kc-sheet"; s.id = "kcSheet"; tmp.selLang = u.lang;
-    s.innerHTML = '<div><div class="grab"></div><h3>' + t.settings + '</h3><div class="kc-me">' + av(u.name, 46) + '<div><b>' + esc(u.name) + '</b><div class="em">' + esc(u.email || "") + '</div></div></div>' +
-      '<input class="kc-in" id="kcPName" maxlength="24" value="' + esc(u.name) + '" placeholder="' + t.name + '"><div class="kc-note" style="margin-bottom:6px">' + t.mylang + "</div>" + langPicker(u.lang) +
-      '<div id="kcErr"></div><button class="kc-btn" data-a="saveprof" data-t="' + t.save + '">' + t.save + '</button><button class="kc-btn ghost" style="margin-top:10px;color:var(--hanko)" data-a="logout">' + t.out + '</button><button class="kc-link" style="width:100%;margin-top:6px" data-a="closesheet">' + t.cancel + "</button></div>";
+    var u = A.user, t = T(), s = document.createElement("div"); s.className = "kc-sheet"; s.id = "kcSheet";
+    s.innerHTML = '<div><div class="grab"></div><h3>' + t.settings + '</h3><div class="kc-me">' + av(u.name, 46) + '<div><b>' + esc(u.name) + " " + fl(u.lang) + '</b><div class="em">' + esc(u.email || "") + '</div></div></div>' +
+      '<button class="kc-btn ghost" style="color:var(--hanko)" data-a="logout">' + t.out + '</button><button class="kc-link" style="width:100%;margin-top:6px" data-a="closesheet">' + t.cancel + "</button></div>";
     $(".kc-app").appendChild(s);
     s.addEventListener("click", function (e) { if (e.target === s) s.remove(); });
   }
@@ -249,12 +265,9 @@
     else if (a === "tocontacts") go("contacts");
     else if (a === "settings") openSettings();
     else if (a === "closesheet") { var s = $("#kcSheet"); if (s) s.remove(); }
-    else if (a === "saveprof") {
-      var nm = ($("#kcPName").value || "").trim(); clearErr(); busy(b, true, "…");
-      api("/api/profile", { name: nm, lang: tmp.selLang || A.user.lang }).then(function (r) { A.user = Object.assign(A.user, r.user); store(); var s2 = $("#kcSheet"); if (s2) s2.remove(); go("contacts"); }).catch(function (x) { busy(b, false); err(x); });
-    } else if (a === "logout") confirmLogout();
+    else if (a === "logout") confirmLogout();
     else if (a === "logout2") doLogout();
-    else if (a === "retr") { var m = msgs.filter(function (x) { return x.id === b.dataset.id; })[0]; if (m) { m.st = "wait"; drawMsgs(); askTr(m.id); } }
+    else if (a === "retr") { var m = msgs.filter(function (x) { return x.id === b.dataset.id; })[0]; if (m) { m.st = "wait"; drawMsgs(); retry = 0; try { ws && ws.close(); } catch (e) {} connect(); } }
     else if (a === "share" || a === "copy") {
       var txt = T().shareTxt + A.user.invite, link = "https://kakeibo.iranza.com";
       if (a === "share" && navigator.share) navigator.share({ text: txt, url: link }).catch(function () {});
@@ -264,13 +277,13 @@
   function onSubmit(e) {
     if (e.target.id !== "kcForm") return; e.preventDefault();
     var i = $("#kcTxt"), v = i.value.trim();
-    if (!v || !ws || ws.readyState !== 1) return;
-    ws.send(JSON.stringify({ text: v })); i.value = ""; i.style.height = "auto"; upSend(); i.focus();
+    if (!v) return;
+    var m = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), uid: me || A.user.id, lang: A.user.lang, text: v, tr: {}, ts: Date.now(), local: true };
+    msgs.push(m); i.value = ""; i.style.height = "auto"; drawMsgs(true); flush(); upSend(); i.focus();
   }
   function onInput(e) {
     if (e.target.id === "kcTxt") {
       var i = e.target; i.style.height = "auto"; i.style.height = Math.min(i.scrollHeight, 120) + "px"; upSend();
-      if (ws && ws.readyState === 1 && Date.now() - lastTypeSent > 2000) { lastTypeSent = Date.now(); try { ws.send(JSON.stringify({ typing: 1 })); } catch (x) {} }
     } else if (e.target.id === "kcCode") { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6); if (e.target.value.length === 6 && !tmp.need) { var b = $('[data-a="ver"]'); if (b) b.click(); } }
   }
   function onKey(e) {
@@ -293,7 +306,6 @@
       }
       root.classList.add("open"); document.body.style.overflow = "hidden";
       go(A.tok && A.user ? "contacts" : "login");
-      if (A.tok) api("/api/me").then(function (r) { if (r.user) { A.user = Object.assign(A.user, r.user); store(); } }).catch(function () {});
     }
   };
 })();
