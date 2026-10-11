@@ -5,10 +5,10 @@
   var API = window.KAKEIBO_CHAT_API || "https://chat.iranza.com", KEY = "kakeibo-chat-auth";
   var LG = [["id", "ID", "Indonesia"], ["ja", "JA", "日本語"], ["en", "EN", "English"], ["my", "MY", "မြန်မာ"], ["bn", "BN", "বাংলা"], ["vi", "VI", "Tiếng Việt"], ["th", "TH", "ไทย"], ["zh", "ZH", "中文"], ["ko", "KO", "한국어"]];
   var UI = {
-    id: { photo: "Foto", caption: "Tambah keterangan (opsional)", sendPhoto: "Kirim", mediaT: "Media dan tautan", tabMedia: "Media", tabLinks: "Tautan", noMedia: "Belum ada foto di percakapan ini.", noLinks: "Belum ada tautan.", upFail: "Foto gagal dikirim. Coba lagi.", t: "Chat Lintas Bahasa", hero: "Ngobrol tanpa batas bahasa", heroSub: "Tulis dalam bahasamu. Temanmu membacanya dalam bahasa mereka, otomatis.", email: "Email kamu", sendc: "Kirim kode masuk", sending: "Mengirim…", code: "Kode 6 digit", login: "Masuk", name: "Namamu", mylang: "Bahasamu", mail: "Kode dikirim ke", resend: "Kirim ulang", resendIn: "Kirim ulang dalam", prof: "Akun baru! Isi nama dan bahasamu dulu.", mine: "Kode undanganmu", share: "Bagikan", copy: "Salin", copied: "Tersalin ✓", addph: "Masukkan kode teman", add: "Tambah", none: "Belum ada teman", noneSub: "Bagikan kode undanganmu atau masukkan kode temanmu di atas.", friends: "Teman", typ: "Tulis pesan…", off: "Terputus. Menyambung ulang…", wait: "menerjemahkan", fail: "terjemahan gagal", quota: "kuota terjemahan bulan ini habis", retry: "Coba lagi", on: "online", offl: "offline", typing: "sedang mengetik…", today: "Hari ini", yday: "Kemarin", you: "Kamu", avChange: "Ganti foto", avK: "Pakai foto profil Kakeibo", avDel: "Hapus foto", avUp: "Mengunggah…", avShared: "Foto ini terlihat oleh teman chat-mu.", avLocal: "Foto Kakeibo-mu belum dibagikan ke teman. Ketuk “Pakai foto profil Kakeibo”.", avNone: "Belum ada foto. Temanmu melihat inisial namamu.", wpUpload: "Upload foto sendiri", wpBlur: "Blur latar", settings: "Pengaturan", profT: "Profil", useK: "Pakai nama dari profil Kakeibo", wp: "Wallpaper chat", wpGal: "Foto dari galeri", wpDim: "Redupkan latar", wpReset: "Kembali ke default", wpBig: "Foto terlalu besar/gagal dibaca", savedP: "Profil tersimpan ✓", langNote: "Bahasa baru dipakai untuk pesan berikutnya.", save: "Simpan", saved: "Tersimpan ✓", out: "Keluar", outAsk: "Keluar dari akun ini?", outYes: "Ya, keluar", cancel: "Batal", shareTxt: "Chat denganku di Kakeibo, pesannya otomatis diterjemahkan! Kode undangan: ", empty: "Belum ada pesan. Sapa duluan 👋", seesAs: "Dibaca sebagai",
-      e: { email: "Email tidak valid.", wait: "Tunggu 30 detik sebelum minta kode lagi.", limit: "Terlalu banyak percobaan. Coba lagi nanti.", code: "Kode salah.", expired: "Kode kedaluwarsa. Minta kode baru.", notfound: "Kode undangan tidak ditemukan.", self: "Itu kodemu sendiri 😄", profile: "Isi nama dan bahasa.", net: "Tidak bisa terhubung ke server.", server: "Terjadi kesalahan. Coba lagi.", rate: "Pelan-pelan, kebanyakan pesan dalam 1 menit.", auth: "Sesi habis, silakan masuk lagi.", wpbig: "Foto terlalu besar atau gagal dibaca.", avatar: "Foto ditolak server. Coba foto lain.", avfail: "Foto gagal diproses. Coba foto lain." } },
-    en: { photo: "Photo", caption: "Add a caption (optional)", sendPhoto: "Send", mediaT: "Media and links", tabMedia: "Media", tabLinks: "Links", noMedia: "No photos in this chat yet.", noLinks: "No links yet.", upFail: "Photo failed to send. Try again.", t: "Cross-Language Chat", hero: "Chat without language barriers", heroSub: "Write in your language. Your friend reads it in theirs, automatically.", email: "Your email", sendc: "Send sign-in code", sending: "Sending…", code: "6-digit code", login: "Sign in", name: "Your name", mylang: "Your language", mail: "Code sent to", resend: "Resend", resendIn: "Resend in", prof: "New account! Enter your name and language first.", mine: "Your invite code", share: "Share", copy: "Copy", copied: "Copied ✓", addph: "Enter friend's code", add: "Add", none: "No friends yet", noneSub: "Share your invite code or enter a friend's code above.", friends: "Friends", typ: "Type a message…", off: "Disconnected. Reconnecting…", wait: "translating", fail: "translation failed", quota: "translation quota used up this month", retry: "Retry", on: "online", offl: "offline", typing: "typing…", today: "Today", yday: "Yesterday", you: "You", avChange: "Change photo", avK: "Use Kakeibo profile photo", avDel: "Remove photo", avUp: "Uploading…", avShared: "Your chat friends can see this photo.", avLocal: "Your Kakeibo photo is not shared yet. Tap “Use Kakeibo profile photo”.", avNone: "No photo yet. Friends see your initial.", wpUpload: "Upload your own photo", wpBlur: "Blur background", settings: "Settings", profT: "Profile", useK: "Use name from Kakeibo profile", wp: "Chat wallpaper", wpGal: "Photo from gallery", wpDim: "Dim background", wpReset: "Back to default", wpBig: "Photo too large / unreadable", savedP: "Profile saved ✓", langNote: "The new language applies to your next messages.", save: "Save", saved: "Saved ✓", out: "Sign out", outAsk: "Sign out of this account?", outYes: "Yes, sign out", cancel: "Cancel", shareTxt: "Chat with me on Kakeibo, messages are translated automatically! Invite code: ", empty: "No messages yet. Say hi 👋", seesAs: "Read as",
-      e: { email: "Invalid email.", wait: "Wait 30 seconds before requesting another code.", limit: "Too many attempts. Try again later.", code: "Wrong code.", expired: "Code expired. Request a new one.", notfound: "Invite code not found.", self: "That's your own code 😄", profile: "Enter a name and language.", net: "Cannot reach the server.", server: "Something went wrong. Try again.", rate: "Slow down, too many messages in a minute.", auth: "Session expired, please sign in again.", wpbig: "Photo too large or unreadable.", avatar: "Photo rejected by the server. Try another.", avfail: "Could not process the photo. Try another." } }
+    id: { rec: "Merekam", micFail: "Mikrofon tidak bisa dipakai. Cek izin browser.", vnTx: "Mentranskrip...", vnQuota: "Kuota transkrip bulan ini habis. Premium punya lebih banyak.", callAudio: "Telepon", callVideo: "Video call", calling: "Memanggil...", incoming: "Panggilan masuk", incomingV: "Video call masuk", accept: "Terima", decline: "Tolak", mute: "Bisukan", unmute: "Bunyikan", camOff: "Matikan kamera", camOn: "Nyalakan kamera", endCall: "Akhiri", connecting: "Menyambungkan...", rejected: "Panggilan ditolak.", busy: "Sedang dalam panggilan lain.", unavailable: "Teman sedang offline. Panggilan hanya bisa saat dua-duanya membuka chat.", permCall: "Izin mikrofon atau kamera ditolak.", callEnded: "Panggilan berakhir.", callMax: "Batas waktu panggilan paket gratis tercapai.", denyVideo: "Video call khusus Premium.", denyCalls: "Batas panggilan harian tercapai.", failedCall: "Panggilan gagal tersambung.", noAnswer: "Tidak dijawab.", limPhoto: "Batas foto harian paket gratis tercapai.", limVoice: "Batas voice note harian paket gratis tercapai.", limVoiceLen: "Voice note paket gratis maksimal {n} detik.", seePremium: "Lihat Premium", shut: "Tutup", acc: "Akun dan Premium", accPlan: "Paket", planFree: "Gratis", planPrem: "Premium", until: "Aktif sampai", usage: "Pemakaian", uTr: "Terjemahan bulan ini", uPhoto: "Foto hari ini", uVoice: "Voice note hari ini", uVn: "Transkrip voice note bulan ini", compare: "Gratis dan Premium", cTr: "Terjemahan per bulan", cPhoto: "Foto per hari", cVoice: "Voice note per hari", cVoiceLen: "Durasi voice note", cVn: "Transkrip voice note per bulan", cCall: "Durasi telepon", cVideo: "Video call", yes: "Ada", no: "Tidak", min: "mnt", sec: "dtk", upgrade: "Upgrade ke Premium", renew: "Perpanjang Premium", upgradeNote: "Pembayaran otomatis belum tersedia. Premium diaktifkan manual oleh admin setelah pembayaran.", upgradeNone: "Hubungi admin untuk upgrade.", lim: "Batas paket tercapai.", photo: "Foto", caption: "Tambah keterangan (opsional)", sendPhoto: "Kirim", mediaT: "Media dan tautan", tabMedia: "Media", tabLinks: "Tautan", noMedia: "Belum ada foto di percakapan ini.", noLinks: "Belum ada tautan.", upFail: "Foto gagal dikirim. Coba lagi.", t: "Chat Lintas Bahasa", hero: "Ngobrol tanpa batas bahasa", heroSub: "Tulis dalam bahasamu. Temanmu membacanya dalam bahasa mereka, otomatis.", email: "Email kamu", sendc: "Kirim kode masuk", sending: "Mengirim…", code: "Kode 6 digit", login: "Masuk", name: "Namamu", mylang: "Bahasamu", mail: "Kode dikirim ke", resend: "Kirim ulang", resendIn: "Kirim ulang dalam", prof: "Akun baru! Isi nama dan bahasamu dulu.", mine: "Kode undanganmu", share: "Bagikan", copy: "Salin", copied: "Tersalin ✓", addph: "Masukkan kode teman", add: "Tambah", none: "Belum ada teman", noneSub: "Bagikan kode undanganmu atau masukkan kode temanmu di atas.", friends: "Teman", typ: "Tulis pesan…", off: "Terputus. Menyambung ulang…", wait: "menerjemahkan", fail: "terjemahan gagal", quota: "kuota terjemahan bulan ini habis", retry: "Coba lagi", on: "online", offl: "offline", typing: "sedang mengetik…", today: "Hari ini", yday: "Kemarin", you: "Kamu", avChange: "Ganti foto", avK: "Pakai foto profil Kakeibo", avDel: "Hapus foto", avUp: "Mengunggah…", avShared: "Foto ini terlihat oleh teman chat-mu.", avLocal: "Foto Kakeibo-mu belum dibagikan ke teman. Ketuk “Pakai foto profil Kakeibo”.", avNone: "Belum ada foto. Temanmu melihat inisial namamu.", wpUpload: "Upload foto sendiri", wpBlur: "Blur latar", settings: "Pengaturan", profT: "Profil", useK: "Pakai nama dari profil Kakeibo", wp: "Wallpaper chat", wpGal: "Foto dari galeri", wpDim: "Redupkan latar", wpReset: "Kembali ke default", wpBig: "Foto terlalu besar/gagal dibaca", savedP: "Profil tersimpan ✓", langNote: "Bahasa baru dipakai untuk pesan berikutnya.", save: "Simpan", saved: "Tersimpan ✓", out: "Keluar", outAsk: "Keluar dari akun ini?", outYes: "Ya, keluar", cancel: "Batal", shareTxt: "Chat denganku di Kakeibo, pesannya otomatis diterjemahkan! Kode undangan: ", empty: "Belum ada pesan. Sapa duluan 👋", seesAs: "Dibaca sebagai",
+      e: { limit: "Batas paket tercapai.", email: "Email tidak valid.", wait: "Tunggu 30 detik sebelum minta kode lagi.", limit: "Terlalu banyak percobaan. Coba lagi nanti.", code: "Kode salah.", expired: "Kode kedaluwarsa. Minta kode baru.", notfound: "Kode undangan tidak ditemukan.", self: "Itu kodemu sendiri 😄", profile: "Isi nama dan bahasa.", net: "Tidak bisa terhubung ke server.", server: "Terjadi kesalahan. Coba lagi.", rate: "Pelan-pelan, kebanyakan pesan dalam 1 menit.", auth: "Sesi habis, silakan masuk lagi.", wpbig: "Foto terlalu besar atau gagal dibaca.", avatar: "Foto ditolak server. Coba foto lain.", avfail: "Foto gagal diproses. Coba foto lain." } },
+    en: { rec: "Recording", micFail: "Cannot use the microphone. Check browser permissions.", vnTx: "Transcribing...", vnQuota: "Transcription quota used up this month. Premium has more.", callAudio: "Call", callVideo: "Video call", calling: "Calling...", incoming: "Incoming call", incomingV: "Incoming video call", accept: "Accept", decline: "Decline", mute: "Mute", unmute: "Unmute", camOff: "Camera off", camOn: "Camera on", endCall: "End", connecting: "Connecting...", rejected: "Call declined.", busy: "Already in another call.", unavailable: "Your friend is offline. Calls only work when both of you have the chat open.", permCall: "Microphone or camera permission denied.", callEnded: "Call ended.", callMax: "Free plan call time limit reached.", denyVideo: "Video calls are Premium only.", denyCalls: "Daily call limit reached.", failedCall: "The call could not connect.", noAnswer: "No answer.", limPhoto: "Free plan daily photo limit reached.", limVoice: "Free plan daily voice note limit reached.", limVoiceLen: "Free plan voice notes are limited to {n} seconds.", seePremium: "See Premium", shut: "Close", acc: "Account and Premium", accPlan: "Plan", planFree: "Free", planPrem: "Premium", until: "Active until", usage: "Usage", uTr: "Translations this month", uPhoto: "Photos today", uVoice: "Voice notes today", uVn: "Voice transcripts this month", compare: "Free and Premium", cTr: "Translations per month", cPhoto: "Photos per day", cVoice: "Voice notes per day", cVoiceLen: "Voice note length", cVn: "Voice transcripts per month", cCall: "Call length", cVideo: "Video calls", yes: "Yes", no: "No", min: "min", sec: "sec", upgrade: "Upgrade to Premium", renew: "Renew Premium", upgradeNote: "Automatic payment is not available yet. Premium is activated manually by an admin after payment.", upgradeNone: "Contact the admin to upgrade.", lim: "Plan limit reached.", photo: "Photo", caption: "Add a caption (optional)", sendPhoto: "Send", mediaT: "Media and links", tabMedia: "Media", tabLinks: "Links", noMedia: "No photos in this chat yet.", noLinks: "No links yet.", upFail: "Photo failed to send. Try again.", t: "Cross-Language Chat", hero: "Chat without language barriers", heroSub: "Write in your language. Your friend reads it in theirs, automatically.", email: "Your email", sendc: "Send sign-in code", sending: "Sending…", code: "6-digit code", login: "Sign in", name: "Your name", mylang: "Your language", mail: "Code sent to", resend: "Resend", resendIn: "Resend in", prof: "New account! Enter your name and language first.", mine: "Your invite code", share: "Share", copy: "Copy", copied: "Copied ✓", addph: "Enter friend's code", add: "Add", none: "No friends yet", noneSub: "Share your invite code or enter a friend's code above.", friends: "Friends", typ: "Type a message…", off: "Disconnected. Reconnecting…", wait: "translating", fail: "translation failed", quota: "translation quota used up this month", retry: "Retry", on: "online", offl: "offline", typing: "typing…", today: "Today", yday: "Yesterday", you: "You", avChange: "Change photo", avK: "Use Kakeibo profile photo", avDel: "Remove photo", avUp: "Uploading…", avShared: "Your chat friends can see this photo.", avLocal: "Your Kakeibo photo is not shared yet. Tap “Use Kakeibo profile photo”.", avNone: "No photo yet. Friends see your initial.", wpUpload: "Upload your own photo", wpBlur: "Blur background", settings: "Settings", profT: "Profile", useK: "Use name from Kakeibo profile", wp: "Chat wallpaper", wpGal: "Photo from gallery", wpDim: "Dim background", wpReset: "Back to default", wpBig: "Photo too large / unreadable", savedP: "Profile saved ✓", langNote: "The new language applies to your next messages.", save: "Save", saved: "Saved ✓", out: "Sign out", outAsk: "Sign out of this account?", outYes: "Yes, sign out", cancel: "Cancel", shareTxt: "Chat with me on Kakeibo, messages are translated automatically! Invite code: ", empty: "No messages yet. Say hi 👋", seesAs: "Read as",
+      e: { limit: "Plan limit reached.", email: "Invalid email.", wait: "Wait 30 seconds before requesting another code.", limit: "Too many attempts. Try again later.", code: "Wrong code.", expired: "Code expired. Request a new one.", notfound: "Invite code not found.", self: "That's your own code 😄", profile: "Enter a name and language.", net: "Cannot reach the server.", server: "Something went wrong. Try again.", rate: "Slow down, too many messages in a minute.", auth: "Session expired, please sign in again.", wpbig: "Photo too large or unreadable.", avatar: "Photo rejected by the server. Try another.", avfail: "Could not process the photo. Try another." } }
   };
   var COL = ["#ac3527", "#223a5c", "#d9822f", "#4a7c59", "#7a5c9e", "#2f7f8a"];
   var A = { tok: null, user: null }, host, root, view, tmp = {}, ws, peer, msgs = [], me, onl = [], retry = 0, closing = true, rt, pingT, typT, peerTyping = false, peerTypT, contacts = [], cdT, lastTypeSent = 0;
@@ -65,7 +65,7 @@
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
           if (r.status === 401 && A.tok) { wipe(); go("login"); setTimeout(function () { err({ code: "auth" }); }, 0); }
-          if (!r.ok) throw { code: j.error || "server" };
+          if (!r.ok) throw { code: j.error || "server", what: j.what, plan: j.plan, max: j.max };
           return j;
         });
       });
@@ -137,7 +137,18 @@
       ".kc-view-img{position:absolute;inset:0;z-index:8;background:rgba(15,13,30,.94);display:flex;align-items:center;justify-content:center;animation:fadeIn .2s both}.kc-view-img img{max-width:100%;max-height:100%;object-fit:contain}.kc-view-img .kc-ib{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;color:#fff}",
       ".kc-tabs{display:flex;gap:6px;background:var(--kbg);border-radius:12px;padding:4px;margin-bottom:14px}.kc-tabs button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px;font:600 13px Inter,sans-serif;color:var(--kmu);cursor:pointer}.kc-tabs button.on{background:#fff;color:var(--kv);box-shadow:0 1px 2px rgba(31,27,58,.08)}",
       ".kc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.kc-gi{aspect-ratio:1;border:0;padding:0;background:#e9e6f6;border-radius:8px;overflow:hidden;cursor:pointer}.kc-gi img{width:100%;height:100%;object-fit:cover;display:block}.kc-sheet.tall>div{min-height:58%}",
-      ".kc-lk{display:block;padding:12px 2px;border-bottom:1px solid var(--kline);text-decoration:none;color:var(--kink);word-break:break-all}.kc-lk b{display:block;font-size:14px;color:var(--kv)}.kc-lk span{font-size:12px;color:var(--kmu)}"
+      ".kc-lk{display:block;padding:12px 2px;border-bottom:1px solid var(--kline);text-decoration:none;color:var(--kink);word-break:break-all}.kc-lk b{display:block;font-size:14px;color:var(--kv)}.kc-lk span{font-size:12px;color:var(--kmu)}",
+      ".kc-comp.rec>*:not(.kc-recbar){display:none!important}.kc-recbar{display:none;align-items:center;gap:12px;flex:1}.kc-comp.rec .kc-recbar{display:flex}.kc-rdot{width:10px;height:10px;border-radius:50%;background:#d6455d;animation:kcBl 1.2s ease-in-out infinite}@keyframes kcBl{50%{opacity:.25}}.kc-recbar b{font:600 15px Inter,sans-serif;font-variant-numeric:tabular-nums}.kc-rh{flex:1;font-size:13px;color:var(--kmu)}",
+      ".kc-au{display:flex;align-items:center;gap:10px;min-width:200px;padding:4px 4px 2px}.kc-pl{width:38px;height:38px;border-radius:50%;border:0;background:var(--kv);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 38px}.kc-m.me .kc-pl{background:#fff;color:var(--kv)}",
+      ".kc-wv{flex:1;height:4px;border-radius:99px;background:rgba(91,73,214,.18);overflow:hidden}.kc-wv i{display:block;height:100%;background:var(--kv)}.kc-m.me .kc-wv{background:rgba(255,255,255,.3)}.kc-m.me .kc-wv i{background:#fff}.kc-du{font:600 12px Inter,sans-serif;font-variant-numeric:tabular-nums;min-width:34px;text-align:right}",
+      ".kc-sp2{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:kcSpin .8s linear infinite;opacity:.6}.kc-b.has-aud .kc-cp{padding-top:6px}",
+      ".kc-call{position:absolute;inset:0;z-index:9;background:#17142e;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:space-between;animation:fadeIn .2s both;padding:calc(env(safe-area-inset-top,0px) + 40px) 20px calc(env(safe-area-inset-bottom,0px) + 36px)}",
+      ".kc-rv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#17142e;opacity:0;pointer-events:none}.kc-call.video.live .kc-rv{opacity:1}.kc-lv{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;width:96px;height:132px;object-fit:cover;border-radius:12px;background:#2a2547;display:none;z-index:2}.kc-call.video .kc-lv{display:block}",
+      ".kc-cmid{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6vh}.kc-cn{font:700 24px 'Shippori Mincho',serif}.kc-cs{font-size:14px;color:rgba(255,255,255,.72);font-variant-numeric:tabular-nums}.kc-call.video.live .kc-cmid{margin-top:0;align-self:flex-start}.kc-call.video.live .kc-cmid .kc-av{display:none}",
+      ".kc-cbar{position:relative;z-index:1;display:flex;gap:22px;justify-content:center;align-items:flex-start}.kc-cb{width:68px;border:0;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;font:500 12px Inter,sans-serif}.kc-cb svg{width:64px;height:64px;padding:19px;border-radius:50%;background:rgba(255,255,255,.14);box-sizing:border-box}.kc-cb.red svg{background:#d6455d}.kc-cb.red svg{transform:rotate(135deg)}.kc-cb.grn svg{background:#1fa971}.kc-cb.on svg{background:#fff;color:#17142e}",
+      ".kc-plan{background:var(--kv);color:#fff;border-radius:18px;padding:18px;margin-bottom:6px}.kc-plan .lb{font-size:12.5px;color:rgba(255,255,255,.78);margin-top:2px}.kc-plan .pn{font:800 28px 'Shippori Mincho',serif;margin:4px 0}.kc-plan.prem{background:var(--kink)}",
+      ".kc-um{margin:12px 2px}.kc-um .r{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}.kc-um .r b{font-variant-numeric:tabular-nums}.kc-bar2{height:6px;border-radius:99px;background:var(--kline);overflow:hidden}.kc-bar2 i{display:block;height:100%;background:var(--kv)}",
+      ".kc-cmp{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:12px;overflow:hidden}.kc-cmp th,.kc-cmp td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--kline)}.kc-cmp td:first-child,.kc-cmp th:first-child{text-align:left;color:var(--kmu)}.kc-cmp .pr{color:var(--kv);font-weight:700}.kc-cmp tr:last-child td{border-bottom:0}"
     ].join("\n");
     document.head.appendChild(s);
   }
@@ -174,12 +185,15 @@
     } else if (v === "contacts") {
       h = '<div class="kc-head"><span data-a="settings" style="cursor:pointer;display:flex">' + avMe(40) + '</span><div class="ttl">' + esc(u.name) + '<div class="sub">' + fl(u.lang) + " " + ln(u.lang) + '</div></div><button class="kc-ib" data-a="settings" aria-label="' + t.settings + '"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button><button class="kc-ib" data-a="close" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>' +
         '<div class="kc-scroll"><div class="kc-inv"><div class="lb">' + t.mine + '</div><div class="cd">' + esc(u.invite) + '</div><div class="row"><button class="kc-btn sm" data-a="share">' + t.share + '</button><button class="kc-btn sm" data-a="copy">' + t.copy + '</button></div></div>' +
-        '<div class="kc-add"><input class="kc-in" id="kcAdd" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="' + t.addph + '"><button class="kc-btn sm navy" data-a="add" style="padding:0 18px">' + t.add + '</button></div><div id="kcErr"></div>' +
+        '<button class="kc-link" data-a="account" style="margin:-6px 0 8px;padding-left:2px">' + t.acc + " \u00b7 " + (u.plan === "premium" ? t.planPrem : t.planFree) + '</button><div class="kc-add"><input class="kc-in" id="kcAdd" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="' + t.addph + '"><button class="kc-btn sm navy" data-a="add" style="padding:0 18px">' + t.add + '</button></div><div id="kcErr"></div>' +
         '<div class="kc-h">' + t.friends + '</div><div id="kcPeers"><div class="kc-sk"></div><div class="kc-sk"></div></div></div>';
+    } else if (v === "account") {
+      h = '<div class="kc-head"><button class="kc-ib" data-a="tocontacts" aria-label="Back">' + BACKI + '</button><div class="ttl">' + t.acc + '</div><button class="kc-ib" data-a="close" aria-label="Close">' + XI + '</button></div><div class="kc-scroll" id="kcAcc"><div class="kc-sk"></div><div class="kc-sk"></div></div>';
+      loadAccount();
     } else if (v === "chat") {
-      h = '<div class="kc-head"><button class="kc-ib" data-a="tocontacts" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></button>' + avP(peer, 40) + '<div class="ttl"><span>' + esc(peer.name) + '</span><span class="kc-pair">' + fl(u.lang) + " ⇄ " + fl(peer.lang) + '</span><div class="sub" id="kcSt">' + t.offl + '</div></div><button class="kc-ib" data-a="media" aria-label="Media"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button><button class="kc-ib" data-a="wallpaper" aria-label="Wallpaper"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 9"/></svg></button></div>' +
+      h = '<div class="kc-head"><button class="kc-ib" data-a="tocontacts" aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></button>' + avP(peer, 40) + '<div class="ttl"><span>' + esc(peer.name) + '</span><span class="kc-pair">' + fl(u.lang) + " ⇄ " + fl(peer.lang) + '</span><div class="sub" id="kcSt">' + t.offl + '</div></div><button class="kc-ib" id="kcCallB" data-a="call" aria-label="Call"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></button><button class="kc-ib" id="kcVCallB" data-a="vcall" aria-label="Video call"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></svg></button><button class="kc-ib" data-a="media" aria-label="Media"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button></div>' +
         '<div class="kc-bar" id="kcBar" style="display:none">' + t.off + '</div><div class="kc-body"><div class="kc-wp" id="kcWp"></div><div class="kc-list" id="kcList"></div></div>' +
-        '<form class="kc-comp" id="kcForm"><button type="button" class="kc-att" data-a="photo" aria-label="Photo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 9"/></svg></button><input type="file" id="kcFile" accept="image/*" hidden><textarea id="kcTxt" rows="1" maxlength="1000" enterkeyhint="send" placeholder="' + t.typ + '"></textarea><button class="kc-send" id="kcSend" aria-label="send" disabled>' + SEND + "</button></form>";
+        '<form class="kc-comp" id="kcForm"><button type="button" class="kc-att" data-a="photo" aria-label="Photo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 9"/></svg></button><input type="file" id="kcFile" accept="image/*" hidden><textarea id="kcTxt" rows="1" maxlength="1000" enterkeyhint="send" placeholder="' + t.typ + '"></textarea><button class="kc-send" id="kcSend" aria-label="send" style="display:none" disabled>' + SEND + '</button><button type="button" class="kc-send kc-mic" id="kcMic" data-a="mic" aria-label="Mic">' + MICI + '</button><div class="kc-recbar"><button type="button" class="kc-att" data-a="reccancel" aria-label="Cancel">' + XI + '</button><span class="kc-rdot"></span><b id="kcRt">0:00</b><span class="kc-rh">' + t.rec + '</span><button type="button" class="kc-send" data-a="recsend" aria-label="Send">' + SEND + "</button></div></form>";
     }
     $(".kc-view").innerHTML = h; $(".kc-view").style.animation = "none"; void $(".kc-view").offsetWidth; $(".kc-view").style.animation = "";
     if (v === "contacts") loadContacts();
@@ -194,6 +208,7 @@
   }
 
   function loadContacts() {
+    api("/api/me").then(function (r) { if (r.user && A.user) { A.user.plan = r.user.plan; A.user.until = r.user.until; store(); } }).catch(function () {});
     api("/api/contacts").then(function (r) {
       contacts = r.contacts || []; var n = $("#kcPeers"); if (!n || view !== "contacts") return;
       n.innerHTML = contacts.length ? contacts.map(function (c, i) {
@@ -217,15 +232,17 @@
         if (d.type === "init") {
           me = d.me; var hist = d.history || [], keep = msgs.filter(function (m) { return m.local; });
           msgs = hist; msgs.forEach(watchTr);
-          keep = keep.filter(function (l) { return !hist.some(function (h) { return h.uid === me && h.text === l.text && h.ts >= l.ts - 5000; }); });
+          keep = keep.filter(function (l) { return !hist.some(function (h) { return (l.aud ? h.aud && h.aud.id === l.aud.id : l.img ? h.img && h.img.id === l.img.id : h.uid === me && h.text === l.text && h.ts >= l.ts - 5000); }); });
           keep.forEach(function (l) { l.uid = me; msgs.push(l); });
           online(d.online); flush(); drawMsgs(true);
         } else if (d.type === "online") online(d.online);
+        else if (d.type === "tx") onTx(d);
+        else if (d.type === "call") onCall(d);
         else if (d.type === "typing") { if (d.uid !== me) { peerTyping = true; clearTimeout(peerTypT); peerTypT = setTimeout(function () { peerTyping = false; online(onl); drawMsgs(); }, 3500); online(onl); } }
         else if (d.type === "msg") {
           peerTyping = false; online(onl);
           if (!msgs.some(function (x) { return x.id === d.msg.id; })) {
-            var li = -1; if (d.msg.uid === me) msgs.some(function (x, i) { if (x.local && (d.msg.img ? x.img && x.img.id === d.msg.img.id : !x.img && x.text === d.msg.text)) { li = i; return true; } });
+            var li = -1; if (d.msg.uid === me) msgs.some(function (x, i) { if (x.local && (d.msg.aud ? x.aud && x.aud.id === d.msg.aud.id : d.msg.img ? x.img && x.img.id === d.msg.img.id : !x.img && !x.aud && x.text === d.msg.text)) { li = i; return true; } });
             if (li >= 0) msgs[li] = d.msg; else msgs.push(d.msg);
             if (d.msg.uid !== me) watchTr(d.msg);
           }
@@ -244,12 +261,12 @@
   }
   function flush() { // kirim pesan yang tertahan saat offline
     if (!ws || ws.readyState !== 1) return;
-    msgs.forEach(function (m) { if (m.local && !m.sent && !m.uploading) { try { ws.send(JSON.stringify(m.img ? { img: { id: m.img.id, w: m.img.w, h: m.img.h }, text: m.text } : { text: m.text })); m.sent = true; } catch (e) {} } });
+    msgs.forEach(function (m) { if (m.local && !m.sent && !m.uploading) { try { ws.send(JSON.stringify(m.aud ? { aud: { id: m.aud.id, dur: m.aud.dur } } : m.img ? { img: { id: m.img.id, w: m.img.w, h: m.img.h }, text: m.text } : { text: m.text })); m.sent = true; } catch (e) {} } });
   }
-  function leaveChat() { closing = true; clearTimeout(rt); clearInterval(pingT); try { ws && ws.close(); } catch (e) {} ws = null; peerTyping = false; }
+  function leaveChat() { stopAud(); if (CALL) endCall(true); closing = true; clearTimeout(rt); clearInterval(pingT); try { ws && ws.close(); } catch (e) {} ws = null; peerTyping = false; }
   function bar(on) { var b = $("#kcBar"); if (b) b.style.display = on ? "" : "none"; if (!on) flush(); upSend(); }
   function online(a) { onl = a || []; var s = $("#kcSt"); if (!s) return; var on = onl.indexOf(peer.id) >= 0; s.textContent = peerTyping ? T().typing : on ? "● " + T().on : T().offl; s.className = "sub" + (on ? " on" : ""); }
-  function upSend() { var s = $("#kcSend"), x = $("#kcTxt"); if (s && x) s.disabled = !x.value.trim(); }
+  function upSend() { var s = $("#kcSend"), x = $("#kcTxt"), mi = $("#kcMic"); if (!s || !x) return; var has = !!x.value.trim(); s.disabled = !has; s.style.display = has ? "" : "none"; if (mi) mi.style.display = has ? "none" : ""; }
   function toast(msg) { var n = $("#kcErr") || null; if (n) { n.textContent = msg; n.classList.add("on"); } else { var b = $("#kcBar"); if (b) { b.textContent = msg; b.style.display = ""; setTimeout(function () { b.textContent = T().off; if (ws && ws.readyState === 1) b.style.display = "none"; }, 2500); } } }
 
   function drawMsgs(force) {
@@ -268,7 +285,7 @@
       var nx = msgs[i + 1], last = !(nx && nx.uid === m.uid && dayKey(nx.ts) === dayKey(m.ts) && nx.ts - m.ts < 120000);
       var tick = mine ? (m.local ? '<i class="kc-ck pend"></i>' : '<i class="kc-ck">✓</i>') : "";
       html += '<div class="kc-row' + (mine ? " me" : "") + (cont ? " cont" : "") + '">' + (mine ? "" : '<span class="kc-ra">' + (last ? avP(peer, 28) : "") + "</span>") +
-        '<div class="kc-m' + (mine ? " me" : "") + '"><div class="kc-b' + (m.img ? " has-img" : "") + '">' + (m.img ? imgHtml(m.img) + (main ? '<div class="kc-cp">' + esc(main) + "</div>" : "") : esc(main)) + sub + '<span class="kc-tm">' + (m.local ? "" : hm(m.ts)) + tick + "</span></div></div></div>";
+        '<div class="kc-m' + (mine ? " me" : "") + '"><div class="kc-b' + (m.img ? " has-img" : m.aud ? " has-aud" : "") + '">' + (m.img ? imgHtml(m.img) + (main ? '<div class="kc-cp">' + esc(main) + "</div>" : "") : m.aud ? audHtml(m) + (main ? '<div class="kc-cp">' + esc(main) + "</div>" : "") : esc(main)) + sub + audSt(m) + '<span class="kc-tm">' + (m.local ? "" : hm(m.ts)) + tick + "</span></div></div></div>";
       prev = m;
     });
     if (peerTyping) html += '<div class="kc-typ"><span class="kc-dots"><i></i><i></i><i></i></span></div>';
@@ -327,7 +344,7 @@
       if (!d) { msgs = msgs.filter(function (x) { return x !== m; }); drawMsgs(); return toast(T().upFail); }
       api("/api/media", { peer: peer.id, mime: "image/jpeg", w: p.w, h: p.h, data: d.split(",")[1] }).then(function (r) {
         m.img.id = r.id; m.uploading = false; IMG[r.id] = p.url; flush(); drawMsgs();
-      }).catch(function () { msgs = msgs.filter(function (x) { return x !== m; }); drawMsgs(); toast(T().upFail); });
+      }).catch(function (e) { msgs = msgs.filter(function (x) { return x !== m; }); drawMsgs(); if (!limitMsg(e)) toast(T().upFail); });
     });
   }
   function openViewer(id) {
@@ -345,9 +362,192 @@
       ? (imgs.length ? '<div class="kc-grid">' + imgs.map(function (m) { var s = IMG[m.img.id]; return '<button class="kc-gi" data-a="viewimg" data-id="' + esc(m.img.id) + '">' + (s ? '<img alt="" src="' + s + '">' : "") + "</button>"; }).join("") + "</div>" : '<div class="kc-emp"><span>' + t.noMedia + "</span></div>")
       : (links.length ? links.map(function (u) { var h = u.replace(/^https?:\/\//, ""); return '<a class="kc-lk" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer"><b>' + esc(h.split("/")[0]) + "</b><span>" + esc(h.length > 60 ? h.slice(0, 60) + "..." : h) + "</span></a>"; }).join("") : '<div class="kc-emp"><span>' + t.noLinks + "</span></div>");
     var s = document.createElement("div"); s.className = "kc-sheet tall"; s.id = "kcSheet"; s.dataset.k = "media";
-    s.innerHTML = '<div><div class="grab"></div><h3>' + t.mediaT + '</h3><div class="kc-tabs"><button data-a="tab" data-t="media" class="' + (tab === "media" ? "on" : "") + '">' + t.tabMedia + '</button><button data-a="tab" data-t="links" class="' + (tab === "links" ? "on" : "") + '">' + t.tabLinks + "</button></div>" + body + "</div>";
+    s.innerHTML = '<div><div class="grab"></div><h3>' + t.mediaT + '</h3><div class="kc-tabs"><button data-a="tab" data-t="media" class="' + (tab === "media" ? "on" : "") + '">' + t.tabMedia + '</button><button data-a="tab" data-t="links" class="' + (tab === "links" ? "on" : "") + '">' + t.tabLinks + "</button></div>" + body + '<button class="kc-btn ghost" style="margin-top:16px" data-a="wallpaper">' + (t.wp || "Wallpaper") + "</button></div>";
     s.addEventListener("click", function (e) { if (e.target === s) s.remove(); });
     $(".kc-app").appendChild(s); hydrate(s);
+  }
+  var MICI = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>', XI = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>', PH = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>', VID = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></svg>', PLAYI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>', PAUSEI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>', BACKI = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>';
+  var REC = null, AUD = null, PLAY = { id: "", paused: true, pct: 0, cur: 0 }, CALL = null, TONE = null, USAGE = null;
+  function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60); }
+  function drop(m) { msgs = msgs.filter(function (x) { return x !== m; }); drawMsgs(); }
+  function vmax() { return USAGE && USAGE.limits ? USAGE.limits.voiceSec : (A.user && A.user.plan === "premium" ? 120 : 30); }
+
+  /* ---------- batas paket ---------- */
+  function premiumPrompt(msg) {
+    var t = T(), old = $("#kcSheet"); if (old) old.remove();
+    var s = document.createElement("div"); s.className = "kc-sheet"; s.id = "kcSheet"; s.dataset.k = "prem";
+    s.innerHTML = '<div><div class="grab"></div><h3>' + t.planFree + '</h3><p class="kc-note" style="font-size:14px;margin:0 0 14px">' + esc(msg) + '</p><button class="kc-btn" data-a="premium">' + t.seePremium + '</button><button class="kc-btn ghost" style="margin-top:8px" data-a="closesheet">' + t.shut + "</button></div>";
+    s.addEventListener("click", function (e) { if (e.target === s) s.remove(); }); $(".kc-app").appendChild(s);
+  }
+  function limitMsg(e) {
+    if (!e || e.code !== "limit") return false; var t = T();
+    premiumPrompt(e.what === "voicelen" ? t.limVoiceLen.replace("{n}", e.max || 30) : e.what === "voice" ? t.limVoice : t.limPhoto); return true;
+  }
+  function loadAccount() {
+    api("/api/usage").then(function (u) {
+      USAGE = u; if (A.user) { A.user.plan = u.plan; A.user.until = u.until; store(); }
+      var t = T(), P = u.plans || {}, F = P.free || u.limits, R = P.premium || u.limits, prem = u.plan === "premium", n = $("#kcAcc"); if (!n || view !== "account") return;
+      var bar = function (lb, used, max) { var p = Math.min(100, Math.round(used / Math.max(1, max) * 100)); return '<div class="kc-um"><div class="r"><span>' + lb + "</span><b>" + used + " / " + max + '</b></div><div class="kc-bar2"><i style="width:' + p + '%"></i></div></div>'; };
+      var fs = function (s) { return s >= 60 ? Math.round(s / 60) + " " + t.min : s + " " + t.sec; };
+      var row = function (lb, a, b) { return "<tr><td>" + lb + "</td><td>" + a + '</td><td class="pr">' + b + "</td></tr>"; };
+      var yn = function (v) { return v ? t.yes : t.no; };
+      n.innerHTML = '<div class="kc-plan' + (prem ? " prem" : "") + '"><div class="lb">' + t.accPlan + '</div><div class="pn">' + (prem ? t.planPrem : t.planFree) + "</div>" + (prem && u.until ? '<div class="lb">' + t.until + " " + esc(new Date(u.until).toLocaleDateString(host.lang)) + "</div>" : "") + '<div class="lb">' + esc((A.user && A.user.email) || "") + "</div></div>" +
+        '<div class="kc-h">' + t.usage + "</div>" + bar(t.uTr, u.used.tr, u.limits.tr) + bar(t.uPhoto, u.used.photoDay, u.limits.photoDay) + bar(t.uVoice, u.used.voiceDay, u.limits.voiceDay) + bar(t.uVn, u.used.vnMonth, u.limits.vnMonth) +
+        '<div class="kc-h">' + t.compare + '</div><table class="kc-cmp"><tr><th></th><th>' + t.planFree + '</th><th class="pr">' + t.planPrem + "</th></tr>" + row(t.cTr, F.tr, R.tr) + row(t.cPhoto, F.photoDay, R.photoDay) + row(t.cVoice, F.voiceDay, R.voiceDay) + row(t.cVoiceLen, fs(F.voiceSec), fs(R.voiceSec)) + row(t.cVn, F.vnMonth, R.vnMonth) + row(t.cCall, fs(F.callSec), fs(R.callSec)) + row(t.cVideo, yn(F.video), yn(R.video)) + "</table>" +
+        (u.upgrade_url ? '<a class="kc-btn" style="display:block;text-align:center;text-decoration:none;margin-top:16px" href="' + esc(u.upgrade_url) + '" target="_blank" rel="noopener noreferrer">' + (prem ? t.renew : t.upgrade) + "</a>" : '<div class="kc-note" style="margin-top:14px">' + t.upgradeNone + "</div>") +
+        '<div class="kc-note">' + t.upgradeNote + '</div><button class="kc-btn ghost" style="margin-top:6px" data-a="logout">' + (t.logout || t.out || "Logout") + "</button>";
+    }).catch(function (e) { var n = $("#kcAcc"); if (n) n.innerHTML = '<div class="kc-emp"><span>' + (T().e[e && e.code] || T().e.server) + "</span></div>"; });
+  }
+
+  /* ---------- voice note ---------- */
+  function pickMime() { var l = ["audio/webm;codecs=opus", "audio/mp4", "audio/ogg;codecs=opus", "audio/webm"]; for (var i = 0; i < l.length; i++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(l[i])) return l[i]; return ""; }
+  function startRec() {
+    if (REC || CALL) return;
+    if (!navigator.mediaDevices || !window.MediaRecorder) return toast(T().micFail);
+    stopAud();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+      var mime = pickMime(), mr;
+      try { mr = new MediaRecorder(st, mime ? { mimeType: mime, audioBitsPerSecond: 24000 } : { audioBitsPerSecond: 24000 }); } catch (e) { st.getTracks().forEach(function (t) { t.stop(); }); return toast(T().micFail); }
+      var R = REC = { mr: mr, st: st, chunks: [], t0: Date.now(), mime: (mr.mimeType || mime || "audio/webm").split(";")[0], send: false };
+      mr.ondataavailable = function (e) { if (e.data && e.data.size) R.chunks.push(e.data); };
+      mr.onstop = onRecStop; mr.start(250);
+      var f = $("#kcForm"); if (f) f.classList.add("rec");
+      R.tick = setInterval(function () { var s = Math.floor((Date.now() - R.t0) / 1000), el = $("#kcRt"); if (el) el.textContent = mmss(s); if (s >= vmax()) stopRec(true); }, 250);
+    }).catch(function () { toast(T().micFail); });
+  }
+  function stopRec(send) { if (!REC) return; REC.send = !!send; clearInterval(REC.tick); try { REC.mr.stop(); } catch (e) { onRecStop(); } }
+  function onRecStop() {
+    var R = REC; if (!R) return; REC = null; clearInterval(R.tick);
+    R.st.getTracks().forEach(function (t) { t.stop(); }); var f = $("#kcForm"); if (f) f.classList.remove("rec");
+    var dur = Math.max(1, Math.round((Date.now() - R.t0) / 1000));
+    if (!R.send || (Date.now() - R.t0) < 700 || !R.chunks.length) return;
+    sendVoice(new Blob(R.chunks, { type: R.mime }), Math.min(dur, vmax()), R.mime);
+  }
+  function sendVoice(blob, dur, mime) {
+    var url = URL.createObjectURL(blob);
+    var m = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), uid: me || A.user.id, lang: A.user.lang, text: "", tr: {}, ts: Date.now(), local: true, uploading: true, aud: { id: "", dur: dur, url: url } };
+    msgs.push(m); drawMsgs(true);
+    readFile(blob, function (d) {
+      if (!d) { drop(m); return toast(T().micFail); }
+      api("/api/media", { peer: peer.id, mime: mime, dur: dur, data: d.split(",")[1] }).then(function (r) { m.aud.id = r.id; m.uploading = false; IMG[r.id] = url; flush(); drawMsgs(); })
+        .catch(function (e) { drop(m); if (!limitMsg(e)) toast(T().upFail); });
+    });
+  }
+  function onTx(d) { var m = msgs.filter(function (x) { return x.id === d.id; })[0]; if (!m) return; if (d.text) m.text = d.text; else m.txFail = d.quota ? "quota" : "none"; drawMsgs(); }
+  function audHtml(m) {
+    var a = m.aud, id = a.id || "", on = id && PLAY.id === id;
+    return '<div class="kc-au" data-aid="' + esc(id) + '"><button type="button" class="kc-pl" data-a="play" data-aid="' + esc(id) + '" aria-label="Play">' + (on && !PLAY.paused ? PAUSEI : PLAYI) + '</button><div class="kc-wv"><i style="width:' + (on ? PLAY.pct : 0) + '%"></i></div><span class="kc-du">' + mmss(on ? PLAY.cur : a.dur) + "</span>" + (id ? "" : '<span class="kc-sp2"></span>') + "</div>";
+  }
+  function audSt(m) {
+    if (!m.aud || m.text) return ""; var t = T();
+    if (m.txFail === "quota") return '<div class="kc-st">' + t.vnQuota + "</div>";
+    if (m.txFail === "none" || Date.now() - m.ts > 25000) return "";
+    return '<div class="kc-st"><span class="kc-dots"><i></i><i></i><i></i></span>' + t.vnTx + "</div>";
+  }
+  function fetchMedia(id, cb) {
+    if (IMG[id]) return cb(true); if (LOADING[id]) return; LOADING[id] = 1;
+    fetch(API + "/api/media/" + id, { headers: { authorization: "Bearer " + A.tok } }).then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+      .then(function (b) { IMG[id] = URL.createObjectURL(b); delete LOADING[id]; cb(true); }).catch(function () { delete LOADING[id]; IMGFAIL[id] = 1; cb(false); });
+  }
+  function stopAud() { if (AUD) { try { AUD.pause(); } catch (e) {} AUD = null; } PLAY = { id: "", paused: true, pct: 0, cur: 0 }; }
+  function paintAud() { var n = root.querySelector('.kc-au[data-aid="' + PLAY.id + '"]'); if (!n) return; n.querySelector(".kc-wv i").style.width = PLAY.pct + "%"; n.querySelector(".kc-du").textContent = mmss(PLAY.cur); }
+  function playAud(id) {
+    if (!id) return;
+    if (PLAY.id === id && AUD) { if (AUD.paused) AUD.play(); else AUD.pause(); return; }
+    var go2 = function () {
+      stopAud(); AUD = new Audio(IMG[id]); PLAY = { id: id, paused: false, pct: 0, cur: 0 };
+      AUD.ontimeupdate = function () { PLAY.cur = Math.floor(AUD.currentTime); PLAY.pct = AUD.duration ? Math.round(AUD.currentTime / AUD.duration * 100) : 0; paintAud(); };
+      AUD.onpause = function () { PLAY.paused = true; drawMsgs(); }; AUD.onplay = function () { PLAY.paused = false; drawMsgs(); };
+      AUD.onended = function () { PLAY = { id: "", paused: true, pct: 0, cur: 0 }; drawMsgs(); };
+      var p = AUD.play(); if (p && p.catch) p.catch(function () {}); drawMsgs();
+    };
+    fetchMedia(id, function (ok) { if (ok) go2(); });
+  }
+
+  /* ---------- telepon dan video call (WebRTC, sinyal lewat WebSocket chat) ---------- */
+  function sig(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ call: o })); }
+  function newCid() { return Math.random().toString(36).slice(2, 10); }
+  function getMedia(video) { if (!navigator.mediaDevices) return Promise.reject(new Error("nomedia")); return navigator.mediaDevices.getUserMedia({ audio: true, video: video ? { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } : false }); }
+  function loadIce() { return api("/api/turn").then(function (r) { if (CALL) CALL.ice = r.iceServers || []; }).catch(function () {}); }
+  function startCall(video) {
+    if (CALL || REC) return;
+    if (!ws || ws.readyState !== 1 || onl.indexOf(peer.id) < 0) return toast(T().unavailable);
+    getMedia(video).then(function (st) {
+      CALL = { id: newCid(), video: video, dir: "out", st: "ring", local: st, ice: [], pend: [], max: 0, muted: false, camoff: false };
+      CALL.icep = loadIce(); sig({ op: "ring", cid: CALL.id, video: video }); callUI(); ringTone(true);
+      CALL.to = setTimeout(function () { if (CALL && CALL.st === "ring") endCall(true, T().noAnswer); }, 40000);
+    }).catch(function () { toast(T().permCall); });
+  }
+  function acceptCall() {
+    var C = CALL; if (!C || C.st !== "incoming") return;
+    getMedia(C.video).then(function (st) {
+      if (CALL !== C) { st.getTracks().forEach(function (t) { t.stop(); }); return; }
+      C.local = st; C.st = "connecting"; ringTone(false); C.icep = loadIce();
+      sig({ op: "accept", cid: C.id }); callUI(); C.icep.then(function () { if (CALL === C) makePc(); });
+    }).catch(function () { toast(T().permCall); endCall(true); });
+  }
+  function makePc() {
+    var C = CALL, pc = new RTCPeerConnection({ iceServers: C.ice.length ? C.ice : [{ urls: ["stun:stun.cloudflare.com:3478"] }] });
+    C.pc = pc; C.local.getTracks().forEach(function (t) { pc.addTrack(t, C.local); });
+    pc.onicecandidate = function (e) { if (e.candidate && CALL === C) sig({ op: "ice", cid: C.id, cand: e.candidate.toJSON ? e.candidate.toJSON() : e.candidate }); };
+    pc.ontrack = function (e) { C.remote = e.streams[0]; attachRemote(); };
+    pc.onconnectionstatechange = function () {
+      if (CALL !== C) return; var s = pc.connectionState;
+      if (s === "connected") callActive();
+      else if (s === "failed") endCall(true, T().failedCall);
+      else if (s === "disconnected") { clearTimeout(C.dc); C.dc = setTimeout(function () { if (CALL === C && pc.connectionState !== "connected") endCall(true, T().failedCall); }, 8000); }
+    };
+    return pc;
+  }
+  function drain() { var C = CALL; if (!C || !C.pc || !C.pc.remoteDescription) return; C.pend.splice(0).forEach(function (x) { C.pc.addIceCandidate(x).catch(function () {}); }); }
+  function onCall(d) {
+    var C = CALL, t = T();
+    if (d.op === "ring") { if (C || REC) return sig({ op: "busy", cid: d.cid }); CALL = { id: d.cid, video: !!d.video, dir: "in", st: "incoming", ice: [], pend: [], max: d.max || 300, muted: false, camoff: false }; callUI(); ringTone(true); try { navigator.vibrate && navigator.vibrate([400, 200, 400]); } catch (e) {} return; }
+    if (!C || d.cid !== C.id) return;
+    if (d.op === "ringok") C.max = d.max || C.max;
+    else if (d.op === "denied") endCall(false, d.reason === "video" ? t.denyVideo : t.denyCalls);
+    else if (d.op === "unavailable") endCall(false, t.unavailable);
+    else if (d.op === "busy") endCall(false, t.busy);
+    else if (d.op === "reject") endCall(false, t.rejected);
+    else if (d.op === "end" || d.op === "cancel") endCall(false, t.callEnded);
+    else if (d.op === "accept" && C.dir === "out") {
+      clearTimeout(C.to); ringTone(false); C.st = "connecting"; callUI();
+      C.icep.then(function () { if (CALL !== C) return; var pc = makePc(); pc.createOffer().then(function (o) { return pc.setLocalDescription(o); }).then(function () { sig({ op: "offer", cid: C.id, sdp: pc.localDescription }); }).catch(function () { endCall(true, t.failedCall); }); });
+    } else if (d.op === "offer" && C.pc) {
+      C.pc.setRemoteDescription(d.sdp).then(function () { drain(); return C.pc.createAnswer(); }).then(function (a) { return C.pc.setLocalDescription(a); }).then(function () { sig({ op: "answer", cid: C.id, sdp: C.pc.localDescription }); }).catch(function () { endCall(true, t.failedCall); });
+    } else if (d.op === "answer" && C.pc) C.pc.setRemoteDescription(d.sdp).then(drain).catch(function () { endCall(true, t.failedCall); });
+    else if (d.op === "ice" && d.cand) { if (C.pc && C.pc.remoteDescription) C.pc.addIceCandidate(d.cand).catch(function () {}); else C.pend.push(d.cand); }
+  }
+  function callActive() { var C = CALL; if (!C || C.st === "active") return; C.st = "active"; C.t0 = Date.now(); ringTone(false); callUI(); C.tick = setInterval(callTick, 1000); }
+  function callTick() {
+    var C = CALL; if (!C || C.st !== "active") return; var s = Math.floor((Date.now() - C.t0) / 1000), el = $("#kcCs"); if (el) el.textContent = mmss(s);
+    if (C.max && s >= C.max) endCall(true, T().callMax);
+  }
+  function toggleMute() { var C = CALL; if (!C || !C.local) return; C.muted = !C.muted; C.local.getAudioTracks().forEach(function (t) { t.enabled = !C.muted; }); callUI(); }
+  function toggleCam() { var C = CALL; if (!C || !C.local) return; C.camoff = !C.camoff; C.local.getVideoTracks().forEach(function (t) { t.enabled = !C.camoff; }); callUI(); }
+  function endCall(notify, msg) {
+    var C = CALL; if (!C) return; CALL = null;
+    clearTimeout(C.to); clearTimeout(C.dc); clearInterval(C.tick); ringTone(false);
+    if (notify) sig({ op: C.st === "ring" ? "cancel" : C.st === "incoming" ? "reject" : "end", cid: C.id });
+    try { C.pc && C.pc.close(); } catch (e) {}
+    if (C.local) C.local.getTracks().forEach(function (t) { t.stop(); });
+    var ov = $("#kcCall"); if (ov) ov.remove(); if (msg) toast(msg);
+  }
+  function attachRemote() { var rv = $("#kcRV"); if (rv && CALL && CALL.remote && rv.srcObject !== CALL.remote) { rv.srcObject = CALL.remote; var p = rv.play && rv.play(); if (p && p.catch) p.catch(function () {}); } }
+  function callUI() {
+    var C = CALL, t = T(); if (!C) return; var ov = $("#kcCall");
+    if (!ov) { ov = document.createElement("div"); ov.id = "kcCall"; ov.innerHTML = '<video id="kcRV" class="kc-rv" autoplay playsinline></video><video id="kcLV" class="kc-lv" autoplay playsinline muted></video><div class="kc-cmid">' + avP(peer, 104) + '<div class="kc-cn">' + esc(peer.name) + '</div><div class="kc-cs" id="kcCs"></div></div><div class="kc-cbar" id="kcCb"></div>'; $(".kc-app").appendChild(ov); }
+    ov.className = "kc-call" + (C.video ? " video" : "") + (C.st === "active" ? " live" : "");
+    var lv = $("#kcLV"); if (C.local && lv && lv.srcObject !== C.local) lv.srcObject = C.local; attachRemote();
+    $("#kcCs").textContent = C.st === "incoming" ? (C.video ? t.incomingV : t.incoming) : C.st === "ring" ? t.calling : C.st === "connecting" ? t.connecting : mmss((Date.now() - C.t0) / 1000);
+    var b = function (cls, act, lb, svg) { return '<button type="button" class="kc-cb ' + cls + '" data-a="' + act + '" aria-label="' + lb + '">' + svg + "<span>" + lb + "</span></button>"; };
+    $("#kcCb").innerHTML = C.st === "incoming" ? b("red", "cdec", t.decline, PH) + b("grn", "cacc", t.accept, C.video ? VID : PH)
+      : b(C.muted ? "on" : "", "cmute", C.muted ? t.unmute : t.mute, MICI) + (C.video ? b(C.camoff ? "on" : "", "ccam", C.camoff ? t.camOn : t.camOff, VID) : "") + b("red", "cend", t.endCall, PH);
+  }
+  function ringTone(on) {
+    if (TONE) { clearInterval(TONE.iv); try { TONE.o.stop(); TONE.ctx.close(); } catch (e) {} TONE = null; }
+    if (!on) return;
+    try { var AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), o = ctx.createOscillator(), g = ctx.createGain(), hi = false; o.frequency.value = 440; g.gain.value = 0; o.connect(g); g.connect(ctx.destination); o.start(); TONE = { ctx: ctx, o: o, iv: setInterval(function () { hi = !hi; g.gain.value = hi ? 0.06 : 0; }, 900) }; } catch (e) {}
   }
   function readFile(f, cb) { var rd = new FileReader(); rd.onerror = function () { cb(null); }; rd.onload = function () { cb(rd.result); }; rd.readAsDataURL(f); }
   function loadImg(src, cb) { var im = new Image(); im.onerror = function () { cb(null); }; im.onload = function () { cb(im); }; im.src = src; }
@@ -434,6 +634,19 @@
     else if (a === "media") openMedia("media");
     else if (a === "tab") openMedia(b.dataset.t);
     else if (a === "viewimg") openViewer(b.dataset.id);
+    else if (a === "mic") startRec();
+    else if (a === "reccancel") stopRec(false);
+    else if (a === "recsend") stopRec(true);
+    else if (a === "play") playAud(b.dataset.aid);
+    else if (a === "call") startCall(false);
+    else if (a === "vcall") { if (A.user && A.user.plan !== "premium") premiumPrompt(T().denyVideo); else startCall(true); }
+    else if (a === "cacc") acceptCall();
+    else if (a === "cdec" || a === "cend") endCall(true);
+    else if (a === "cmute") toggleMute();
+    else if (a === "ccam") toggleCam();
+    else if (a === "account") go("account");
+    else if (a === "premium") { var sh0 = $("#kcSheet"); if (sh0) sh0.remove(); go("account"); }
+    else if (a === "closesheet") { var sh1 = $("#kcSheet"); if (sh1) sh1.remove(); }
     else if (a === "pick") { tmp.lang = tmp.lang2 = b.dataset.l; Array.prototype.forEach.call(b.parentNode.children, function (x) { x.classList.toggle("sel", x === b); }); }
     else if (a === "req" || a === "resend") {
       var em = a === "req" ? ($("#kcEmail").value || "").trim() : tmp.email; if (a === "req") { tmp.email = em; tmp.need = false; } clearErr();
@@ -445,7 +658,7 @@
       busy(b, true, "…");
       api("/api/auth/verify", body).then(function (r) {
         if (r.need_profile) { tmp.need = true; var c = body.code; go("code"); $("#kcCode").value = c; $("#kcName").focus(); return; }
-        r.user.email = r.user.email || tmp.email; A.tok = r.token; A.user = r.user; store(); tmp = {}; go("contacts");
+        r.user.email = r.user.email || tmp.email; A.tok = r.token; A.user = r.user; store(); var nx = tmp.next; tmp = {}; go(nx || "contacts");
       }).catch(function (x) { busy(b, false); err(x); });
     } else if (a === "relogin") go("login");
     else if (a === "add") {
@@ -501,7 +714,7 @@
     else if (e.key === "Enter" && (e.target.id === "kcAdd")) { e.preventDefault(); $('[data-a="add"]').click(); }
   }
   function onVis() { if (!root || !root.classList.contains("open") || view !== "chat" || closing) return; if (!ws || ws.readyState > 1) { clearTimeout(rt); retry = 0; connect(); } }
-  function close() { if (!root) return; leaveChat(); clearInterval(cdT); root.classList.remove("open"); document.body.style.overflow = ""; }
+  function close() { if (!root) return; stopAud(); if (CALL) endCall(true); leaveChat(); clearInterval(cdT); root.classList.remove("open"); document.body.style.overflow = ""; }
 
   window.KakeiboChat = {
     open: function (ctx) {
@@ -516,7 +729,8 @@
         document.body.appendChild(root);
       }
       root.classList.add("open"); document.body.style.overflow = "hidden";
-      go(A.tok && A.user ? "contacts" : "login");
+      tmp.next = ctx.view === "account" ? "account" : null;
+      go(A.tok && A.user ? (ctx.view === "account" ? "account" : "contacts") : "login");
     }
   };
 })();
