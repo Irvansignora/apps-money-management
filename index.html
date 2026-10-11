@@ -808,7 +808,6 @@
 
   /* ---- Chat Lintas Bahasa (coming soon) + banner toko aplikasi ---- */
   .tool-card{position:relative;}
-  .soon-badge{position:absolute;top:-5px;right:-3px;background:var(--hanko);color:#fff;font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:999px;box-shadow:0 2px 6px -2px rgba(172,53,39,.6);}
   .store-banner{position:relative;display:flex;align-items:flex-start;gap:12px;padding:14px 40px 14px 14px;border-radius:18px;color:#f3ecd9;overflow:hidden;
     background:radial-gradient(120% 140% at 100% 0%,rgba(var(--acc-rgb),.5),transparent 55%),linear-gradient(135deg,#17233d,#2b4470);box-shadow:var(--shadow-md);}
   .sb-ic{width:46px;height:46px;flex:0 0 46px;border-radius:11px;box-shadow:0 4px 12px -4px rgba(0,0,0,.5);}
@@ -821,26 +820,10 @@
   .sb-stores .store span{display:none;}
   .sb-stores .store strong{font-size:12.5px;}
   .sb-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(255,255,255,.1);color:#eee6d2;font-size:13px;cursor:pointer;}
-  .chat-hero{border-radius:20px;padding:18px 16px 16px;color:#f3ecd9;background:radial-gradient(110% 90% at 100% 0%,rgba(var(--acc-rgb),.55),transparent 60%),linear-gradient(150deg,#17233d,#2b4470);}
-  .chat-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(236,227,206,.14);border:1px solid rgba(236,227,206,.3);border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:600;}
-  .chat-pill i{width:7px;height:7px;border-radius:50%;background:rgb(var(--acc-rgb));animation:pulse 1.6s infinite;}
-  .chat-hero h3{font-family:'Shippori Mincho',serif;font-size:24px;line-height:1.2;margin:12px 0 6px;}
-  .chat-hero p{margin:0;font-size:13px;line-height:1.5;color:#c9d2e4;}
-  .chat-demo{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
-  .cd-b{max-width:90%;padding:9px 12px;border-radius:14px;font-size:13.5px;line-height:1.4;opacity:0;animation:riseIn .5s var(--ease) forwards;}
-  .cd-b small{display:block;font-size:11.5px;opacity:.72;margin-top:5px;padding-top:5px;border-top:1px dashed currentColor;}
-  .cd-in{align-self:flex-start;background:#fbf7ea;color:var(--sumi);border-bottom-left-radius:4px;animation-delay:.35s;}
-  .cd-out{align-self:flex-end;background:rgb(var(--acc-rgb));color:#fff;border-bottom-right-radius:4px;animation-delay:1.7s;}
-  .chat-feats{display:grid;gap:8px;margin:14px 0;}
-  .chat-feat{display:flex;gap:11px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.4;}
-  .chat-feat b{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ai);font-size:16px;}
-  .chat-lead{font-size:12px;color:var(--mist);text-align:center;margin-bottom:8px;}
-  .chat-stores{display:flex;gap:10px;}
   .store{flex:1;display:flex;align-items:center;gap:10px;background:#14151a;color:#fff;border:1px solid #3a3d46;border-radius:12px;padding:9px 12px;}
   .store svg{height:26px;width:auto;flex:0 0 auto;}
   .store span{display:block;font-size:9.5px;color:#aab1c0;}
   .store strong{font-size:15px;line-height:1.1;}
-  @media (prefers-reduced-motion:reduce){.cd-b{animation:none;opacity:1;}.chat-pill i{animation:none;}}
 </style>
 </head>
 <body>
@@ -1269,7 +1252,7 @@ const catInfo = (id) => ALL_CATS.find(c => c.id === id) || ALL_CATS[ALL_CATS.len
 const TOOLS = [
   { id: "absensi", labelKey: "absensiMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 9h18"/><path d="M8.5 14.5l2 2 4-4.5"/></svg>` },
   { id: "budget", labelKey: "budgetMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14.5" r="1.2" fill="currentColor" stroke="none"/></svg>` },
-  { id: "chat", labelKey: "chatMenuBtn", soon: true, icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 10h7M8.5 13.5h4"/></svg>` },
+  { id: "chat", labelKey: "chatMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 10h7M8.5 13.5h4"/></svg>` },
   { id: "overtime", labelKey: "overtimeCalcBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>` },
   { id: "halal", labelKey: "halalMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/><path d="M9 12l2 2 4-4"/></svg>` },
   { id: "convo", labelKey: "convoMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4M8 22h8"/></svg>` },
@@ -1523,7 +1506,7 @@ const I18N = {
     absensiDisclaimer: "厚生年金 (9.15%), 健康保険 (±4.99%, rata2 nasional), dan 雇用保険 (0.5%, tarif per Apr 2026) dihitung otomatis dari gaji kotor pakai tarif resmi terbaru. 所得税 didekati dari penyetahunan gaji + 基礎控除 hasil reformasi pajak 2025-2026, BUKAN tabel 源泉徴収 resmi persis. Sewa & utilitas tetap diisi manual karena itu kebijakan tempat kerja masing2, bukan aturan pemerintah. Cek slip gaji asli buat angka pastinya.",
     wd0: "Min", wd1: "Sen", wd2: "Sel", wd3: "Rab", wd4: "Kam", wd5: "Jum", wd6: "Sab",
     convoMenuBtn: "🗣️ Bicara 2 Arah", convoTitle: "Bicara 2 Arah",
-    chatMenuBtn: "💬 Chat Lintas Bahasa", chatTitle: "Chat Lintas Bahasa", chatSoonBadge: "Segera", chatHeroBadge: "Segera hadir", chatHeroTitle: "Ngobrol tanpa batas bahasa", chatHeroSub: "Tulis dalam bahasamu. Teman dan rekan kerja membacanya dalam bahasa mereka, otomatis.", chatDemoJa: "Besok kumpul jam 7 pagi. Bisa?", chatDemoReply: "Siap, besok saya datang jam 7!", chatF1: "Terjemahan otomatis 9 bahasa, termasuk Jepang", chatF2: "Kirim suara, terjemahan langsung jadi teks", chatF3: "Grup kerja dengan bos dan teman satu tim", chatStoreLead: "Akan tersedia di", appBannerTitle: "Segera hadir sebagai aplikasi HP", appBannerSub: "Semua fitur akan tersedia di Play Store & App Store",
+    chatMenuBtn: "💬 Chat Lintas Bahasa", appBannerTitle: "Segera hadir sebagai aplikasi HP", appBannerSub: "Semua fitur akan tersedia di Play Store & App Store",
     belajarMenuBtn: "🎌 Belajar Jepang",
     slipCheckTitle: "Cek Slip vs Absensi", slipCheckNoSlip: "Untuk membandingkan, bulan ini perlu: absensi terisi, upah per jam, dan slip gaji yang sudah discan.", slipCheckRecorded: "Jam tercatat", slipCheckExpected: "Estimasi gross dari absensi", slipCheckSlip: "Gross di slip", slipCheckDiff: "Selisih", slipCheckOk: "Sesuai dengan absensimu.", slipCheckLow: "Slip lebih rendah dari estimasi. Tanyakan ke HR/koordinator, mungkin ada jam yang belum dibayar", slipCheckHigh: "Slip lebih tinggi dari estimasi, mungkin ada tunjangan atau bonus.", slipCheckNote: "Hanya indikasi, bukan kepastian. Pembulatan jam, istirahat, tunjangan, dan premi hari libur bisa membuat selisih. Ini bukan nasihat hukum.", wageMonthNote: "Upah ini berlaku khusus bulan {m}. Bulan lain tidak ikut berubah.", wageCarryNote: "Belum diatur untuk {m}, memakai angka bulan sebelumnya. Ketik angka untuk menetapkan khusus bulan ini.",
     convoIntro: "Pilih bahasa tiap orang, lalu tekan tombol mic pas gantian ngomong. Nanti otomatis diterjemahin & dibacain ke bahasa lawan bicara.",
@@ -1719,7 +1702,7 @@ const I18N = {
     absensiDisclaimer: "厚生年金 (9.15%), 健康保険 (±4.99%, national average), and 雇用保険 (0.5%, rate as of Apr 2026) are auto-calculated from your gross salary using the latest official rates. 所得税 is estimated by annualizing your salary + 基礎控除 from the 2025-2026 tax reform, NOT the exact official 源泉徴収 withholding table. Rent & utilities stay manual since those follow your employer's own policy, not government rules. Check your real payslip for exact numbers.",
     wd0: "Sun", wd1: "Mon", wd2: "Tue", wd3: "Wed", wd4: "Thu", wd5: "Fri", wd6: "Sat",
     convoMenuBtn: "🗣️ Two-Way Talk", convoTitle: "Two-Way Talk",
-    chatMenuBtn: "💬 Cross-Language Chat", chatTitle: "Cross-Language Chat", chatSoonBadge: "Soon", chatHeroBadge: "Coming soon", chatHeroTitle: "Chat without language barriers", chatHeroSub: "Write in your language. Friends and coworkers read it in theirs, automatically.", chatDemoJa: "We meet at 7 a.m. tomorrow. Can you make it?", chatDemoReply: "Yes, I'll be there at 7 tomorrow!", chatF1: "Auto-translation in 9 languages, including Japanese", chatF2: "Send voice messages, get translated text instantly", chatF3: "Work groups with your boss and teammates", chatStoreLead: "Coming soon to", appBannerTitle: "Coming soon as a mobile app", appBannerSub: "All features will be available on Play Store & App Store",
+    chatMenuBtn: "💬 Cross-Language Chat", appBannerTitle: "Coming soon as a mobile app", appBannerSub: "All features will be available on Play Store & App Store",
     belajarMenuBtn: "🎌 Learn Japanese",
     slipCheckTitle: "Payslip vs Attendance Check", slipCheckNoSlip: "To compare, this month needs: attendance filled in, hourly wage, and a scanned payslip.", slipCheckRecorded: "Hours recorded", slipCheckExpected: "Estimated gross from attendance", slipCheckSlip: "Gross on payslip", slipCheckDiff: "Difference", slipCheckOk: "Matches your attendance.", slipCheckLow: "Payslip is lower than estimated. Ask HR or your coordinator; some hours may be unpaid", slipCheckHigh: "Payslip is higher than estimated, possibly allowances or a bonus.", slipCheckNote: "Indication only, not certainty. Rounding, breaks, allowances, and holiday premiums can cause differences. Not legal advice.", wageMonthNote: "This wage applies to {m} only. Other months are not changed.", wageCarryNote: "Not set for {m}; using the previous month's figure. Type a number to set it for this month only.",
     convoIntro: "Pick each person's language, then tap the mic when it's your turn to speak. It'll be translated and read aloud in the other language automatically.",
@@ -1895,7 +1878,7 @@ const I18N = {
     wd0: "တနင်္ဂနွေ", wd1: "တနင်္လာ", wd2: "အင်္ဂါ", wd3: "ဗုဒ္ဓဟူး", wd4: "ကြာသပတေး", wd5: "သောကြာ", wd6: "စနေ",
     absensiDisclaimer: "厚生年金 (9.15%), 健康保険 (±4.99%, နိုင်ငံလုံးဆိုင်ရာ ပျမ်းမျှ), နှင့် 雇用保険 (0.5%, 2026 ဧပြီလ ရက်စွဲအတိုင်း) တို့ကို စုစုပေါင်းလစာမှ တရားဝင်နှုန်းများဖြင့် အလိုအလျောက် တွက်ချက်ထားသည်။ 所得税 ကို 2025-2026 အခွန်ပြုပြင်ပြောင်းလဲမှုမှ 基礎控除 နှင့် နှစ်အလိုက် လစာခန့်မှန်းချက်ဖြင့် ခန့်မှန်းထားခြင်းဖြစ်ပြီး၊ တရားဝင် 源泉徴収 ဇယားအတိုင်း အတိအကျ မဟုတ်ပါ။ အခန်းငှားခနှင့် ဝန်ဆောင်ခများသည် အလုပ်ရှင်၏ မူဝါဒအလိုက် ဖြစ်သောကြောင့် အစိုးရစည်းမျဉ်းမဟုတ်ဘဲ ကိုယ်တိုင်ဖြည့်ရမည်။ အတိအကျ ကိန်းဂဏန်းများအတွက် လစာစလစ်ပ်စစ် မူရင်းကို စစ်ဆေးပါ။",
     convoMenuBtn: "🗣️ နှစ်ဦးနှစ်ဖက် စကားပြော", convoTitle: "နှစ်ဦးနှစ်ဖက် စကားပြော",
-    chatMenuBtn: "💬 ဘာသာစုံ ချက်တ်", chatTitle: "ဘာသာစကားစုံ ချက်တ်", chatSoonBadge: "မကြာမီ", chatHeroBadge: "မကြာမီ လာမည်", chatHeroTitle: "ဘာသာစကား အတားအဆီးမရှိ စကားပြောပါ", chatHeroSub: "သင့်ဘာသာစကားနဲ့ ရေးပါ။ သူငယ်ချင်းတွေနဲ့ လုပ်ဖော်ကိုင်ဖက်တွေက သူတို့ဘာသာစကားနဲ့ အလိုအလျောက် ဖတ်နိုင်ပါမယ်။", chatDemoJa: "မနက်ဖြန် မနက် ၇ နာရီ စုမယ်။ ရနိုင်လား။", chatDemoReply: "ရပါတယ်၊ မနက်ဖြန် ၇ နာရီ လာပါမယ်!", chatF1: "ဂျပန်အပါအဝင် ဘာသာစကား ၉ မျိုး အလိုအလျောက် ဘာသာပြန်", chatF2: "အသံပို့ပါ၊ ဘာသာပြန်ထားတဲ့ စာသား ချက်ချင်းရပါမယ်", chatF3: "အလုပ်ရှင်နဲ့ အဖွဲ့သားတွေနဲ့ အလုပ်အဖွဲ့ ချက်တ်", chatStoreLead: "မကြာမီ ရရှိနိုင်မည့်နေရာ", appBannerTitle: "မကြာမီ မိုဘိုင်းအက်ပ်အဖြစ် လာမည်", appBannerSub: "လုပ်ဆောင်ချက်အားလုံးကို Play Store နှင့် App Store တွင် ရရှိမည်",
+    chatMenuBtn: "💬 ဘာသာစုံ ချက်တ်", appBannerTitle: "မကြာမီ မိုဘိုင်းအက်ပ်အဖြစ် လာမည်", appBannerSub: "လုပ်ဆောင်ချက်အားလုံးကို Play Store နှင့် App Store တွင် ရရှိမည်",
     belajarMenuBtn: "🎌 ဂျပန်စာ လေ့လာရန်",
     slipCheckTitle: "လစာစာရွက် နှင့် တက်ရောက်မှု စစ်ဆေးခြင်း", slipCheckNoSlip: "နှိုင်းယှဉ်ရန် ဤလအတွက် တက်ရောက်မှု၊ တစ်နာရီလစာနှင့် စကန်ဖတ်ထားသော လစာစာရွက် လိုအပ်ပါသည်။", slipCheckRecorded: "မှတ်တမ်းတင်ထားသော နာရီ", slipCheckExpected: "တက်ရောက်မှုအရ ခန့်မှန်း စုစုပေါင်းလစာ", slipCheckSlip: "လစာစာရွက်ပါ စုစုပေါင်း", slipCheckDiff: "ကွာခြားချက်", slipCheckOk: "သင့်တက်ရောက်မှုနှင့် ကိုက်ညီပါသည်။", slipCheckLow: "လစာစာရွက်က ခန့်မှန်းချက်ထက် နည်းနေသည်။ HR သို့မဟုတ် ညှိနှိုင်းသူကို မေးပါ၊ မပေးရသေးသော နာရီများ ရှိနိုင်ပါသည်", slipCheckHigh: "လစာစာရွက်က ခန့်မှန်းချက်ထက် များနေသည်။ ခွင့်ပြုကြေး သို့မဟုတ် ဘောနပ်စ် ပါနိုင်ပါသည်။", slipCheckNote: "ညွှန်ပြချက်သာ ဖြစ်ပြီး အတည်မဟုတ်ပါ။ နာရီပိုင်းဖြတ်ခြင်း၊ အနားယူချိန်၊ ခွင့်ပြုကြေးနှင့် ရုံးပိတ်ရက် အဆများကြောင့် ကွာခြားနိုင်ပါသည်။ ဥပဒေအကြံဉာဏ် မဟုတ်ပါ။", wageMonthNote: "ဤလစာသည် {m} အတွက်သာ ဖြစ်ပါသည်။ အခြားလများ မပြောင်းပါ။", wageCarryNote: "{m} အတွက် မသတ်မှတ်ရသေးဘဲ ယခင်လ ကိန်းဂဏန်းကို သုံးထားသည်။ ဤလအတွက်သာ သတ်မှတ်ရန် ဂဏန်းရိုက်ပါ။",
     convoIntro: "လူတစ်ဦးစီ၏ ဘာသာစကားကို ရွေးပြီး၊ သင့်အလှည့်ရောက်တဲ့အခါ mic ခလုတ်ကို နှိပ်ပါ။ အလိုအလျောက် ဘာသာပြန်ပြီး အခြားဘာသာစကားဖြင့် ဖတ်ပြပါမည်။",
@@ -2046,7 +2029,7 @@ const I18N = {
     halalNoteProcessedMeat: "প্রক্রিয়াজাত মাংস — জাপানে সাধারণত শূকরের, তবে স্পষ্টভাবে উল্লেখ থাকলে মুরগি/টার্কিও হতে পারে",
     halalNoteBroth: "স্যুপ/broth — কখনো কখনো অনুল্লেখিত উৎসের মাংসের নির্যাস থাকে",
     convoMenuBtn: "🗣️ দ্বিমুখী কথোপকথন", convoTitle: "দ্বিমুখী কথোপকথন",
-    chatMenuBtn: "💬 সব ভাষার চ্যাট", chatTitle: "সব ভাষার চ্যাট", chatSoonBadge: "শীঘ্রই", chatHeroBadge: "শীঘ্রই আসছে", chatHeroTitle: "ভাষার বাধা ছাড়াই চ্যাট করুন", chatHeroSub: "নিজের ভাষায় লিখুন। বন্ধু ও সহকর্মীরা নিজেদের ভাষায় স্বয়ংক্রিয়ভাবে পড়বে।", chatDemoJa: "কাল সকাল ৭টায় জড়ো হব। পারবে?", chatDemoReply: "হ্যাঁ, কাল ৭টায় আসছি!", chatF1: "জাপানিসহ ৯টি ভাষায় স্বয়ংক্রিয় অনুবাদ", chatF2: "ভয়েস পাঠান, অনুবাদ করা লেখা সঙ্গে সঙ্গে পান", chatF3: "বস ও সহকর্মীদের সাথে কাজের গ্রুপ", chatStoreLead: "শীঘ্রই পাওয়া যাবে", appBannerTitle: "শীঘ্রই মোবাইল অ্যাপ হিসেবে আসছে", appBannerSub: "সব ফিচার Play Store ও App Store-এ পাওয়া যাবে",
+    chatMenuBtn: "💬 সব ভাষার চ্যাট", appBannerTitle: "শীঘ্রই মোবাইল অ্যাপ হিসেবে আসছে", appBannerSub: "সব ফিচার Play Store ও App Store-এ পাওয়া যাবে",
     belajarMenuBtn: "🎌 জাপানি শিখুন",
     slipCheckTitle: "পে-স্লিপ বনাম হাজিরা যাচাই", slipCheckNoSlip: "তুলনা করতে এই মাসে হাজিরা, ঘণ্টা প্রতি মজুরি এবং স্ক্যান করা পে-স্লিপ লাগবে।", slipCheckRecorded: "নথিভুক্ত ঘণ্টা", slipCheckExpected: "হাজিরা থেকে আনুমানিক মোট বেতন", slipCheckSlip: "পে-স্লিপে মোট বেতন", slipCheckDiff: "পার্থক্য", slipCheckOk: "আপনার হাজিরার সাথে মিলেছে।", slipCheckLow: "পে-স্লিপ আনুমানিকের চেয়ে কম। HR বা সমন্বয়কারীকে জিজ্ঞেস করুন, কিছু ঘণ্টার বেতন বাকি থাকতে পারে", slipCheckHigh: "পে-স্লিপ আনুমানিকের চেয়ে বেশি, সম্ভবত ভাতা বা বোনাস আছে।", slipCheckNote: "এটি শুধু ইঙ্গিত, নিশ্চিত নয়। ঘণ্টা গোল করা, বিরতি, ভাতা ও ছুটির দিনের হারে পার্থক্য হতে পারে। এটি আইনি পরামর্শ নয়।", wageMonthNote: "এই মজুরি শুধু {m} মাসের জন্য। অন্য মাস বদলাবে না।", wageCarryNote: "{m} মাসের জন্য নির্ধারিত নেই, আগের মাসের অঙ্ক ব্যবহার হচ্ছে। শুধু এই মাসের জন্য ঠিক করতে সংখ্যা লিখুন।",
     convoIntro: "প্রত্যেকের ভাষা বেছে নিন, তারপর আপনার পালা এলে মাইক বোতাম চাপুন। এটি স্বয়ংক্রিয়ভাবে অনুবাদ হয়ে অন্য ভাষায় পড়ে শোনানো হবে।",
@@ -2198,7 +2181,7 @@ const I18N = {
     halalNoteProcessedMeat: "Thịt chế biến — ở Nhật thường là thịt heo, nhưng có thể là gà/gà tây nếu ghi rõ",
     halalNoteBroth: "Nước dùng — đôi khi chứa chiết xuất thịt không rõ nguồn gốc",
     convoMenuBtn: "🗣️ Trò Chuyện Hai Chiều", convoTitle: "Trò Chuyện Hai Chiều",
-    chatMenuBtn: "💬 Chat Đa Ngôn Ngữ", chatTitle: "Chat Đa Ngôn Ngữ", chatSoonBadge: "Sắp có", chatHeroBadge: "Sắp ra mắt", chatHeroTitle: "Trò chuyện không rào cản ngôn ngữ", chatHeroSub: "Viết bằng tiếng của bạn. Bạn bè và đồng nghiệp đọc bằng tiếng của họ, tự động.", chatDemoJa: "Mai 7 giờ sáng tập trung nhé. Được không?", chatDemoReply: "Được ạ, mai 7 giờ em có mặt!", chatF1: "Tự động dịch 9 ngôn ngữ, có tiếng Nhật", chatF2: "Gửi giọng nói, nhận ngay bản dịch dạng chữ", chatF3: "Nhóm làm việc với sếp và đồng đội", chatStoreLead: "Sắp có trên", appBannerTitle: "Sắp ra mắt dạng ứng dụng di động", appBannerSub: "Toàn bộ tính năng sẽ có trên Play Store & App Store",
+    chatMenuBtn: "💬 Chat Đa Ngôn Ngữ", appBannerTitle: "Sắp ra mắt dạng ứng dụng di động", appBannerSub: "Toàn bộ tính năng sẽ có trên Play Store & App Store",
     belajarMenuBtn: "🎌 Học tiếng Nhật",
     slipCheckTitle: "Đối chiếu phiếu lương và chấm công", slipCheckNoSlip: "Để so sánh, tháng này cần: chấm công đã nhập, lương theo giờ và phiếu lương đã quét.", slipCheckRecorded: "Số giờ đã ghi", slipCheckExpected: "Tổng lương ước tính từ chấm công", slipCheckSlip: "Tổng lương trên phiếu", slipCheckDiff: "Chênh lệch", slipCheckOk: "Khớp với chấm công của bạn.", slipCheckLow: "Phiếu lương thấp hơn ước tính. Hãy hỏi HR hoặc điều phối viên, có thể có giờ chưa được trả", slipCheckHigh: "Phiếu lương cao hơn ước tính, có thể do phụ cấp hoặc thưởng.", slipCheckNote: "Chỉ mang tính tham khảo, không chắc chắn. Làm tròn giờ, giờ nghỉ, phụ cấp và hệ số ngày lễ có thể gây chênh lệch. Không phải tư vấn pháp lý.", wageMonthNote: "Mức lương này chỉ áp dụng cho tháng {m}. Các tháng khác không đổi.", wageCarryNote: "Chưa đặt cho {m}, đang dùng số của tháng trước. Nhập số để đặt riêng cho tháng này.",
     convoIntro: "Chọn ngôn ngữ của mỗi người, sau đó nhấn nút mic khi đến lượt bạn nói. Nó sẽ tự động được dịch và đọc to bằng ngôn ngữ kia.",
@@ -2351,7 +2334,7 @@ const I18N = {
     halalNoteProcessedMeat: "เนื้อแปรรูป — ในญี่ปุ่นมักเป็นหมู แต่อาจเป็นไก่/ไก่งวงหากระบุชัดเจน",
     halalNoteBroth: "น้ำซุป — บางครั้งมีสารสกัดเนื้อสัตว์ที่ไม่ระบุแหล่งที่มา",
     convoMenuBtn: "🗣️ สนทนาสองทาง", convoTitle: "สนทนาสองทาง",
-    chatMenuBtn: "💬 แชทข้ามภาษา", chatTitle: "แชทข้ามภาษา", chatSoonBadge: "เร็วๆ นี้", chatHeroBadge: "เร็วๆ นี้", chatHeroTitle: "คุยกันได้ ไม่มีกำแพงภาษา", chatHeroSub: "พิมพ์ด้วยภาษาของคุณ เพื่อนและเพื่อนร่วมงานจะอ่านเป็นภาษาของเขาโดยอัตโนมัติ", chatDemoJa: "พรุ่งนี้นัดรวมตัว 7 โมงเช้า ไหวไหม", chatDemoReply: "ไหวครับ พรุ่งนี้ไป 7 โมงครับ!", chatF1: "แปลอัตโนมัติ 9 ภาษา รวมถึงภาษาญี่ปุ่น", chatF2: "ส่งข้อความเสียง ได้ข้อความแปลทันที", chatF3: "กลุ่มทำงานกับหัวหน้าและเพื่อนร่วมทีม", chatStoreLead: "เร็วๆ นี้บน", appBannerTitle: "เร็วๆ นี้ในรูปแบบแอปมือถือ", appBannerSub: "ทุกฟีเจอร์จะมีให้ใช้บน Play Store และ App Store",
+    chatMenuBtn: "💬 แชทข้ามภาษา", appBannerTitle: "เร็วๆ นี้ในรูปแบบแอปมือถือ", appBannerSub: "ทุกฟีเจอร์จะมีให้ใช้บน Play Store และ App Store",
     belajarMenuBtn: "🎌 เรียนภาษาญี่ปุ่น",
     slipCheckTitle: "ตรวจสลิปเงินเดือนกับการลงเวลา", slipCheckNoSlip: "ในการเปรียบเทียบ เดือนนี้ต้องมีการลงเวลา ค่าแรงต่อชั่วโมง และสลิปเงินเดือนที่สแกนแล้ว", slipCheckRecorded: "ชั่วโมงที่บันทึก", slipCheckExpected: "เงินเดือนรวมโดยประมาณจากการลงเวลา", slipCheckSlip: "เงินเดือนรวมในสลิป", slipCheckDiff: "ส่วนต่าง", slipCheckOk: "ตรงกับการลงเวลาของคุณ", slipCheckLow: "สลิปต่ำกว่าที่ประมาณไว้ ลองถาม HR หรือผู้ประสานงาน อาจมีชั่วโมงที่ยังไม่ได้จ่าย", slipCheckHigh: "สลิปสูงกว่าที่ประมาณไว้ อาจมีเบี้ยเลี้ยงหรือโบนัส", slipCheckNote: "เป็นเพียงข้อบ่งชี้ ไม่ใช่ความแน่นอน การปัดเวลา เวลาพัก เบี้ยเลี้ยง และอัตราวันหยุดอาจทำให้ต่างกัน ไม่ใช่คำแนะนำทางกฎหมาย", wageMonthNote: "ค่าแรงนี้ใช้เฉพาะเดือน {m} เดือนอื่นไม่เปลี่ยน", wageCarryNote: "ยังไม่ได้ตั้งค่าสำหรับ {m} ใช้ตัวเลขของเดือนก่อน พิมพ์ตัวเลขเพื่อตั้งเฉพาะเดือนนี้",
     convoIntro: "เลือกภาษาของแต่ละคน แล้วกดปุ่มไมค์เมื่อถึงตาคุณพูด ระบบจะแปลและอ่านออกเสียงเป็นอีกภาษาให้อัตโนมัติ",
@@ -2517,7 +2500,6 @@ let scanReceiptPhoto = null; // thumbnail foto struk berwarna (hasil crop, SEBEL
 
 // ---- fitur Bicara 2 Arah (speech-to-text -> translate -> text-to-speech) ----
 let showConvoScreen = false;
-let showChatSoonScreen = false; // teaser fitur Chat Lintas Bahasa (coming soon)
 let storeBannerHidden = false; // banner "akan tersedia di Play Store & App Store" (seluruh aplikasi)
 try { storeBannerHidden = localStorage.getItem("jp-finance-store-banner-hidden") === "1"; } catch (e) {}
 // logo resmi Google Play (berwarna) & Apple; ganti ke badge resmi Google/Apple saat sudah rilis
@@ -2534,18 +2516,11 @@ function openBelajar() {
     document.head.appendChild(sc);
   });
 }
-// Chat Lintas Bahasa: beta tertutup. Aktifkan sekali lewat kakeibo.iranza.com/?chatbeta=1 (tersimpan di perangkat); tanpa itu tampil teaser "segera hadir"
-function chatBetaOn() {
-  try {
-    if (new URLSearchParams(location.search).get("chatbeta") === "1") localStorage.setItem("kakeibo-chat-beta", "1");
-    return localStorage.getItem("kakeibo-chat-beta") === "1";
-  } catch (e) { return false; }
-}
 function openChat() {
   const go = () => window.KakeiboChat.open({ lang, esc });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=1";
+  sc.src = "modules/chat.js?v=3";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
@@ -3421,7 +3396,7 @@ function render() {
       <div class="tools-grid">
         ${TOOLS.slice(0, 7).map(tool => `
           <div class="tool-card" data-tool="${tool.id}">
-            <div class="ic-circle">${tool.icon}</div>${tool.soon ? `<span class="soon-badge">${esc(t("chatSoonBadge"))}</span>` : ""}
+            <div class="ic-circle">${tool.icon}</div>
             <div class="tool-label">${esc(tNoIcon(tool.labelKey))}</div>
           </div>
         `).join("")}
@@ -4065,35 +4040,6 @@ function render() {
       </div>
     </div>
 
-    <div class="sheet-backdrop ${showChatSoonScreen?"open":""}" id="chatSoonBackdrop">
-      <div class="sheet" id="chatSoonInner">
-        <div class="sheet-head">
-          <div class="sheet-title">${esc(t("chatTitle"))}</div>
-          <button class="close-btn" id="closeChatSoon" aria-label="${esc(t("closeAria"))}">✕</button>
-        </div>
-        ${showChatSoonScreen ? `
-          <div class="chat-hero">
-            <span class="chat-pill"><i></i>${esc(t("chatHeroBadge"))}</span>
-            <h3>${esc(t("chatHeroTitle"))}</h3>
-            <p>${esc(t("chatHeroSub"))}</p>
-            <div class="chat-demo">
-              <div class="cd-b cd-in">明日は朝7時に集合です。大丈夫ですか？<small>🌐 ${esc(t("chatDemoJa"))}</small></div>
-              <div class="cd-b cd-out">${esc(t("chatDemoReply"))}<small>🌐 了解です。明日7時に行きます！</small></div>
-            </div>
-          </div>
-          <div class="chat-feats">
-            <div class="chat-feat"><b>🌏</b><span>${esc(t("chatF1"))}</span></div>
-            <div class="chat-feat"><b>🎙️</b><span>${esc(t("chatF2"))}</span></div>
-            <div class="chat-feat"><b>👥</b><span>${esc(t("chatF3"))}</span></div>
-          </div>
-          <div class="chat-lead">${esc(t("chatStoreLead"))}</div>
-          <div class="chat-stores">
-            ${storeBadgesHtml()}
-          </div>
-        ` : ""}
-      </div>
-    </div>
-
     <div class="sheet-backdrop ${showConvoScreen?"open":""}" id="convoBackdrop">
       <div class="sheet" id="convoInner">
         <div class="sheet-head">
@@ -4483,7 +4429,7 @@ function render() {
         <div class="tools-grid">
           ${TOOLS.map(tool => `
             <div class="tool-card" data-tool-more="${tool.id}">
-              <div class="ic-circle">${tool.icon}</div>${tool.soon ? `<span class="soon-badge">${esc(t("chatSoonBadge"))}</span>` : ""}
+              <div class="ic-circle">${tool.icon}</div>
               <div class="tool-label">${esc(tNoIcon(tool.labelKey))}</div>
             </div>
           `).join("")}
@@ -5324,7 +5270,7 @@ function attachEvents() {
     payslipHistory: () => { showPayslipHistoryScreen = true; },
     receiptHistory: () => { showReceiptHistoryScreen = true; },
     convo: () => { showConvoScreen = true; },
-    chat: () => { if (chatBetaOn()) openChat(); else showChatSoonScreen = true; },
+    chat: () => { openChat(); },
     belajar: () => { openBelajar(); },
   };
   document.querySelectorAll("[data-tool]").forEach(el => {
@@ -5348,11 +5294,6 @@ function attachEvents() {
     });
   });
 
-  // ---- teaser Chat Lintas Bahasa (coming soon) ----
-  const closeChatSoon = document.getElementById("closeChatSoon");
-  const chatSoonBackdrop = document.getElementById("chatSoonBackdrop");
-  if (closeChatSoon) closeChatSoon.addEventListener("click", () => { showChatSoonScreen = false; render(); });
-  if (chatSoonBackdrop) chatSoonBackdrop.addEventListener("click", (e) => { if (e.target === chatSoonBackdrop) { showChatSoonScreen = false; render(); } });
   const storeBannerClose = document.getElementById("storeBannerClose");
   if (storeBannerClose) storeBannerClose.addEventListener("click", () => {
     storeBannerHidden = true;
