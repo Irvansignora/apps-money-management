@@ -1257,6 +1257,7 @@ const TOOLS = [
   { id: "halal", labelKey: "halalMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11Z"/><path d="M9 12l2 2 4-4"/></svg>` },
   { id: "convo", labelKey: "convoMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4M8 22h8"/></svg>` },
   { id: "belajar", labelKey: "belajarMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h6M9 11.5h4"/></svg>` },
+  { id: "akun", labelKey: "akunMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>` },
   { id: "estimate", labelKey: "estimateMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg>` },
   { id: "dependents", labelKey: "dependentsMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>` },
   { id: "payday", labelKey: "paydayMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 9h18"/></svg>` },
@@ -1508,6 +1509,7 @@ const I18N = {
     convoMenuBtn: "🗣️ Bicara 2 Arah", convoTitle: "Bicara 2 Arah",
     chatMenuBtn: "💬 Chat Lintas Bahasa", appBannerTitle: "Segera hadir sebagai aplikasi HP", appBannerSub: "Semua fitur akan tersedia di Play Store & App Store",
     belajarMenuBtn: "🎌 Belajar Jepang",
+    akunMenuBtn: "Akun dan Premium",
     slipCheckTitle: "Cek Slip vs Absensi", slipCheckNoSlip: "Untuk membandingkan, bulan ini perlu: absensi terisi, upah per jam, dan slip gaji yang sudah discan.", slipCheckRecorded: "Jam tercatat", slipCheckExpected: "Estimasi gross dari absensi", slipCheckSlip: "Gross di slip", slipCheckDiff: "Selisih", slipCheckOk: "Sesuai dengan absensimu.", slipCheckLow: "Slip lebih rendah dari estimasi. Tanyakan ke HR/koordinator, mungkin ada jam yang belum dibayar", slipCheckHigh: "Slip lebih tinggi dari estimasi, mungkin ada tunjangan atau bonus.", slipCheckNote: "Hanya indikasi, bukan kepastian. Pembulatan jam, istirahat, tunjangan, dan premi hari libur bisa membuat selisih. Ini bukan nasihat hukum.", wageMonthNote: "Upah ini berlaku khusus bulan {m}. Bulan lain tidak ikut berubah.", wageCarryNote: "Belum diatur untuk {m}, memakai angka bulan sebelumnya. Ketik angka untuk menetapkan khusus bulan ini.",
     convoIntro: "Pilih bahasa tiap orang, lalu tekan tombol mic pas gantian ngomong. Nanti otomatis diterjemahin & dibacain ke bahasa lawan bicara.",
     convoLangALabel: "Bahasa Kamu", convoLangBLabel: "Bahasa Lawan Bicara",
@@ -1704,6 +1706,7 @@ const I18N = {
     convoMenuBtn: "🗣️ Two-Way Talk", convoTitle: "Two-Way Talk",
     chatMenuBtn: "💬 Cross-Language Chat", appBannerTitle: "Coming soon as a mobile app", appBannerSub: "All features will be available on Play Store & App Store",
     belajarMenuBtn: "🎌 Learn Japanese",
+    akunMenuBtn: "Account and Premium",
     slipCheckTitle: "Payslip vs Attendance Check", slipCheckNoSlip: "To compare, this month needs: attendance filled in, hourly wage, and a scanned payslip.", slipCheckRecorded: "Hours recorded", slipCheckExpected: "Estimated gross from attendance", slipCheckSlip: "Gross on payslip", slipCheckDiff: "Difference", slipCheckOk: "Matches your attendance.", slipCheckLow: "Payslip is lower than estimated. Ask HR or your coordinator; some hours may be unpaid", slipCheckHigh: "Payslip is higher than estimated, possibly allowances or a bonus.", slipCheckNote: "Indication only, not certainty. Rounding, breaks, allowances, and holiday premiums can cause differences. Not legal advice.", wageMonthNote: "This wage applies to {m} only. Other months are not changed.", wageCarryNote: "Not set for {m}; using the previous month's figure. Type a number to set it for this month only.",
     convoIntro: "Pick each person's language, then tap the mic when it's your turn to speak. It'll be translated and read aloud in the other language automatically.",
     convoLangALabel: "Your Language", convoLangBLabel: "Other Person's Language",
@@ -1880,6 +1883,7 @@ const I18N = {
     convoMenuBtn: "🗣️ နှစ်ဦးနှစ်ဖက် စကားပြော", convoTitle: "နှစ်ဦးနှစ်ဖက် စကားပြော",
     chatMenuBtn: "💬 ဘာသာစုံ ချက်တ်", appBannerTitle: "မကြာမီ မိုဘိုင်းအက်ပ်အဖြစ် လာမည်", appBannerSub: "လုပ်ဆောင်ချက်အားလုံးကို Play Store နှင့် App Store တွင် ရရှိမည်",
     belajarMenuBtn: "🎌 ဂျပန်စာ လေ့လာရန်",
+    akunMenuBtn: "အကောင့်နှင့် ပရီမီယံ",
     slipCheckTitle: "လစာစာရွက် နှင့် တက်ရောက်မှု စစ်ဆေးခြင်း", slipCheckNoSlip: "နှိုင်းယှဉ်ရန် ဤလအတွက် တက်ရောက်မှု၊ တစ်နာရီလစာနှင့် စကန်ဖတ်ထားသော လစာစာရွက် လိုအပ်ပါသည်။", slipCheckRecorded: "မှတ်တမ်းတင်ထားသော နာရီ", slipCheckExpected: "တက်ရောက်မှုအရ ခန့်မှန်း စုစုပေါင်းလစာ", slipCheckSlip: "လစာစာရွက်ပါ စုစုပေါင်း", slipCheckDiff: "ကွာခြားချက်", slipCheckOk: "သင့်တက်ရောက်မှုနှင့် ကိုက်ညီပါသည်။", slipCheckLow: "လစာစာရွက်က ခန့်မှန်းချက်ထက် နည်းနေသည်။ HR သို့မဟုတ် ညှိနှိုင်းသူကို မေးပါ၊ မပေးရသေးသော နာရီများ ရှိနိုင်ပါသည်", slipCheckHigh: "လစာစာရွက်က ခန့်မှန်းချက်ထက် များနေသည်။ ခွင့်ပြုကြေး သို့မဟုတ် ဘောနပ်စ် ပါနိုင်ပါသည်။", slipCheckNote: "ညွှန်ပြချက်သာ ဖြစ်ပြီး အတည်မဟုတ်ပါ။ နာရီပိုင်းဖြတ်ခြင်း၊ အနားယူချိန်၊ ခွင့်ပြုကြေးနှင့် ရုံးပိတ်ရက် အဆများကြောင့် ကွာခြားနိုင်ပါသည်။ ဥပဒေအကြံဉာဏ် မဟုတ်ပါ။", wageMonthNote: "ဤလစာသည် {m} အတွက်သာ ဖြစ်ပါသည်။ အခြားလများ မပြောင်းပါ။", wageCarryNote: "{m} အတွက် မသတ်မှတ်ရသေးဘဲ ယခင်လ ကိန်းဂဏန်းကို သုံးထားသည်။ ဤလအတွက်သာ သတ်မှတ်ရန် ဂဏန်းရိုက်ပါ။",
     convoIntro: "လူတစ်ဦးစီ၏ ဘာသာစကားကို ရွေးပြီး၊ သင့်အလှည့်ရောက်တဲ့အခါ mic ခလုတ်ကို နှိပ်ပါ။ အလိုအလျောက် ဘာသာပြန်ပြီး အခြားဘာသာစကားဖြင့် ဖတ်ပြပါမည်။",
     convoLangALabel: "သင့်ဘာသာစကား", convoLangBLabel: "အခြားသူ၏ ဘာသာစကား",
@@ -2031,6 +2035,7 @@ const I18N = {
     convoMenuBtn: "🗣️ দ্বিমুখী কথোপকথন", convoTitle: "দ্বিমুখী কথোপকথন",
     chatMenuBtn: "💬 সব ভাষার চ্যাট", appBannerTitle: "শীঘ্রই মোবাইল অ্যাপ হিসেবে আসছে", appBannerSub: "সব ফিচার Play Store ও App Store-এ পাওয়া যাবে",
     belajarMenuBtn: "🎌 জাপানি শিখুন",
+    akunMenuBtn: "অ্যাকাউন্ট ও প্রিমিয়াম",
     slipCheckTitle: "পে-স্লিপ বনাম হাজিরা যাচাই", slipCheckNoSlip: "তুলনা করতে এই মাসে হাজিরা, ঘণ্টা প্রতি মজুরি এবং স্ক্যান করা পে-স্লিপ লাগবে।", slipCheckRecorded: "নথিভুক্ত ঘণ্টা", slipCheckExpected: "হাজিরা থেকে আনুমানিক মোট বেতন", slipCheckSlip: "পে-স্লিপে মোট বেতন", slipCheckDiff: "পার্থক্য", slipCheckOk: "আপনার হাজিরার সাথে মিলেছে।", slipCheckLow: "পে-স্লিপ আনুমানিকের চেয়ে কম। HR বা সমন্বয়কারীকে জিজ্ঞেস করুন, কিছু ঘণ্টার বেতন বাকি থাকতে পারে", slipCheckHigh: "পে-স্লিপ আনুমানিকের চেয়ে বেশি, সম্ভবত ভাতা বা বোনাস আছে।", slipCheckNote: "এটি শুধু ইঙ্গিত, নিশ্চিত নয়। ঘণ্টা গোল করা, বিরতি, ভাতা ও ছুটির দিনের হারে পার্থক্য হতে পারে। এটি আইনি পরামর্শ নয়।", wageMonthNote: "এই মজুরি শুধু {m} মাসের জন্য। অন্য মাস বদলাবে না।", wageCarryNote: "{m} মাসের জন্য নির্ধারিত নেই, আগের মাসের অঙ্ক ব্যবহার হচ্ছে। শুধু এই মাসের জন্য ঠিক করতে সংখ্যা লিখুন।",
     convoIntro: "প্রত্যেকের ভাষা বেছে নিন, তারপর আপনার পালা এলে মাইক বোতাম চাপুন। এটি স্বয়ংক্রিয়ভাবে অনুবাদ হয়ে অন্য ভাষায় পড়ে শোনানো হবে।",
     convoLangALabel: "আপনার ভাষা", convoLangBLabel: "অন্য ব্যক্তির ভাষা",
@@ -2183,6 +2188,7 @@ const I18N = {
     convoMenuBtn: "🗣️ Trò Chuyện Hai Chiều", convoTitle: "Trò Chuyện Hai Chiều",
     chatMenuBtn: "💬 Chat Đa Ngôn Ngữ", appBannerTitle: "Sắp ra mắt dạng ứng dụng di động", appBannerSub: "Toàn bộ tính năng sẽ có trên Play Store & App Store",
     belajarMenuBtn: "🎌 Học tiếng Nhật",
+    akunMenuBtn: "Tài khoản và Premium",
     slipCheckTitle: "Đối chiếu phiếu lương và chấm công", slipCheckNoSlip: "Để so sánh, tháng này cần: chấm công đã nhập, lương theo giờ và phiếu lương đã quét.", slipCheckRecorded: "Số giờ đã ghi", slipCheckExpected: "Tổng lương ước tính từ chấm công", slipCheckSlip: "Tổng lương trên phiếu", slipCheckDiff: "Chênh lệch", slipCheckOk: "Khớp với chấm công của bạn.", slipCheckLow: "Phiếu lương thấp hơn ước tính. Hãy hỏi HR hoặc điều phối viên, có thể có giờ chưa được trả", slipCheckHigh: "Phiếu lương cao hơn ước tính, có thể do phụ cấp hoặc thưởng.", slipCheckNote: "Chỉ mang tính tham khảo, không chắc chắn. Làm tròn giờ, giờ nghỉ, phụ cấp và hệ số ngày lễ có thể gây chênh lệch. Không phải tư vấn pháp lý.", wageMonthNote: "Mức lương này chỉ áp dụng cho tháng {m}. Các tháng khác không đổi.", wageCarryNote: "Chưa đặt cho {m}, đang dùng số của tháng trước. Nhập số để đặt riêng cho tháng này.",
     convoIntro: "Chọn ngôn ngữ của mỗi người, sau đó nhấn nút mic khi đến lượt bạn nói. Nó sẽ tự động được dịch và đọc to bằng ngôn ngữ kia.",
     convoLangALabel: "Ngôn Ngữ Của Bạn", convoLangBLabel: "Ngôn Ngữ Người Kia",
@@ -2336,6 +2342,7 @@ const I18N = {
     convoMenuBtn: "🗣️ สนทนาสองทาง", convoTitle: "สนทนาสองทาง",
     chatMenuBtn: "💬 แชทข้ามภาษา", appBannerTitle: "เร็วๆ นี้ในรูปแบบแอปมือถือ", appBannerSub: "ทุกฟีเจอร์จะมีให้ใช้บน Play Store และ App Store",
     belajarMenuBtn: "🎌 เรียนภาษาญี่ปุ่น",
+    akunMenuBtn: "บัญชีและพรีเมียม",
     slipCheckTitle: "ตรวจสลิปเงินเดือนกับการลงเวลา", slipCheckNoSlip: "ในการเปรียบเทียบ เดือนนี้ต้องมีการลงเวลา ค่าแรงต่อชั่วโมง และสลิปเงินเดือนที่สแกนแล้ว", slipCheckRecorded: "ชั่วโมงที่บันทึก", slipCheckExpected: "เงินเดือนรวมโดยประมาณจากการลงเวลา", slipCheckSlip: "เงินเดือนรวมในสลิป", slipCheckDiff: "ส่วนต่าง", slipCheckOk: "ตรงกับการลงเวลาของคุณ", slipCheckLow: "สลิปต่ำกว่าที่ประมาณไว้ ลองถาม HR หรือผู้ประสานงาน อาจมีชั่วโมงที่ยังไม่ได้จ่าย", slipCheckHigh: "สลิปสูงกว่าที่ประมาณไว้ อาจมีเบี้ยเลี้ยงหรือโบนัส", slipCheckNote: "เป็นเพียงข้อบ่งชี้ ไม่ใช่ความแน่นอน การปัดเวลา เวลาพัก เบี้ยเลี้ยง และอัตราวันหยุดอาจทำให้ต่างกัน ไม่ใช่คำแนะนำทางกฎหมาย", wageMonthNote: "ค่าแรงนี้ใช้เฉพาะเดือน {m} เดือนอื่นไม่เปลี่ยน", wageCarryNote: "ยังไม่ได้ตั้งค่าสำหรับ {m} ใช้ตัวเลขของเดือนก่อน พิมพ์ตัวเลขเพื่อตั้งเฉพาะเดือนนี้",
     convoIntro: "เลือกภาษาของแต่ละคน แล้วกดปุ่มไมค์เมื่อถึงตาคุณพูด ระบบจะแปลและอ่านออกเสียงเป็นอีกภาษาให้อัตโนมัติ",
     convoLangALabel: "ภาษาของคุณ", convoLangBLabel: "ภาษาของอีกฝ่าย",
@@ -2358,7 +2365,7 @@ function seasonFxLabel(m) { // label chip Animasi Musim: emoji + nama musim (kan
   const x = fx && fx.META[m];
   return x ? x.emoji + " " + x.ja : m;
 }
-function tNoIcon(key) { return t(key).replace(/^\S+\s+/, ""); } // buang emoji di depan teks, buat label kartu yg udah punya ikon SVG sendiri
+function tNoIcon(key) { return t(key).replace(/^[^\p{L}\p{N}\s]+\s+/u, ""); } // buang emoji di depan teks, buat label kartu yg udah punya ikon SVG sendiri
 function catLabel(catId) {
   const dict = CAT_I18N[lang] || CAT_I18N.id;
   return dict[catId] || CAT_I18N.id[catId] || catId;
@@ -2516,11 +2523,11 @@ function openBelajar() {
     document.head.appendChild(sc);
   });
 }
-function openChat() {
-  const go = () => window.KakeiboChat.open({ lang, esc });
+function openChat(opts) {
+  const go = () => window.KakeiboChat.open({ lang, esc, ...(opts || {}) });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=3";
+  sc.src = "modules/chat.js?v=4";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
@@ -5271,6 +5278,7 @@ function attachEvents() {
     receiptHistory: () => { showReceiptHistoryScreen = true; },
     convo: () => { showConvoScreen = true; },
     chat: () => { openChat(); },
+    akun: () => { openChat({ view: "account" }); },
     belajar: () => { openBelajar(); },
   };
   document.querySelectorAll("[data-tool]").forEach(el => {
