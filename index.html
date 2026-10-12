@@ -2527,7 +2527,7 @@ function openChat(opts) {
   const go = () => window.KakeiboChat.open({ lang, esc, ...(opts || {}) });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=5";
+  sc.src = "modules/chat.js?v=6";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
@@ -3308,21 +3308,54 @@ function chartData() {
 
 // ---- render ----
 // ---- halaman profil (full page): tutup + dukungan tombol Back HP ----
-function closeProfilePage() {
-  if (profileHistoryPushed) { try { history.back(); return; } catch (e) {} }
-  profileHistoryPushed = false;
-  showSettings = false;
-  render();
+function closeProfilePage() { profileHistoryPushed = false; showSettings = false; render(); }
+function closeAboutPage() { aboutHistoryPushed = false; showAbout = false; render(); }
+
+// ---- tombol Back HP / browser ----
+// Satu "penjaga" di history: Back tidak pernah langsung keluar app. Urutannya: tutup lapisan paling atas
+// (chat, scan, asisten LEA, popup/layar penuh, halaman profil/info). Kalau sudah di beranda, Back pertama
+// menampilkan "tekan sekali lagi", Back kedua baru keluar.
+const BACK_GUARD = { kk: "guard" };
+let backExitAt = 0, backArmed = false;
+function closeTopLayer() {
+  try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
+  const crop = document.getElementById("cropCancelBtn");
+  if (crop && showCropTool) { crop.click(); return true; }
+  try { if (typeof leaEls !== "undefined" && leaEls.overlay.classList.contains("open")) { leaCloseOverlay(); return true; } } catch (e) {}
+  const bl = document.getElementById("belajarBackdrop");
+  if (bl && bl.classList.contains("open")) { const x = document.getElementById("belajarClose"); if (x) x.click(); return true; }
+  const sheets = document.querySelectorAll(".sheet-backdrop.open");
+  if (sheets.length) {
+    const top = sheets[sheets.length - 1], btn = top.querySelector(".close-btn");
+    if (btn) btn.click(); else top.click();
+    return true;
+  }
+  if (showSettings) { closeProfilePage(); return true; }
+  if (showAbout) { closeAboutPage(); return true; }
+  return false;
 }
-function closeAboutPage() {
-  if (aboutHistoryPushed) { try { history.back(); return; } catch (e) {} }
-  aboutHistoryPushed = false;
-  showAbout = false;
-  render();
+function showBackToast(msg) {
+  let el = document.getElementById("backToast");
+  if (!el) {
+    el = document.createElement("div"); el.id = "backToast";
+    el.style.cssText = "position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:90;background:rgba(42,37,29,.92);color:#fff;font:500 13px Inter,sans-serif;padding:10px 16px;border-radius:14px;pointer-events:none;transition:opacity .2s;max-width:86%;text-align:center";
+    document.body.appendChild(el);
+  }
+  el.textContent = msg; el.style.opacity = "1";
+  clearTimeout(showBackToast.t); showBackToast.t = setTimeout(() => { el.style.opacity = "0"; }, 1800);
 }
-window.addEventListener("popstate", () => {
-  if (showSettings) { profileHistoryPushed = false; showSettings = false; render(); }
-  else if (showAbout) { aboutHistoryPushed = false; showAbout = false; render(); }
+function armBackGuard() { // dipasang setelah sentuhan pertama: Chrome mengabaikan entri history yang dibuat tanpa interaksi pengguna
+  if (backArmed) return; backArmed = true;
+  try { history.pushState(BACK_GUARD, ""); } catch (e) { backArmed = false; }
+}
+["pointerdown", "keydown", "touchstart"].forEach(ev => window.addEventListener(ev, armBackGuard, { once: true, passive: true, capture: true }));
+window.addEventListener("popstate", (e) => {
+  if (!backArmed || (e.state && e.state.kk === "guard")) return; // bukan Back dari penjaga kita
+  if (closeTopLayer()) { try { history.pushState(BACK_GUARD, ""); } catch (x) {} return; }
+  if (Date.now() - backExitAt < 2000) { history.back(); return; } // Back kedua: keluar
+  backExitAt = Date.now();
+  showBackToast(lang === "id" ? "Tekan Back sekali lagi untuk keluar" : "Press Back again to exit");
+  try { history.pushState(BACK_GUARD, ""); } catch (x) {}
 });
 
 function render() {
@@ -4774,7 +4807,6 @@ function attachEvents() {
     };
     profilePageEnter = true;
     showSettings = true;
-    try { history.pushState({ page: "profile" }, ""); profileHistoryPushed = true; } catch (e) { profileHistoryPushed = false; }
     render();
     profilePageEnter = false;
   };
@@ -5368,7 +5400,6 @@ function attachEvents() {
   if (navAboutBtn) navAboutBtn.addEventListener("click", () => {
     aboutPageEnter = true;
     showAbout = true;
-    try { history.pushState({ page: "about" }, ""); aboutHistoryPushed = true; } catch (e) { aboutHistoryPushed = false; }
     render();
     aboutPageEnter = false;
   });
