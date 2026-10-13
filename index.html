@@ -825,6 +825,7 @@
   .store span{display:block;font-size:9.5px;color:#aab1c0;}
   .store strong{font-size:15px;line-height:1.1;}
 </style>
+<script src="modules/auth.js?v=1"></script>
 </head>
 <body>
 <div id="app"></div>
@@ -845,6 +846,7 @@
     <div id="leaTranscript" class="lea-transcript">Tap orb terus ngomong, misal "catat pengeluaran 2000 yen makan siang"</div>
     <div id="leaLangRow" class="lea-lang-row"></div>
     <div id="leaResultBox"></div>
+    <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">LEA Sensei · 日本語 AI <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Premium+</span></button>
   </div>
 </div>
 
@@ -1295,7 +1297,6 @@ const CONVO_LANGS = [
 function convoLangMeta(code) { return CONVO_LANGS.find(l => l.code === code) || CONVO_LANGS[0]; }
 
 // ---- info developer & donasi (About page) ----
-const DEV_PHOTO_URI = "data:image/jpeg;base64,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";
 const DEV_INFO = {
   name: "Muhamad Irpan Yasin",
   linkedin: "https://www.linkedin.com/in/muhamad-irpan-yasin",
@@ -1331,8 +1332,8 @@ const I18N = {
     editInSettings: "atur di Pengaturan", incomeThisMonth: "Pemasukan bulan ini", expenseThisMonth: "Pengeluaran bulan ini",
     trend6mo: "Tren 6 Bulan", income: "Pemasukan", expense: "Pengeluaran", ledgerTitle: "Buku Besar", filterAll: "Semua",
     emptyTitle: "Belum ada catatan bulan ini.", emptySub: "Stempel transaksi pertamamu.", addTxAria: "Tambah transaksi",
-    navHome: "Beranda", navStats: "Statistik", navLedger: "Buku Besar", navAbout: "Tentang",
-    aboutTitle: "Tentang Aplikasi", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · dibuat buat pekerja migran di Jepang",
+    navHome: "Beranda", navStats: "Statistik", navLedger: "Buku Besar", navAbout: "Premium",
+    aboutTitle: "Upgrade Fitur", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · dibuat buat pekerja migran di Jepang",
     aboutDesc: "Kakeibo digital buat catat pemasukan & pengeluaran harian, otomatis dikonversi ke mata uang negara asal, plus scan struk, slip gaji, dan cek label halal langsung dari kamera.",
     aboutFeat1: "Scan struk, slip gaji & label halal", aboutFeat2: "Konversi otomatis ke mata uang asal",
     aboutFeat3: "Estimasi gaji bersih & absensi", aboutFeat4: "6 bahasa: ID, EN, MY, BN, VI, TH",
@@ -1528,8 +1529,8 @@ const I18N = {
     editInSettings: "edit in Settings", incomeThisMonth: "Income this month", expenseThisMonth: "Expense this month",
     trend6mo: "6-Month Trend", income: "Income", expense: "Expense", ledgerTitle: "Ledger", filterAll: "All",
     emptyTitle: "No entries yet this month.", emptySub: "Stamp your first transaction.", addTxAria: "Add transaction",
-    navHome: "Home", navStats: "Statistics", navLedger: "Ledger", navAbout: "About",
-    aboutTitle: "About This App", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · built for migrant workers in Japan",
+    navHome: "Home", navStats: "Statistics", navLedger: "Ledger", navAbout: "Premium",
+    aboutTitle: "Upgrade Features", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · built for migrant workers in Japan",
     aboutDesc: "A digital kakeibo to track your daily income & expenses, auto-converted to your home currency, plus receipt, payslip, and halal-label scanning right from your camera.",
     aboutFeat1: "Scan receipts, payslips & halal labels", aboutFeat2: "Auto-convert to your home currency",
     aboutFeat3: "Net salary & attendance estimator", aboutFeat4: "6 languages: ID, EN, MY, BN, VI, TH",
@@ -1724,8 +1725,8 @@ const I18N = {
     editInSettings: "ဆက်တင်တွင်ပြင်ဆင်ပါ", incomeThisMonth: "ဒီလဝင်ငွေ", expenseThisMonth: "ဒီလထွက်ငွေ",
     trend6mo: "၆လ ခြေရာခံမှု", income: "ဝင်ငွေ", expense: "ထွက်ငွေ", ledgerTitle: "စာရင်းစာအုပ်", filterAll: "အားလုံး",
     emptyTitle: "ဒီလအတွက် မှတ်တမ်းမရှိသေးပါ။", emptySub: "ပထမဆုံးအရောင်းအဝယ်ကို တံဆိပ်ခတ်ပါ။", addTxAria: "အရောင်းအဝယ်ထည့်ရန်",
-    navHome: "ပင်မ", navStats: "စာရင်းအင်း", navLedger: "စာရင်းစာအုပ်", navAbout: "အကြောင်း",
-    aboutTitle: "အက်ပ်အကြောင်း", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · ဂျပန်တွင် ရွှေ့ပြောင်းလုပ်သားများအတွက် ပြုလုပ်ထားသည်",
+    navHome: "ပင်မ", navStats: "စာရင်းအင်း", navLedger: "စာရင်းစာအုပ်", navAbout: "Premium",
+    aboutTitle: "လုပ်ဆောင်ချက် မြှင့်တင်ရန်", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · ဂျပန်တွင် ရွှေ့ပြောင်းလုပ်သားများအတွက် ပြုလုပ်ထားသည်",
     aboutDesc: "နေ့စဉ်ဝင်ငွေနှင့် အသုံးစရိတ်များကို မှတ်တမ်းတင်ပြီး မိမိနိုင်ငံငွေကြေးသို့ အလိုအလျောက် ပြောင်းပေးသည့် ဒစ်ဂျစ်တယ် kakeibo။ ပြေစာ၊ လစာစာရွက်၊ halal တံဆိပ်များကို ကင်မရာဖြင့် စကင်န်ဖတ်နိုင်သည်။",
     aboutFeat1: "ပြေစာ၊ လစာစာရွက် & halal တံဆိပ် စကင်န်ဖတ်ခြင်း", aboutFeat2: "နေအိမ်ငွေကြေးသို့ အလိုအလျောက် ပြောင်းလဲခြင်း",
     aboutFeat3: "လစာနှင့် တက်ရောက်မှု ခန့်မှန်းချက်", aboutFeat4: "ဘာသာစကား ၆ မျိုး: ID, EN, MY, BN, VI, TH",
@@ -1901,8 +1902,8 @@ const I18N = {
     editInSettings: "সেটিংসে পরিবর্তন করুন", incomeThisMonth: "এই মাসের আয়", expenseThisMonth: "এই মাসের খরচ",
     trend6mo: "৬ মাসের প্রবণতা", income: "আয়", expense: "খরচ", ledgerTitle: "হিসাবের খাতা", filterAll: "সব",
     emptyTitle: "এই মাসে এখনো কোনো এন্ট্রি নেই।", emptySub: "আপনার প্রথম লেনদেন যোগ করুন।", addTxAria: "লেনদেন যোগ করুন",
-    navHome: "হোম", navStats: "পরিসংখ্যান", navLedger: "হিসাবের খাতা", navAbout: "সম্পর্কে",
-    aboutTitle: "অ্যাপ সম্পর্কে", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · জাপানে অভিবাসী শ্রমিকদের জন্য তৈরি",
+    navHome: "হোম", navStats: "পরিসংখ্যান", navLedger: "হিসাবের খাতা", navAbout: "Premium",
+    aboutTitle: "ফিচার আপগ্রেড", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · জাপানে অভিবাসী শ্রমিকদের জন্য তৈরি",
     aboutDesc: "প্রতিদিনের আয়-ব্যয় নথিভুক্ত করার ডিজিটাল kakeibo, স্বয়ংক্রিয়ভাবে নিজ দেশের মুদ্রায় রূপান্তরিত হয়, সাথে ক্যামেরা দিয়ে রসিদ, বেতন স্লিপ ও হালাল লেবেল স্ক্যান করার সুবিধা।",
     aboutFeat1: "রসিদ, বেতন স্লিপ ও হালাল লেবেল স্ক্যান", aboutFeat2: "নিজ দেশের মুদ্রায় স্বয়ংক্রিয় রূপান্তর",
     aboutFeat3: "নিট বেতন ও উপস্থিতির হিসাব", aboutFeat4: "৬টি ভাষা: ID, EN, MY, BN, VI, TH",
@@ -2053,8 +2054,8 @@ const I18N = {
     editInSettings: "chỉnh trong Cài đặt", incomeThisMonth: "Thu nhập tháng này", expenseThisMonth: "Chi tiêu tháng này",
     trend6mo: "Xu hướng 6 tháng", income: "Thu nhập", expense: "Chi tiêu", ledgerTitle: "Sổ Cái", filterAll: "Tất cả",
     emptyTitle: "Chưa có giao dịch tháng này.", emptySub: "Hãy đóng dấu giao dịch đầu tiên.", addTxAria: "Thêm giao dịch",
-    navHome: "Trang chủ", navStats: "Thống kê", navLedger: "Sổ Cái", navAbout: "Giới thiệu",
-    aboutTitle: "Giới thiệu ứng dụng", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · dành cho lao động di trú tại Nhật",
+    navHome: "Trang chủ", navStats: "Thống kê", navLedger: "Sổ Cái", navAbout: "Premium",
+    aboutTitle: "Nâng cấp tính năng", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · dành cho lao động di trú tại Nhật",
     aboutDesc: "Sổ kakeibo kỹ thuật số giúp ghi thu chi hằng ngày, tự động quy đổi sang tiền quê nhà, kèm quét biên lai, phiếu lương và nhãn halal ngay từ camera.",
     aboutFeat1: "Quét biên lai, phiếu lương & nhãn halal", aboutFeat2: "Tự động quy đổi sang tiền quê nhà",
     aboutFeat3: "Ước tính lương thực nhận & chấm công", aboutFeat4: "6 ngôn ngữ: ID, EN, MY, BN, VI, TH",
@@ -2206,8 +2207,8 @@ const I18N = {
     editInSettings: "แก้ไขในตั้งค่า", incomeThisMonth: "รายรับเดือนนี้", expenseThisMonth: "รายจ่ายเดือนนี้",
     trend6mo: "แนวโน้ม 6 เดือน", income: "รายรับ", expense: "รายจ่าย", ledgerTitle: "สมุดบัญชี", filterAll: "ทั้งหมด",
     emptyTitle: "ยังไม่มีรายการเดือนนี้", emptySub: "ประทับตรารายการแรกของคุณ", addTxAria: "เพิ่มรายการ",
-    navHome: "หน้าแรก", navStats: "สถิติ", navLedger: "สมุดบัญชี", navAbout: "เกี่ยวกับ",
-    aboutTitle: "เกี่ยวกับแอป", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · สร้างขึ้นสำหรับแรงงานข้ามชาติในญี่ปุ่น",
+    navHome: "หน้าแรก", navStats: "สถิติ", navLedger: "สมุดบัญชี", navAbout: "Premium",
+    aboutTitle: "อัปเกรดฟีเจอร์", aboutAppName: "帳簿 — Japan Work Ledger", aboutVersion: "v1.0 · สร้างขึ้นสำหรับแรงงานข้ามชาติในญี่ปุ่น",
     aboutDesc: "kakeibo ดิจิทัลสำหรับบันทึกรายรับรายจ่ายประจำวัน แปลงเป็นสกุลเงินบ้านเกิดอัตโนมัติ พร้อมสแกนใบเสร็จ สลิปเงินเดือน และฉลากฮาลาลจากกล้อง",
     aboutFeat1: "สแกนใบเสร็จ สลิปเงินเดือน & ฉลากฮาลาล", aboutFeat2: "แปลงเป็นสกุลเงินบ้านเกิดอัตโนมัติ",
     aboutFeat3: "ประมาณการเงินเดือนสุทธิ & การเข้างาน", aboutFeat4: "6 ภาษา: ID, EN, MY, BN, VI, TH",
@@ -2517,7 +2518,7 @@ function openBelajar() {
   let n = 0;
   ["modules/belajar-data.js", "modules/belajar.js"].forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=1";
+    sc.src = src + "?v=2";
     sc.onload = () => { if (++n === 2) go(); };
     sc.onerror = () => alert("Modul belajar gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
@@ -2527,11 +2528,29 @@ function openChat(opts) {
   const go = () => window.KakeiboChat.open({ lang, esc, ...(opts || {}) });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=7";
+  sc.src = "modules/chat.js?v=8";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
 }
+// LEA Sensei (tutor AI, khusus Premium+): modul baru dimuat hanya kalau paketnya memenuhi
+function openLeaAI() {
+  if (window.KakeiboAuth && !window.KakeiboAuth.isPlus()) return window.KakeiboAuth.require();
+  const go = () => window.KakeiboLeaAI.open({ lang, esc });
+  const need = [];
+  if (!window.BELAJAR_DATA) need.push("modules/belajar-data.js");
+  if (!window.KakeiboLeaAI) need.push("modules/lea-ai.js");
+  if (!need.length) return go();
+  let n = 0;
+  need.forEach(src => {
+    const sc = document.createElement("script");
+    sc.src = src + "?v=1";
+    sc.onload = () => { if (++n === need.length) go(); };
+    sc.onerror = () => alert("Modul LEA Sensei gagal dimuat. Cek koneksi internet.");
+    document.head.appendChild(sc);
+  });
+}
+document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-lea-ai]")) openLeaAI(); });
 // Notifikasi push: ketuk notifikasi membuka percakapan (?chat=ID); halaman yang sudah terbuka diberi tahu service worker
 try {
   const dp = new URLSearchParams(location.search).get("chat");
@@ -3318,6 +3337,8 @@ function closeAboutPage() { aboutHistoryPushed = false; showAbout = false; rende
 const BACK_GUARD = { kk: "guard" };
 let backExitAt = 0, backArmed = false;
 function closeTopLayer() {
+  try { if (window.KakeiboAuth && window.KakeiboAuth.back()) return true; } catch (e) {}
+  try { if (window.KakeiboLeaAI && window.KakeiboLeaAI.isOpen() && window.KakeiboLeaAI.back()) return true; } catch (e) {}
   try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
   const crop = document.getElementById("cropCancelBtn");
   if (crop && showCropTool) { crop.click(); return true; }
@@ -3618,7 +3639,7 @@ function render() {
           </button>
         </div>
         <button type="button" class="nav-btn" id="navAboutBtn" aria-label="${esc(t("navAbout"))}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
         </button>
         <button type="button" class="nav-btn" id="navProfileBtn" aria-label="${esc(t("settingsAria"))}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
@@ -3885,6 +3906,7 @@ function render() {
           ${settingsForm.photo ? `<button type="button" class="ph-remove" id="removePhotoBtn">${esc(t("photoRemove"))}</button>` : ""}
         </div>
 
+        ${window.KakeiboAuth ? window.KakeiboAuth.accountCard() : ""}
         <section class="pcard">
           <div class="pcard-title display">${esc(t("profileSection"))}</div>
           <div class="field-label">${esc(t("nameLabel"))}</div>
@@ -3954,20 +3976,7 @@ function render() {
           <div class="ab-feat"><span class="ab-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span><span>${esc(t("aboutFeat4"))}</span></div>
         </div>
 
-        <section class="ab-dev">
-          <div class="ab-dev-label">${esc(t("aboutDevTitle"))}</div>
-          <div class="ab-dev-row">
-            <img src="${DEV_PHOTO_URI}" alt="${esc(DEV_INFO.name)}" class="ab-dev-photo">
-            <div class="ab-dev-who">
-              <div class="ab-dev-name">${esc(DEV_INFO.name)}</div>
-              <div class="ab-dev-role">${esc(t("aboutDevRole"))}</div>
-            </div>
-          </div>
-          <div class="ab-dev-links">
-            <a href="${DEV_INFO.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
-            <a href="${DEV_INFO.website}" target="_blank" rel="noopener">${esc(t("aboutWebsiteBtn"))}</a>
-          </div>
-        </section>
+        <section class="ab-plans" id="abPlans">${window.KakeiboAuth ? window.KakeiboAuth.plansHtml() : ""}</section>
 
         <section class="pcard ab-card">
           <div class="ab-card-title">${esc(t("aboutDonateTitle"))}</div>
@@ -5403,6 +5412,8 @@ function attachEvents() {
     render();
     aboutPageEnter = false;
   });
+  const abPlans = document.getElementById("abPlans");
+  if (abPlans && window.KakeiboAuth) window.KakeiboAuth.hydratePlans(abPlans);
   const closeAboutSheet = document.getElementById("closeAboutSheet");
   if (closeAboutSheet) closeAboutSheet.addEventListener("click", closeAboutPage);
   app.querySelectorAll("[data-copy]").forEach(el => {
@@ -6502,12 +6513,73 @@ function performCropAndProceed() {
   // 3000px (naik dari 2400): font struk/payslip kecil banget, resolusi lebih tinggi
   // ngasih Tesseract lebih banyak piksel per glyph buat dibedain (mis. 3 vs 7, ヲ vs ラ).
   const dataUrl = grayscaleContrastFromCanvas(cropCanvas, 3000);
+  // Premium+: kirim foto berwarna (maks 1600px) ke AI; kalau gagal otomatis jatuh ke OCR lokal di bawah
+  const aiUrl = window.KakeiboAuth && window.KakeiboAuth.isPlus() ? aiImageFromCanvas(cropCanvas, 1600) : null;
   showCropTool = false;
   cropImgEl = null;
   render();
+  if (aiUrl) { runAIScan(target, aiUrl, dataUrl); return; }
   if (target === "payslip") runPayslipOCRFromDataUrl(dataUrl);
   else if (target === "halal") runHalalOCRFromDataUrl(dataUrl);
   else runOCRFromDataUrl(dataUrl);
+}
+
+function aiImageFromCanvas(cv, maxSide) {
+  const k = Math.min(1, maxSide / Math.max(cv.width, cv.height));
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(cv.width * k)); c.height = Math.max(1, Math.round(cv.height * k));
+  const x = c.getContext("2d");
+  x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height);
+  x.drawImage(cv, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.82);
+}
+const AI_SCAN_MSG = {
+  id: "Batas scan AI hari ini habis. Memakai scan biasa.",
+  en: "Today's AI scan limit is used up. Using the standard scan.",
+  my: "ယနေ့ AI စကန် ကန့်သတ်ချက် ပြည့်သွားပြီ။ ပုံမှန်စကန်ကို သုံးပါမည်။"
+};
+// Scan AI: hasil terstruktur dari Worker dimasukkan ke state yang sama dengan jalur OCR (picker struk, hasil slip gaji, analisis halal).
+async function runAIScan(target, aiUrl, fallbackUrl) {
+  const kind = target === "payslip" || target === "halal" ? target : "receipt";
+  const fallback = () => {
+    if (kind === "payslip") return runPayslipOCRFromDataUrl(fallbackUrl);
+    if (kind === "halal") return runHalalOCRFromDataUrl(fallbackUrl);
+    return runOCRFromDataUrl(fallbackUrl);
+  };
+  scanning = true; scanProgress = 0; render();
+  const tick = setInterval(() => {
+    scanProgress = Math.min(90, scanProgress + 6);
+    const el = document.getElementById("scanProgressPct");
+    if (el) el.textContent = scanProgress + "%";
+  }, 600);
+  try {
+    const r = await window.KakeiboAuth.api("/api/ai/scan", { kind, image: aiUrl });
+    clearInterval(tick);
+    if (kind === "payslip") {
+      const f = r.fields || {};
+      if (f.net === undefined && f.gross === undefined) throw { code: "empty" };
+      scanning = false;
+      payslipDraft = { fields: f, monthKey: r.month || monthKey(new Date()), chosenKey: f.net !== undefined ? "net" : "gross", ai: true };
+      showPayslipResult = true;
+    } else if (kind === "halal") {
+      if (!r.text) throw { code: "empty" };
+      scanning = false;
+      halalResult = analyzeHalalText(r.text);
+      showHalalRawText = false;
+    } else {
+      if (!r.items || !r.items.length) throw { code: "empty" };
+      scanning = false;
+      scanIncludeTax = !r.taxExclusive;
+      scanItems = r.items.map((it, i) => ({ id: "it" + i, label: it.label, price: it.price, checked: true, taxRate: it.taxRate }));
+      showItemPicker = true;
+    }
+    render();
+  } catch (e) {
+    clearInterval(tick);
+    scanning = false;
+    if (e && e.code === "limit") alert(AI_SCAN_MSG[lang] || AI_SCAN_MSG.en);
+    fallback();
+  }
 }
 
 async function runPayslipOCRFromDataUrl(dataUrl) {
@@ -7553,6 +7625,14 @@ if (isIOS() && !isStandalone() && !isInstallDismissed()) {
 }
 showBackupReminderBanner = computeShowBackupReminder();
 render();
+// Login wajib: tanpa sesi tampil layar login (Google / kode email); dengan sesi app langsung terbuka, offline pun tetap bisa.
+if (window.KakeiboAuth) {
+  window.KakeiboAuth.init({
+    getLang: () => lang,
+    onChange: () => { const a = document.activeElement; if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) render(); },
+  });
+  window.KakeiboAuth.gate();
+}
 hydrateReceiptHistoryPhotos(); // non-blocking, nyusul re-render kalau ada foto struk yg perlu di-lengkapin dari IndexedDB
 
 window.addEventListener("beforeinstallprompt", (e) => {
