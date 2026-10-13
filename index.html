@@ -2527,7 +2527,7 @@ function openChat(opts) {
   const go = () => window.KakeiboChat.open({ lang, esc, ...(opts || {}) });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=6";
+  sc.src = "modules/chat.js?v=7";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
