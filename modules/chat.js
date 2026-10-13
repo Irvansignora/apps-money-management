@@ -68,6 +68,7 @@
   var store = function () { try { localStorage.setItem(KEY, JSON.stringify({ tok: A.tok, user: A.user })); } catch (e) {} };
   var TC = {}, T = function () { var l = host.lang; if (!TC[l]) { var b = UI.en, o = UI[l]; TC[l] = o && o !== b ? Object.assign({}, b, o, { e: Object.assign({}, b.e, o.e), sys: Object.assign({}, b.sys, o.sys) }) : b; } return TC[l]; };
   // ukuran teks chat: kecil / sedang (bawaan) / besar; disimpan per perangkat
+  function planLbl(p) { return p === "plus" ? "Premium+" : p === "premium" ? T().planPrem : T().planFree; }
   var FSKEY = "kakeibo-chat-fs", FSK = "m", FSV = { s: .82, m: .9, l: 1 };
   try { var fq = localStorage.getItem(FSKEY); if (FSV[fq]) FSK = fq; } catch (e) {}
   function applyFs() { if (root) root.style.setProperty("--kfs", FSV[FSK]); }
@@ -126,7 +127,7 @@
         });
       });
   }
-  function wipe() { A.tok = null; A.user = null; store(); }
+  function wipe() { A.tok = null; A.user = null; store(); try { if (window.KakeiboAuth) window.KakeiboAuth.onLogout(); } catch (e) {} }
   function err(e) { var n = $("#kcSheet #kcErr") || $("#kcErr"); if (!n) return; var t = T(); n.textContent = e && e.code === "glimit" ? (e.what === "groups" ? t.gLimGroups : t.gMax).replace("{n}", e.max) : t.e[e && e.code] || t.e.server; n.classList.add("on"); }
   function clearErr() { var n = $("#kcSheet #kcErr") || $("#kcErr"); if (n) { n.textContent = ""; n.classList.remove("on"); } }
   function busy(b, on, txt) { if (!b) return; b.disabled = !!on; if (txt != null) b.dataset.t = b.dataset.t || b.textContent; b.textContent = on ? (txt || "…") : (b.dataset.t || b.textContent); }
@@ -364,14 +365,14 @@
   }
 
   function meHtml() {
-    var t = T(), u = A.user, prem = u.plan === "premium";
+    var t = T(), u = A.user, prem = (u.plan === "premium" || u.plan === "plus");
     return '<div class="kc-page">' + top(t.tabMe, "") +
-      '<div class="kc-pc"><button class="kc-pcav" data-a="profile" aria-label="' + t.profT + '">' + avMe(64) + '</button><div class="mid"><div class="nm">' + esc(u.name) + '</div><div class="em">' + esc(u.email || "") + '</div><div class="pills"><span class="kc-pill">' + fl(u.lang) + " " + esc(ln(u.lang)) + '</span><button class="kc-pill' + (prem ? " prem" : "") + '" data-a="plan">' + (prem ? t.planPrem : t.planFree) + "</button></div></div></div>" +
+      '<div class="kc-pc"><button class="kc-pcav" data-a="profile" aria-label="' + t.profT + '">' + avMe(64) + '</button><div class="mid"><div class="nm">' + esc(u.name) + '</div><div class="em">' + esc(u.email || "") + '</div><div class="pills"><span class="kc-pill">' + fl(u.lang) + " " + esc(ln(u.lang)) + '</span><button class="kc-pill' + (prem ? " prem" : "") + '" data-a="plan">' + (planLbl(u.plan)) + "</button></div></div></div>" +
       '<div class="kc-h">' + t.setGen + '</div><div class="kc-set"><div class="kc-sr"><span class="kc-si">' + ic("bell") + '</span><span class="t"><b>' + t.notif + '</b><span id="kcPushNote">…</span></span><button class="kc-sw" id="kcPushB" data-a="push" role="switch" aria-checked="false" aria-label="' + esc(t.notif) + '" disabled></button></div>' +
       '<div class="kc-sr col"><span class="kc-si">' + ic("edit") + '</span><span class="t"><b>' + t.fontT + '</b></span><div class="kc-seg" role="group" aria-label="' + esc(t.fontT) + '">' + ["s", "m", "l"].map(function (k) { return '<button type="button" data-a="fs" data-v="' + k + '" aria-pressed="' + (FSK === k) + '">' + t["font" + k.toUpperCase()] + "</button>"; }).join("") + "</div></div>" +
       (window.SeasonFX ? '<div class="kc-sr"><span class="kc-si">' + ic("globe") + '</span><span class="t"><b>' + t.seasonFx + "</b><span>" + t.seasonFxSub + '</span></span><button class="kc-sw" id="kcFxB" data-a="seasonfx" role="switch" aria-checked="' + (window.SeasonFX.getMode() !== "off") + '" aria-label="' + esc(t.seasonFx) + '"></button></div>' : "") +
       srow("image", t.wp, "", "wallpaper") + srow("globe", t.profRow, esc(u.name), "profile") + "</div>" +
-      '<div class="kc-h">' + t.setPlan + '</div><div class="kc-set">' + srow("crown", t.planT, prem ? t.planPrem : t.planFree, "plan") + srow("addu", t.mine, esc(u.invite), "invite") + "</div>" +
+      '<div class="kc-h">' + t.setPlan + '</div><div class="kc-set">' + srow("crown", t.planT, planLbl(u.plan), "plan") + srow("addu", t.mine, esc(u.invite), "invite") + "</div>" +
       '<div class="kc-set">' + srow("logout", t.out, "", "logout", true) + "</div></div>" + nav("me");
   }
 
@@ -472,7 +473,7 @@
   }
   function leftGroup() { toast(T().gGone); leaveChat(); go("groups"); }
   function loadPicker() {
-    var cap = GMAX[A.user.plan === "premium" ? "premium" : "free"];
+    var cap = GMAX[A.user.plan === "premium" || A.user.plan === "plus" ? "premium" : "free"];
     tmp.sel = {}; tmp.cap = cap - 1; tmp.capMsg = T().gMax.replace("{n}", cap);
     var mx = $("#kcPkMax"); if (mx) mx.textContent = tmp.capMsg;
     api("/api/contacts").then(function (r) {
@@ -563,6 +564,7 @@
     sheet("<h3>" + t.gJoinT + '</h3><div class="kc-add"><input class="kc-in" id="kcJoin" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="' + t.gCodePh + '"><button class="kc-btn sm" data-a="join" style="padding:0 18px">' + t.gJoin + '</button></div><div id="kcErr"></div>', "", "join");
   }
   function openPlan() {
+    if (window.KakeiboAuth) return window.KakeiboAuth.openPlan(); // satu popup paket untuk seluruh app
     sheet("<h3>" + T().planT + '</h3><div id="kcAcc"><div class="kc-sk"></div><div class="kc-sk"></div></div>', "tall", "plan"); loadAccount();
   }
   function openProfile() {
@@ -716,7 +718,7 @@
   var REC = null, AUD = null, PLAY = { id: "", paused: true, pct: 0, cur: 0 }, CALL = null, TONE = null, USAGE = null;
   function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60); }
   function drop(m) { msgs = msgs.filter(function (x) { return x !== m; }); drawMsgs(); }
-  function vmax() { return USAGE && USAGE.limits ? USAGE.limits.voiceSec : (A.user && A.user.plan === "premium" ? 120 : 30); }
+  function vmax() { return USAGE && USAGE.limits ? USAGE.limits.voiceSec : (A.user && (A.user.plan === "premium" || A.user.plan === "plus") ? 120 : 30); }
 
   /* ---------- batas paket ---------- */
   function premiumPrompt(msg) {
@@ -732,12 +734,12 @@
   function loadAccount() {
     api("/api/usage").then(function (u) {
       USAGE = u; if (A.user) { A.user.plan = u.plan; A.user.until = u.until; store(); }
-      var t = T(), P = u.plans || {}, F = P.free || u.limits, R = P.premium || u.limits, prem = u.plan === "premium", n = $("#kcAcc"); if (!n) return;
+      var t = T(), P = u.plans || {}, F = P.free || u.limits, R = P.premium || u.limits, prem = (u.plan === "premium" || u.plan === "plus"), n = $("#kcAcc"); if (!n) return;
       var bar = function (lb, used, max) { var p = Math.min(100, Math.round(used / Math.max(1, max) * 100)); return '<div class="kc-um"><div class="r"><span>' + lb + "</span><b>" + used + " / " + max + '</b></div><div class="kc-bar2"><i style="width:' + p + '%"></i></div></div>'; };
       var fs = function (s) { return s >= 60 ? Math.round(s / 60) + " " + t.min : s + " " + t.sec; };
       var row = function (lb, a, b) { return "<tr><td>" + lb + "</td><td>" + a + '</td><td class="pr">' + b + "</td></tr>"; };
       var yn = function (v) { return v ? t.yes : t.no; };
-      n.innerHTML = '<div class="kc-plan' + (prem ? " prem" : "") + '"><div class="lb">' + t.accPlan + '</div><div class="pn">' + (prem ? t.planPrem : t.planFree) + "</div>" + (prem && u.until ? '<div class="lb">' + t.until + " " + esc(new Date(u.until).toLocaleDateString(host.lang)) + "</div>" : "") + '<div class="lb">' + esc((A.user && A.user.email) || "") + "</div></div>" +
+      n.innerHTML = '<div class="kc-plan' + (prem ? " prem" : "") + '"><div class="lb">' + t.accPlan + '</div><div class="pn">' + (planLbl(u.plan)) + "</div>" + (prem && u.until ? '<div class="lb">' + t.until + " " + esc(new Date(u.until).toLocaleDateString(host.lang)) + "</div>" : "") + '<div class="lb">' + esc((A.user && A.user.email) || "") + "</div></div>" +
         '<div class="kc-h">' + t.usage + "</div>" + bar(t.uTr, u.used.tr, u.limits.tr) + bar(t.uPhoto, u.used.photoDay, u.limits.photoDay) + bar(t.uVoice, u.used.voiceDay, u.limits.voiceDay) + bar(t.uVn, u.used.vnMonth, u.limits.vnMonth) +
         '<div class="kc-h">' + t.compare + '</div><table class="kc-cmp"><tr><th></th><th>' + t.planFree + '</th><th class="pr">' + t.planPrem + "</th></tr>" + row(t.cTr, F.tr, R.tr) + row(t.cPhoto, F.photoDay, R.photoDay) + row(t.cVoice, F.voiceDay, R.voiceDay) + row(t.cVoiceLen, fs(F.voiceSec), fs(R.voiceSec)) + row(t.cVn, F.vnMonth, R.vnMonth) + row(t.cCall, fs(F.callSec), fs(R.callSec)) + row(t.cVideo, yn(F.video), yn(R.video)) + "</table>" +
         (u.upgrade_url ? '<a class="kc-btn" style="display:block;text-align:center;text-decoration:none;margin-top:16px" href="' + esc(u.upgrade_url) + '" target="_blank" rel="noopener noreferrer">' + (prem ? t.renew : t.upgrade) + "</a>" : '<div class="kc-note" style="margin-top:14px">' + t.upgradeNone + "</div>") +
@@ -1017,7 +1019,7 @@
     else if (a === "recsend") stopRec(true);
     else if (a === "play") playAud(b.dataset.aid);
     else if (a === "call") startCall(false);
-    else if (a === "vcall") { if (A.user && A.user.plan !== "premium") premiumPrompt(t.denyVideo); else startCall(true); }
+    else if (a === "vcall") { if (A.user && A.user.plan !== "premium" && A.user.plan !== "plus") premiumPrompt(t.denyVideo); else startCall(true); }
     else if (a === "cacc") acceptCall();
     else if (a === "cdec" || a === "cend") endCall(true);
     else if (a === "cmute") toggleMute();
@@ -1129,6 +1131,7 @@
   window.KakeiboChat = {
     open: function (ctx) {
       host = ctx; css();
+      try { var st = JSON.parse(localStorage.getItem(KEY) || "{}"); A.tok = st.tok || null; A.user = st.user || null; } catch (e0) {} // sesi bersama dengan login Kakeibo
       if (!root) {
         root = document.createElement("div"); root.id = "kcRoot"; root.innerHTML = '<div class="kc-app"><div class="kc-view"></div></div>';
         root.addEventListener("click", function (e) { if (e.target === root) return close(); onClick(e); });
@@ -1144,6 +1147,7 @@
       var pg0 = $("#kcPg"); if (pg0) pg0.remove(); var sh0 = $("#kcSheet"); if (sh0) sh0.remove();
       if (A.tok && A.user) { go("chats"); if (ctx.view === "account") openPlan(); } else go("login");
     },
+    close: function () { close(); },
     isOpen: function () { return !!root && root.classList.contains("open"); },
     back: function () { return !!root && root.classList.contains("open") && navBack(); }
   };
