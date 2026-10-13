@@ -48,7 +48,8 @@
   function render() {
     var t = T(), h = "", D = units(), esc = host.esc, i = idx();
     if (view === "list") {
-      h = D.map(function (u, n) {
+      var aiT = { id: ["Kaiwa dengan AI dan pelajaran terstruktur", "Latihan dialog, dikoreksi LEA"], en: ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"], my: ["AI နှင့် စကားပြောလေ့ကျင့်ခြင်းနှင့် အဆင့်လိုက်သင်ခန်းစာ", "စကားပြောလေ့ကျင့်ရန်၊ LEA ပြင်ပေးမည်"] }[host.lang] || ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"];
+      h = '<button type="button" class="bl-card" data-lea-ai style="border:1px dashed var(--hanko)"><div class="bl-ico" style="background:var(--hanko)">🎓</div><div class="bl-grow"><b>LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">Premium+</span></b><div class="bl-ro">' + aiT[0] + '</div></div></button>' + D.map(function (u, n) {
         var d = u.p.filter(function (_, k) { return st.done[pid(u, k)]; }).length;
         return '<button type="button" class="bl-card" data-a="unit" data-n="' + n + '"><div class="bl-ico">' + u.ico + '</div><div class="bl-grow"><b>' + esc(u.n[i] || u.n[1]) +
           '</b><div class="bl-ro">' + d + " / " + u.p.length + " " + t.ph + '</div><div class="bl-bar"><i style="width:' + Math.round(d / u.p.length * 100) + '%"></i></div></div></button>';
