@@ -58,13 +58,35 @@
   var ic = function (n, s) { return '<svg viewBox="0 0 24 24" width="' + (s || 20) + '" height="' + (s || 20) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + "</svg>"; };
 
   /* ---------- suara ---------- */
-  function say(txt) {
+  var player = null, ttsCache = {}, ttsOrder = [], ttsSeq = 0, SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+  // iOS/Safari hanya mengizinkan audio kalau elemennya sudah "dibuka" oleh sentuhan pengguna, jadi dibuka saat tombol ditekan
+  function prime() { try { if (!player) player = new Audio(); player.src = SILENT; var pr = player.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
+  function stopSay() { ttsSeq++; try { speechSynthesis.cancel(); } catch (e) {} try { if (player) player.pause(); } catch (e) {} }
+  function sayBrowser(txt) { // cadangan: suara bawaan HP
     try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = 0.9; var v = speechSynthesis.getVoices().filter(function (x) { return /^ja/i.test(x.lang); })[0]; if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {}
+  }
+  function ttsUrl(txt) { // suara GPT lewat worker; hasilnya disimpan sementara supaya putar ulang tidak memanggil server lagi
+    if (ttsCache[txt]) return ttsCache[txt];
+    var pr = window.KakeiboAuth.blob("/api/ai/tts", { text: txt }).then(function (b) { return URL.createObjectURL(b); });
+    ttsCache[txt] = pr; ttsOrder.push(txt);
+    pr.catch(function () { delete ttsCache[txt]; });
+    if (ttsOrder.length > 20) { var old = ttsOrder.shift(), op = ttsCache[old]; delete ttsCache[old]; if (op) op.then(function (u) { URL.revokeObjectURL(u); }).catch(function () {}); }
+    return pr;
+  }
+  function say(txt) {
+    stopSay(); if (!txt) return; var seq = ttsSeq;
+    if (!window.KakeiboAuth || !window.KakeiboAuth.blob) return sayBrowser(txt);
+    ttsUrl(txt).then(function (url) {
+      if (seq !== ttsSeq) return;
+      if (!player) player = new Audio();
+      player.src = url; var pr = player.play();
+      if (pr && pr.catch) pr.catch(function () { if (seq === ttsSeq) sayBrowser(txt); });
+    }).catch(function () { if (seq === ttsSeq) sayBrowser(txt); });
   }
   function listen() {
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return flash(T().noMic);
     if (rec) { try { rec.stop(); } catch (e) {} return; }
-    try { speechSynthesis.cancel(); } catch (e) {}
+    stopSay(); prime();
     rec = new SR(); rec.lang = "ja-JP"; rec.interimResults = false; rec.maxAlternatives = 1;
     var m = $('[data-a="mic"]'); if (m) m.classList.add("rec");
     rec.onresult = function (e) { var t = e.results[0] && e.results[0][0] && e.results[0][0].transcript; if (t) { var ta = $("#laTxt"); if (ta) ta.value = t; send(); } };
@@ -118,13 +140,13 @@
     });
   }
   function record(score) { var k = unit ? unit.k : "_free", p = prog[k] || { best: 0, tries: 0 }; p.best = Math.max(p.best, score); p.tries++; p.at = Date.now(); prog[k] = p; saveProg(); }
-  function start(u) { unit = u || null; msgs = []; done = null; hint = ""; sending = false; view = "chat"; drawChat(); ask(); }
+  function start(u) { prime(); unit = u || null; msgs = []; done = null; hint = ""; sending = false; view = "chat"; drawChat(); ask(); }
   function send() {
     var ta = $("#laTxt"); if (!ta || sending || done) return; var v = ta.value.trim(); if (!v) return;
-    ta.value = ""; ta.style.height = ""; try { speechSynthesis.cancel(); } catch (e) {}
+    ta.value = ""; ta.style.height = ""; stopSay(); prime();
     msgs.push({ role: "user", text: v }); ask();
   }
-  function go(home) { if (rec) { try { rec.stop(); } catch (e) {} } try { speechSynthesis.cancel(); } catch (e) {} view = home ? "home" : view; if (home) drawHome(); }
+  function go(home) { if (rec) { try { rec.stop(); } catch (e) {} } stopSay(); view = home ? "home" : view; if (home) drawHome(); }
   function close() { go(false); if (el) { el.remove(); el = null; } }
 
   function onClick(e) {
@@ -141,7 +163,7 @@
     else if (a === "retry") { var er = b.closest(".la-err"); if (er) er.remove(); ask(); }
     else if (a === "again") start(unit);
     else if (a === "finish") go(true);
-    else if (a === "sound") { sound = !sound; try { localStorage.setItem(SKEY, sound ? "1" : "0"); } catch (x) {} if (!sound) { try { speechSynthesis.cancel(); } catch (x) {} } b.classList.toggle("on", sound); b.setAttribute("aria-pressed", sound); b.innerHTML = ic(sound ? "vol" : "mute"); }
+    else if (a === "sound") { sound = !sound; try { localStorage.setItem(SKEY, sound ? "1" : "0"); } catch (x) {} if (!sound) stopSay(); else prime(); b.classList.toggle("on", sound); b.setAttribute("aria-pressed", sound); b.innerHTML = ic(sound ? "vol" : "mute"); }
   }
   function mount() {
     css(); if (el) return;
