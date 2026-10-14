@@ -11,9 +11,9 @@
   var saveProg = function () { try { localStorage.setItem(KEY, JSON.stringify(prog)); } catch (e) {} };
 
   var UI = {
-    id: { lvl: "Level belajar (JLPT)", lvDesc: ["Pemula", "Dasar", "Menengah", "Menengah atas", "Mahir"], voiceT: "Suara LEA", preview: "Dengar contoh", title: "LEA Sensei", sub: "Belajar bahasa Jepang bareng AI", free: "Kaiwa bebas", freeSub: "Ngobrol santai, LEA mengoreksi kalimatmu", lessons: "Pelajaran terstruktur", lessonsSub: "Latihan dialog per tema, ada nilai di akhir", best: "Nilai terbaik", turns: "giliran", ph: "Tulis dalam bahasa Jepang…", say: "Ucapkan", send: "Kirim", mic: "Bicara", better: "Lebih natural", why: "Kenapa", tryHint: "Coba bilang", meaning: "Arti", sound: "Suara", score: "Nilai", good: "Sudah bagus", improve: "Perlu dilatih", again: "Ulangi", finish: "Selesai", back: "Kembali", thinking: "LEA sedang menulis…", left: "Sisa hari ini", errNet: "Tidak bisa terhubung. Coba lagi.", errAi: "AI sedang sibuk. Coba lagi sebentar.", errLimit: "Batas pesan LEA Sensei hari ini sudah habis. Besok bisa lanjut.", errPlus: "Fitur ini khusus Premium+.", retry: "Coba lagi", noMic: "HP ini belum mendukung input suara.", micDenied: "Izin mikrofon ditolak.", start: "Mulai", plusOnly: "Premium+" },
-    en: { lvl: "Study level (JLPT)", lvDesc: ["Beginner", "Elementary", "Intermediate", "Upper-intermediate", "Advanced"], voiceT: "LEA's voice", preview: "Play sample", title: "LEA Sensei", sub: "Learn Japanese with AI", free: "Free conversation", freeSub: "Chat casually, LEA corrects your sentences", lessons: "Structured lessons", lessonsSub: "Dialogue practice by topic, with a score at the end", best: "Best score", turns: "turns", ph: "Write in Japanese…", say: "Play", send: "Send", mic: "Speak", better: "More natural", why: "Why", tryHint: "Try saying", meaning: "Meaning", sound: "Sound", score: "Score", good: "Done well", improve: "To practise", again: "Again", finish: "Finish", back: "Back", thinking: "LEA is writing…", left: "Left today", errNet: "Cannot connect. Try again.", errAi: "The AI is busy. Try again shortly.", errLimit: "You reached today's LEA Sensei message limit. Continue tomorrow.", errPlus: "This feature is for Premium+ only.", retry: "Retry", noMic: "This phone does not support voice input.", micDenied: "Microphone permission denied.", start: "Start", plusOnly: "Premium+" },
-    my: { lvl: "သင်ယူမည့် အဆင့် (JLPT)", lvDesc: ["အစပြု", "အခြေခံ", "အလယ်အလတ်", "အလယ်အလတ်အထက်", "ကျွမ်းကျင်"], voiceT: "LEA ၏ အသံ", preview: "နမူနာ နားထောင်ရန်", title: "LEA Sensei", sub: "AI နှင့်အတူ ဂျပန်စာသင်ပါ", free: "လွတ်လပ်စွာ စကားပြော", freeSub: "ပေါ့ပေါ့ပါးပါး ပြောပါ၊ LEA က သင့်ဝါကျများကို ပြင်ပေးမည်", lessons: "အဆင့်လိုက် သင်ခန်းစာ", lessonsSub: "အကြောင်းအရာအလိုက် စကားပြောလေ့ကျင့်ပြီး အဆုံးတွင် အမှတ်ပေးမည်", best: "အမြင့်ဆုံးအမှတ်", turns: "ကြိမ်", ph: "ဂျပန်လိုရေးပါ…", say: "နားထောင်ရန်", send: "ပို့ရန်", mic: "ပြောရန်", better: "ပိုသဘာဝကျသော", why: "အကြောင်းရင်း", tryHint: "ဒီလိုပြောကြည့်ပါ", meaning: "အဓိပ္ပာယ်", sound: "အသံ", score: "အမှတ်", good: "ကောင်းသည့်အချက်", improve: "ထပ်လေ့ကျင့်ရန်", again: "ထပ်လုပ်ရန်", finish: "ပြီးပြီ", back: "နောက်သို့", thinking: "LEA ရေးနေသည်…", left: "ယနေ့ ကျန်ရှိ", errNet: "ချိတ်ဆက်၍မရပါ။ ထပ်ကြိုးစားပါ။", errAi: "AI အလုပ်များနေသည်။ ခဏနေပြီး ထပ်ကြိုးစားပါ။", errLimit: "ယနေ့ LEA Sensei မက်ဆေ့ချ် ကန့်သတ်ချက် ပြည့်သွားပြီ။ မနက်ဖြန် ဆက်လုပ်ပါ။", errPlus: "ဤလုပ်ဆောင်ချက်သည် Premium+ အတွက်သာ ဖြစ်သည်။", retry: "ထပ်ကြိုးစားရန်", noMic: "ဤဖုန်းတွင် အသံထည့်သွင်းမှု မပံ့ပိုးပါ။", micDenied: "မိုက်ခရိုဖုန်း ခွင့်ပြုချက် ငြင်းပယ်ခံရသည်။", start: "စတင်ရန်", plusOnly: "Premium+" }
+    id: { study: "Belajar JLPT", studySub: "Kotoba, bunpou, dan latihan sesuai level", tabV: "Kotoba", tabG: "Bunpou", quizBtn: "Latihan soal", prep: "Menyiapkan materi… (pertama kali bisa 10-20 detik)", exampleT: "Contoh", notesT: "Catatan", formT: "Cara membentuk", qOf: "Soal {n} dari {m}", next: "Lanjut", seeScore: "Lihat nilai", okT: "Benar!", noT: "Kurang tepat", resultT: "Hasil latihan", quizAgain: "Latihan lagi", toList: "Kembali ke daftar", sRetry: "Coba lagi", sBest: "Nilai terbaik", lvl: "Level belajar (JLPT)", lvDesc: ["Pemula", "Dasar", "Menengah", "Menengah atas", "Mahir"], voiceT: "Suara LEA", preview: "Dengar contoh", title: "LEA Sensei", sub: "Belajar bahasa Jepang bareng AI", free: "Kaiwa bebas", freeSub: "Ngobrol santai, LEA mengoreksi kalimatmu", lessons: "Pelajaran terstruktur", lessonsSub: "Latihan dialog per tema, ada nilai di akhir", best: "Nilai terbaik", turns: "giliran", ph: "Tulis dalam bahasa Jepang…", say: "Ucapkan", send: "Kirim", mic: "Bicara", better: "Lebih natural", why: "Kenapa", tryHint: "Coba bilang", meaning: "Arti", sound: "Suara", score: "Nilai", good: "Sudah bagus", improve: "Perlu dilatih", again: "Ulangi", finish: "Selesai", back: "Kembali", thinking: "LEA sedang menulis…", left: "Sisa hari ini", errNet: "Tidak bisa terhubung. Coba lagi.", errAi: "AI sedang sibuk. Coba lagi sebentar.", errLimit: "Batas pesan LEA Sensei hari ini sudah habis. Besok bisa lanjut.", errPlus: "Fitur ini khusus Premium+.", retry: "Coba lagi", noMic: "HP ini belum mendukung input suara.", micDenied: "Izin mikrofon ditolak.", start: "Mulai", plusOnly: "Premium+" },
+    en: { study: "JLPT study", studySub: "Kotoba, bunpou and practice for your level", tabV: "Kotoba", tabG: "Bunpou", quizBtn: "Practice quiz", prep: "Preparing the lesson… (the first time can take 10-20 seconds)", exampleT: "Examples", notesT: "Notes", formT: "How to form", qOf: "Question {n} of {m}", next: "Next", seeScore: "See score", okT: "Correct!", noT: "Not quite", resultT: "Practice result", quizAgain: "Practice again", toList: "Back to the list", sRetry: "Try again", sBest: "Best score", lvl: "Study level (JLPT)", lvDesc: ["Beginner", "Elementary", "Intermediate", "Upper-intermediate", "Advanced"], voiceT: "LEA's voice", preview: "Play sample", title: "LEA Sensei", sub: "Learn Japanese with AI", free: "Free conversation", freeSub: "Chat casually, LEA corrects your sentences", lessons: "Structured lessons", lessonsSub: "Dialogue practice by topic, with a score at the end", best: "Best score", turns: "turns", ph: "Write in Japanese…", say: "Play", send: "Send", mic: "Speak", better: "More natural", why: "Why", tryHint: "Try saying", meaning: "Meaning", sound: "Sound", score: "Score", good: "Done well", improve: "To practise", again: "Again", finish: "Finish", back: "Back", thinking: "LEA is writing…", left: "Left today", errNet: "Cannot connect. Try again.", errAi: "The AI is busy. Try again shortly.", errLimit: "You reached today's LEA Sensei message limit. Continue tomorrow.", errPlus: "This feature is for Premium+ only.", retry: "Retry", noMic: "This phone does not support voice input.", micDenied: "Microphone permission denied.", start: "Start", plusOnly: "Premium+" },
+    my: { study: "JLPT လေ့လာရန်", studySub: "အဆင့်အလိုက် ဝေါဟာရ၊ သဒ္ဒါနှင့် လေ့ကျင့်ခန်း", tabV: "ဝေါဟာရ", tabG: "သဒ္ဒါ", quizBtn: "လေ့ကျင့်ခန်း", prep: "သင်ခန်းစာ ပြင်ဆင်နေသည်… (ပထမဆုံးအကြိမ် စက္ကန့် ၂၀ ခန့် ကြာနိုင်သည်)", exampleT: "ဥပမာ", notesT: "မှတ်ချက်", formT: "ဖွဲ့နည်း", qOf: "မေးခွန်း {n}/{m}", next: "ဆက်သွားရန်", seeScore: "ရလဒ်ကြည့်ရန်", okT: "မှန်ပါသည်!", noT: "မမှန်ပါ", resultT: "လေ့ကျင့်ခန်း ရလဒ်", quizAgain: "ထပ်လေ့ကျင့်ရန်", toList: "စာရင်းသို့ ပြန်သွားရန်", sRetry: "ထပ်ကြိုးစားပါ", sBest: "အကောင်းဆုံးရမှတ်", lvl: "သင်ယူမည့် အဆင့် (JLPT)", lvDesc: ["အစပြု", "အခြေခံ", "အလယ်အလတ်", "အလယ်အလတ်အထက်", "ကျွမ်းကျင်"], voiceT: "LEA ၏ အသံ", preview: "နမူနာ နားထောင်ရန်", title: "LEA Sensei", sub: "AI နှင့်အတူ ဂျပန်စာသင်ပါ", free: "လွတ်လပ်စွာ စကားပြော", freeSub: "ပေါ့ပေါ့ပါးပါး ပြောပါ၊ LEA က သင့်ဝါကျများကို ပြင်ပေးမည်", lessons: "အဆင့်လိုက် သင်ခန်းစာ", lessonsSub: "အကြောင်းအရာအလိုက် စကားပြောလေ့ကျင့်ပြီး အဆုံးတွင် အမှတ်ပေးမည်", best: "အမြင့်ဆုံးအမှတ်", turns: "ကြိမ်", ph: "ဂျပန်လိုရေးပါ…", say: "နားထောင်ရန်", send: "ပို့ရန်", mic: "ပြောရန်", better: "ပိုသဘာဝကျသော", why: "အကြောင်းရင်း", tryHint: "ဒီလိုပြောကြည့်ပါ", meaning: "အဓိပ္ပာယ်", sound: "အသံ", score: "အမှတ်", good: "ကောင်းသည့်အချက်", improve: "ထပ်လေ့ကျင့်ရန်", again: "ထပ်လုပ်ရန်", finish: "ပြီးပြီ", back: "နောက်သို့", thinking: "LEA ရေးနေသည်…", left: "ယနေ့ ကျန်ရှိ", errNet: "ချိတ်ဆက်၍မရပါ။ ထပ်ကြိုးစားပါ။", errAi: "AI အလုပ်များနေသည်။ ခဏနေပြီး ထပ်ကြိုးစားပါ။", errLimit: "ယနေ့ LEA Sensei မက်ဆေ့ချ် ကန့်သတ်ချက် ပြည့်သွားပြီ။ မနက်ဖြန် ဆက်လုပ်ပါ။", errPlus: "ဤလုပ်ဆောင်ချက်သည် Premium+ အတွက်သာ ဖြစ်သည်။", retry: "ထပ်ကြိုးစားရန်", noMic: "ဤဖုန်းတွင် အသံထည့်သွင်းမှု မပံ့ပိုးပါ။", micDenied: "မိုက်ခရိုဖုန်း ခွင့်ပြုချက် ငြင်းပယ်ခံရသည်။", start: "စတင်ရန်", plusOnly: "Premium+" }
   };
   var T = function () { return Object.assign({}, UI.en, UI[host.lang] || {}); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -34,6 +34,9 @@
       ".la-set{background:var(--card,#fbf7ea);border:1px solid var(--line,rgba(122,110,80,.24));border-radius:18px;padding:12px 13px;margin-bottom:12px}.la-set .la-h{margin:0 0 8px}.la-set .la-h~.la-h{margin-top:12px}",
       ".la-chips{display:flex;gap:6px}.la-lv{flex:1;border:1px solid var(--line,rgba(122,110,80,.3));background:transparent;color:inherit;border-radius:10px;padding:9px 0;font:700 13px Inter,sans-serif;cursor:pointer}.la-lv.on{background:var(--ai,#17233d);color:#fff;border-color:var(--ai,#17233d)}.la-lvd{font-size:12px;color:var(--mist,#6d6759);margin-top:6px}",
       ".la-vrow{display:flex;gap:8px}.la-vrow select{flex:1;min-width:0;border:1px solid var(--line,rgba(122,110,80,.3));background:transparent;color:inherit;border-radius:10px;padding:9px 10px;font:600 13.5px Inter,sans-serif}.la-vrow button{border:0;border-radius:10px;padding:9px 13px;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;font:700 12.5px Inter,sans-serif;cursor:pointer}",
+      ".la-vi{background:var(--card,#fbf7ea);border:1px solid var(--line,rgba(122,110,80,.24));border-radius:16px;padding:12px 13px;margin-bottom:10px}.la-vtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.la-vi .la-jp{font:700 19px/1.4 Inter,sans-serif}.la-vi .la-rd{font-size:12.5px;color:var(--mist,#6d6759)}.la-vi .la-mn{font-size:13.5px;line-height:1.5;margin-top:2px}.la-ex{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line,rgba(122,110,80,.3))}.la-gh{font:800 22px/1.3 Inter,sans-serif}",
+      ".la-q{font:700 16px/1.55 Inter,sans-serif;margin:6px 2px 14px}.la-opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line,rgba(122,110,80,.3));background:var(--card,#fbf7ea);color:inherit;border-radius:14px;padding:12px 14px;margin-bottom:9px;font:600 15px/1.4 Inter,sans-serif;cursor:pointer}.la-opt.ok{border-color:#2f7d4f;background:#d6ecdc;color:#1c5a35}.la-opt.no{border-color:#ac3527;background:#f4d9d5;color:#7a1f14}.la-opt:disabled{cursor:default}",
+      ".la-big{display:block;width:100%;border:0;border-radius:14px;padding:14px;margin-top:10px;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;font:800 15px Inter,sans-serif;cursor:pointer}.la-big.g{background:transparent;color:inherit;border:1.5px solid var(--line,rgba(122,110,80,.3))}.la-lv.w{flex:1}",
       ".la-chip{font:700 10.5px Inter,sans-serif;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;border-radius:99px;padding:3px 9px}",
       ".la-body{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 24px;-webkit-overflow-scrolling:touch}",
       ".la-card{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--card,#fbf7ea);border:1px solid var(--line,rgba(122,110,80,.24));border-radius:18px;padding:13px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer;min-height:68px}.la-card:active{transform:scale(.985)}",
@@ -107,7 +110,7 @@
   }
   function drawHome() {
     var t = T(), li = LEVELS.indexOf(level), sets = '<div class="la-set"><div class="la-h">' + esc(t.lvl) + '</div><div class="la-chips">' + LEVELS.map(function (l) { return '<button class="la-lv' + (l === level ? " on" : "") + '" data-a="lvl" data-l="' + l + '">' + l + "</button>"; }).join("") + '</div><div class="la-lvd">' + esc((t.lvDesc || [])[li] || "") + '</div><div class="la-h">' + esc(t.voiceT) + '</div><div class="la-vrow"><select id="laVoice" aria-label="' + esc(t.voiceT) + '">' + VOICES.map(function (v) { return '<option value="' + v + '"' + (v === voice ? " selected" : "") + ">" + v.charAt(0).toUpperCase() + v.slice(1) + "</option>"; }).join("") + '</select><button data-a="preview">▶ ' + esc(t.preview) + "</button></div></div>",
-      h = head(t.title, t.sub, false) + '<div class="la-body">' + sets + '<button class="la-card hero" data-a="free"><div class="la-ico">💬</div><div class="la-grow"><b>' + esc(t.free) + "</b><span>" + esc(t.freeSub) + '</span></div></button><div class="la-h">' + esc(t.lessons) + '</div><div class="la-note" style="font-size:12.5px;color:var(--mist,#6d6759);margin:-2px 2px 10px">' + esc(t.lessonsSub) + "</div>";
+      h = head(t.title, t.sub, false) + '<div class="la-body">' + sets + '<button class="la-card hero" data-a="free"><div class="la-ico">💬</div><div class="la-grow"><b>' + esc(t.free) + "</b><span>" + esc(t.freeSub) + '</span></div></button><button class="la-card" data-a="study"><div class="la-ico">📚</div><div class="la-grow"><b>' + esc(t.study) + "</b><span>" + esc(t.studySub) + " · " + level + '</span></div></button><div class="la-h">' + esc(t.lessons) + '</div><div class="la-note" style="font-size:12.5px;color:var(--mist,#6d6759);margin:-2px 2px 10px">' + esc(t.lessonsSub) + "</div>";
     units().forEach(function (u, n) { var p = prog[u.k]; h += '<button class="la-card" data-a="unit" data-n="' + n + '"><div class="la-ico">' + u.ico + '</div><div class="la-grow"><b>' + esc(uTitle(u)) + "</b>" + (p ? "<span>" + esc(t.best) + ': <b class="la-sc" style="display:inline">' + p.best + "</b> · " + p.tries + "×</span>" : "<span>" + esc(t.start) + " · 6 " + esc(t.turns) + "</span>") + "</div></button>"; });
     el.querySelector(".la-app").innerHTML = h + "</div>";
   }
@@ -158,26 +161,113 @@
     if (e.target === el) return close();
     var b = e.target.closest("[data-a]"); if (!b) return; var a = b.dataset.a;
     if (a === "close") close();
-    else if (a === "back") go(true);
+    else if (a === "back") goBack();
     else if (a === "lvl") { if (LEVELS.indexOf(b.dataset.l) >= 0) { level = b.dataset.l; try { localStorage.setItem("kakeibo-lea-level", level); } catch (x) {} drawHome(); } }
     else if (a === "preview") { prime(); say("こんにちは。一緒に日本語を勉強しましょう。"); }
     else if (a === "free") start(null);
     else if (a === "unit") start(units()[+b.dataset.n]);
     else if (a === "send") send();
     else if (a === "mic") listen();
-    else if (a === "play") say(b.dataset.t);
+    else if (a === "play") { prime(); say(b.dataset.t); }
+    else if (a === "study") drawStudy();
+    else if (a === "slvl") { if (LEVELS.indexOf(b.dataset.l) >= 0) { level = b.dataset.l; try { localStorage.setItem("kakeibo-lea-level", level); } catch (x) {} drawStudy(); } }
+    else if (a === "stab") { st.tab = b.dataset.t === "grammar" ? "grammar" : "vocab"; drawStudy(); }
+    else if (a === "topic") openTopic(+b.dataset.n);
+    else if (a === "quiz") startQuiz();
+    else if (a === "opt") pickOpt(+b.dataset.i);
+    else if (a === "qnext") nextQ();
+    else if (a === "tolist") { st.seq++; drawStudy(); }
+    else if (a === "sretry") { if (st.retry) st.retry(); }
     else if (a === "hint") { var ta = $("#laTxt"); if (ta) { ta.value = b.dataset.t; ta.focus(); } }
     else if (a === "retry") { var er = b.closest(".la-err"); if (er) er.remove(); ask(); }
     else if (a === "again") start(unit);
     else if (a === "finish") go(true);
     else if (a === "sound") { sound = !sound; try { localStorage.setItem(SKEY, sound ? "1" : "0"); } catch (x) {} if (!sound) stopSay(); else prime(); b.classList.toggle("on", sound); b.setAttribute("aria-pressed", sound); b.innerHTML = ic(sound ? "vol" : "mute"); }
   }
+  // ---- Belajar JLPT: kotoba, bunpou, latihan. Daftar topik dari modul lea-study-data.js, isi dibuat AI oleh worker lalu disimpan ----
+  var st = { tab: "vocab", item: null, data: null, qs: null, qi: 0, score: 0, picked: -1, seq: 0, retry: null }, sCache = {};
+  function curr() { return (window.LEA_STUDY && window.LEA_STUDY[level]) || { vocab: [], grammar: [] }; }
+  function tl(o) { return (o && (o[host.lang] || o.en)) || ""; }
+  function topicLabel(it) { return it.p ? it.p : tl(it.t); }
+  function topicSub(it) { return it.p ? tl(it.h) : ""; }
+  function body(h) { var a = el && el.querySelector(".la-app"); if (a) a.innerHTML = h; }
+  function getStudy(kind, id, set) {
+    var ck = [kind, id, aiLang(), kind === "quiz" ? set : 0].join("|");
+    if (sCache[ck]) return Promise.resolve(sCache[ck]);
+    return window.KakeiboAuth.api("/api/ai/study", { kind: kind, topic: id, set: set, lang: aiLang() }).then(function (r) { sCache[ck] = r; return r; });
+  }
+  function drawStudy() {
+    view = "study"; var t = T(), list = curr()[st.tab] || [];
+    var h = head(t.study, level + " · " + ((t.lvDesc || [])[LEVELS.indexOf(level)] || ""), true) + '<div class="la-body"><div class="la-chips">' + LEVELS.map(function (l) { return '<button class="la-lv' + (l === level ? " on" : "") + '" data-a="slvl" data-l="' + l + '">' + l + "</button>"; }).join("") + '</div><div class="la-chips" style="margin:10px 0 12px"><button class="la-lv w' + (st.tab === "vocab" ? " on" : "") + '" data-a="stab" data-t="vocab">' + esc(t.tabV) + '</button><button class="la-lv w' + (st.tab === "grammar" ? " on" : "") + '" data-a="stab" data-t="grammar">' + esc(t.tabG) + "</button></div>";
+    list.forEach(function (it, n) {
+      var p = prog["s|" + it.id], sub = [topicSub(it), p ? t.sBest + ": " + p.best : ""].filter(Boolean).join(" · ");
+      h += '<button class="la-card" data-a="topic" data-n="' + n + '"><div class="la-ico">' + (it.p ? "文" : "語") + '</div><div class="la-grow"><b>' + esc(topicLabel(it)) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") + "</div></button>";
+    });
+    body(h + "</div>");
+  }
+  function drawWait() { body(head(topicLabel(st.item), level, true) + '<div class="la-body"><div class="la-typ" style="margin-top:40px">' + esc(T().prep) + "</div></div>"); }
+  function drawStudyErr(e) { body(head(topicLabel(st.item), level, true) + '<div class="la-body"><div class="la-err">' + esc(errMsg(e)) + '</div><button class="la-big" data-a="sretry">' + esc(T().sRetry) + "</button></div>"); }
+  function playBtn(txt) { return '<button class="la-ib" data-a="play" data-t="' + esc(txt) + '" aria-label="' + esc(T().say) + '">' + ic("vol", 18) + "</button>"; }
+  function openTopic(n) {
+    var it = curr()[st.tab][n]; if (!it) return;
+    st.item = it; st.data = null; view = "topic"; var my = ++st.seq; drawWait();
+    st.retry = function () { openTopic(n); };
+    getStudy("content", it.id, 1).then(function (r) { if (my !== st.seq || view !== "topic") return; st.data = r; drawTopic(); })
+      .catch(function (e) { if (my !== st.seq || view !== "topic") return; drawStudyErr(e); });
+  }
+  function drawTopic() {
+    view = "topic"; var t = T(), it = st.item, d = st.data, h = head(topicLabel(it), topicSub(it) || level, true) + '<div class="la-body">';
+    if (d.type === "vocab") {
+      d.items.forEach(function (x) {
+        h += '<div class="la-vi"><div class="la-vtop"><b class="la-jp">' + esc(x.jp) + '</b><span class="la-rd">' + esc(x.reading) + "</span>" + playBtn(x.jp) + '</div><div class="la-mn">' + esc(x.meaning) + "</div>" +
+          (x.example ? '<div class="la-ex"><div class="la-vtop"><span class="la-jp" style="font-size:15px">' + esc(x.example) + "</span>" + playBtn(x.example) + '</div><div class="la-rd">' + esc(x.example_reading) + '</div><div class="la-mn">' + esc(x.example_meaning) + "</div></div>" : "") + "</div>";
+      });
+    } else {
+      h += '<div class="la-vi"><div class="la-gh">' + esc(d.pattern || it.p) + '</div><div class="la-mn" style="font-size:14.5px">' + esc(d.meaning) + "</div></div>";
+      if (d.formation) h += '<div class="la-vi"><div class="la-h" style="margin:0 0 4px">' + esc(t.formT) + '</div><div class="la-mn">' + esc(d.formation) + "</div></div>";
+      h += '<div class="la-vi"><div class="la-mn">' + esc(d.explain) + '</div></div><div class="la-h">' + esc(t.exampleT) + "</div>";
+      d.examples.forEach(function (x) { h += '<div class="la-vi"><div class="la-vtop"><span class="la-jp" style="font-size:17px">' + esc(x.jp) + "</span>" + playBtn(x.jp) + '</div><div class="la-rd">' + esc(x.reading) + '</div><div class="la-mn">' + esc(x.meaning) + "</div></div>"; });
+      if (d.notes) h += '<div class="la-vi"><div class="la-h" style="margin:0 0 4px">' + esc(t.notesT) + '</div><div class="la-mn">' + esc(d.notes) + "</div></div>";
+    }
+    body(h + '<button class="la-big" data-a="quiz">' + esc(t.quizBtn) + "</button></div>");
+  }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+  function startQuiz() {
+    var it = st.item; if (!it) return; var p = prog["s|" + it.id] || { best: 0, tries: 0 }, set = (p.tries % 3) + 1;
+    view = "quiz"; var my = ++st.seq; drawWait(); st.retry = startQuiz;
+    getStudy("quiz", it.id, set).then(function (r) {
+      if (my !== st.seq || view !== "quiz") return;
+      st.qs = r.questions.map(function (q) { var idx = shuffle([0, 1, 2, 3]); return { q: q.q, why: q.why, options: idx.map(function (i) { return q.options[i]; }), answer: idx.indexOf(q.answer) }; });
+      st.qi = 0; st.score = 0; st.picked = -1; drawQuiz();
+    }).catch(function (e) { if (my !== st.seq || view !== "quiz") return; drawStudyErr(e); });
+  }
+  function drawQuiz() {
+    var t = T(), q = st.qs[st.qi], n = st.qs.length, ans = st.picked >= 0;
+    var h = head(topicLabel(st.item), t.qOf.replace("{n}", st.qi + 1).replace("{m}", n), true) + '<div class="la-body"><div class="la-q">' + esc(q.q) + "</div>";
+    q.options.forEach(function (o, i) { h += '<button class="la-opt' + (ans ? (i === q.answer ? " ok" : i === st.picked ? " no" : "") : "") + '" data-a="opt" data-i="' + i + '"' + (ans ? " disabled" : "") + ">" + esc(o) + "</button>"; });
+    if (ans) h += '<div class="la-vi"><b>' + esc(st.picked === q.answer ? t.okT : t.noT) + "</b>" + (q.why ? '<div class="la-mn">' + esc(q.why) + "</div>" : "") + '</div><button class="la-big" data-a="qnext">' + esc(st.qi + 1 < n ? t.next : t.seeScore) + "</button>";
+    body(h + "</div>");
+  }
+  function pickOpt(i) { if (st.picked >= 0 || !st.qs) return; st.picked = i; if (i === st.qs[st.qi].answer) st.score++; drawQuiz(); }
+  function nextQ() { if (st.qi + 1 < st.qs.length) { st.qi++; st.picked = -1; drawQuiz(); } else finishQuiz(); }
+  function finishQuiz() {
+    var t = T(), n = st.qs.length, pct = Math.round(st.score / n * 100), k = "s|" + st.item.id, p = prog[k] || { best: 0, tries: 0 };
+    p.best = Math.max(p.best, pct); p.tries++; p.at = Date.now(); prog[k] = p; saveProg(); view = "result";
+    body(head(topicLabel(st.item), t.resultT, true) + '<div class="la-body"><div class="la-sum"><div class="la-ring" style="--p:' + pct + '"><i>' + pct + '</i></div><div style="text-align:center;font-weight:700">' + st.score + " / " + n + '</div></div><button class="la-big" data-a="quiz">' + esc(t.quizAgain) + '</button><button class="la-big g" data-a="tolist">' + esc(t.toList) + "</button></div>");
+  }
+  function goBack() {
+    stopSay(); st.seq++;
+    if (view === "quiz" || view === "result") { if (st.data) drawTopic(); else drawStudy(); }
+    else if (view === "topic") drawStudy();
+    else if (view === "study") { view = "home"; drawHome(); }
+    else go(true);
+  }
   function mount() {
     css(); if (el) return;
     el = document.createElement("div"); el.className = "la-root"; el.innerHTML = '<div class="la-app"></div>';
     el.addEventListener("click", onClick);
     el.addEventListener("change", function (e) { if (e.target.id === "laVoice" && VOICES.indexOf(e.target.value) >= 0) { voice = e.target.value; stopSay(); try { localStorage.setItem("kakeibo-lea-voice", voice); } catch (x) {} } });
-    el.addEventListener("keydown", function (e) { if (e.target.id === "laTxt" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } else if (e.key === "Escape") { if (view === "chat") go(true); else close(); } });
+    el.addEventListener("keydown", function (e) { if (e.target.id === "laTxt" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } else if (e.key === "Escape") { if (view !== "home") goBack(); else close(); } });
     el.addEventListener("input", function (e) { if (e.target.id === "laTxt") { e.target.style.height = "auto"; e.target.style.height = Math.min(110, e.target.scrollHeight) + "px"; } });
     document.body.appendChild(el); view = "home"; drawHome();
   }
@@ -188,6 +278,6 @@
       window.KakeiboAuth.require(function () { mount(); });
     },
     isOpen: function () { return !!el; },
-    back: function () { if (!el) return false; if (view === "chat") go(true); else close(); return true; }
+    back: function () { if (!el) return false; if (view !== "home") goBack(); else close(); return true; }
   };
 })();
