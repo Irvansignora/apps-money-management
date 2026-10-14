@@ -60,6 +60,11 @@
         });
       });
   }
+  function blob(path, body) { // untuk respons biner (suara LEA); gagal = lempar error supaya pemanggil bisa fallback
+    var s = read();
+    return fetch(API + path, { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + (s.tok || "") }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw { code: "tts", status: r.status }; return r.blob(); });
+  }
   function dropSession() { write({}); closeSheets(); try { if (window.KakeiboChat && window.KakeiboChat.isOpen()) window.KakeiboChat.close(); } catch (e) {} showGate(); cfg.onChange(); }
   function refresh() { // segarkan paket dari server; gagal jaringan = diam saja (app tetap bisa dipakai offline)
     if (!read().tok) return Promise.resolve(null);
@@ -231,7 +236,7 @@
       if (!read().tok || !user()) showGate(); else { refresh(); }
     },
     user: user, plan: plan, isPlus: isPlus, isPaid: function () { return plan() !== "free"; }, planName: planName,
-    api: api, refresh: refresh, openPlan: openPlan, plansHtml: plansHtml, hydratePlans: hydratePlans, logout: logout, accountCard: accountCard,
+    api: api, blob: blob, refresh: refresh, openPlan: openPlan, plansHtml: plansHtml, hydratePlans: hydratePlans, logout: logout, accountCard: accountCard,
     require: function (cb) { if (isPlus()) return cb && cb(); lock(); }, // gerbang fitur Premium+
     back: function () { if (gate) return true; var s = document.querySelector(".kk-sheet"); if (s) { s.remove(); return true; } return false; },
     onLogout: function () { if (!read().tok) { closeSheets(); showGate(); cfg.onChange(); } } // dipanggil modul Chat saat sesi berakhir
