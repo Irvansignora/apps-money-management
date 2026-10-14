@@ -2539,12 +2539,13 @@ function openLeaAI() {
   const go = () => window.KakeiboLeaAI.open({ lang, esc });
   const need = [];
   if (!window.BELAJAR_DATA) need.push("modules/belajar-data.js");
+  if (!window.LEA_STUDY) need.push("modules/lea-study-data.js");
   if (!window.KakeiboLeaAI) need.push("modules/lea-ai.js");
   if (!need.length) return go();
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=1";
+    sc.src = src + "?v=3";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul LEA Sensei gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
