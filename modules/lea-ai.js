@@ -6,14 +6,14 @@
   var host = { lang: "id" }, el = null, view = "home", unit = null, msgs = [], sending = false, rec = null, done = null, hint = "";
   var KEY = "kakeibo-lea-progress", SKEY = "kakeibo-lea-sound";
   var LI = { id: 0, en: 1, vi: 2 }, AI_LANGS = ["id", "en", "my", "bn", "vi", "th", "zh", "ko"];
-  var prog = {}, sound = true;
-  try { prog = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; sound = localStorage.getItem(SKEY) !== "0"; } catch (e) {}
+  var prog = {}, sound = true, voice = "coral", level = "N5", VOICES = ["alloy", "ash", "ballad", "coral", "echo", "fable", "nova", "onyx", "sage", "shimmer"], LEVELS = ["N5", "N4", "N3", "N2", "N1"];
+  try { prog = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; sound = localStorage.getItem(SKEY) !== "0"; var sv = localStorage.getItem("kakeibo-lea-voice"), sl = localStorage.getItem("kakeibo-lea-level"); if (VOICES.indexOf(sv) >= 0) voice = sv; if (LEVELS.indexOf(sl) >= 0) level = sl; } catch (e) {}
   var saveProg = function () { try { localStorage.setItem(KEY, JSON.stringify(prog)); } catch (e) {} };
 
   var UI = {
-    id: { title: "LEA Sensei", sub: "Belajar bahasa Jepang bareng AI", free: "Kaiwa bebas", freeSub: "Ngobrol santai, LEA mengoreksi kalimatmu", lessons: "Pelajaran terstruktur", lessonsSub: "Latihan dialog per tema, ada nilai di akhir", best: "Nilai terbaik", turns: "giliran", ph: "Tulis dalam bahasa Jepang…", say: "Ucapkan", send: "Kirim", mic: "Bicara", better: "Lebih natural", why: "Kenapa", tryHint: "Coba bilang", meaning: "Arti", sound: "Suara", score: "Nilai", good: "Sudah bagus", improve: "Perlu dilatih", again: "Ulangi", finish: "Selesai", back: "Kembali", thinking: "LEA sedang menulis…", left: "Sisa hari ini", errNet: "Tidak bisa terhubung. Coba lagi.", errAi: "AI sedang sibuk. Coba lagi sebentar.", errLimit: "Batas pesan LEA Sensei hari ini sudah habis. Besok bisa lanjut.", errPlus: "Fitur ini khusus Premium+.", retry: "Coba lagi", noMic: "HP ini belum mendukung input suara.", micDenied: "Izin mikrofon ditolak.", start: "Mulai", plusOnly: "Premium+" },
-    en: { title: "LEA Sensei", sub: "Learn Japanese with AI", free: "Free conversation", freeSub: "Chat casually, LEA corrects your sentences", lessons: "Structured lessons", lessonsSub: "Dialogue practice by topic, with a score at the end", best: "Best score", turns: "turns", ph: "Write in Japanese…", say: "Play", send: "Send", mic: "Speak", better: "More natural", why: "Why", tryHint: "Try saying", meaning: "Meaning", sound: "Sound", score: "Score", good: "Done well", improve: "To practise", again: "Again", finish: "Finish", back: "Back", thinking: "LEA is writing…", left: "Left today", errNet: "Cannot connect. Try again.", errAi: "The AI is busy. Try again shortly.", errLimit: "You reached today's LEA Sensei message limit. Continue tomorrow.", errPlus: "This feature is for Premium+ only.", retry: "Retry", noMic: "This phone does not support voice input.", micDenied: "Microphone permission denied.", start: "Start", plusOnly: "Premium+" },
-    my: { title: "LEA Sensei", sub: "AI နှင့်အတူ ဂျပန်စာသင်ပါ", free: "လွတ်လပ်စွာ စကားပြော", freeSub: "ပေါ့ပေါ့ပါးပါး ပြောပါ၊ LEA က သင့်ဝါကျများကို ပြင်ပေးမည်", lessons: "အဆင့်လိုက် သင်ခန်းစာ", lessonsSub: "အကြောင်းအရာအလိုက် စကားပြောလေ့ကျင့်ပြီး အဆုံးတွင် အမှတ်ပေးမည်", best: "အမြင့်ဆုံးအမှတ်", turns: "ကြိမ်", ph: "ဂျပန်လိုရေးပါ…", say: "နားထောင်ရန်", send: "ပို့ရန်", mic: "ပြောရန်", better: "ပိုသဘာဝကျသော", why: "အကြောင်းရင်း", tryHint: "ဒီလိုပြောကြည့်ပါ", meaning: "အဓိပ္ပာယ်", sound: "အသံ", score: "အမှတ်", good: "ကောင်းသည့်အချက်", improve: "ထပ်လေ့ကျင့်ရန်", again: "ထပ်လုပ်ရန်", finish: "ပြီးပြီ", back: "နောက်သို့", thinking: "LEA ရေးနေသည်…", left: "ယနေ့ ကျန်ရှိ", errNet: "ချိတ်ဆက်၍မရပါ။ ထပ်ကြိုးစားပါ။", errAi: "AI အလုပ်များနေသည်။ ခဏနေပြီး ထပ်ကြိုးစားပါ။", errLimit: "ယနေ့ LEA Sensei မက်ဆေ့ချ် ကန့်သတ်ချက် ပြည့်သွားပြီ။ မနက်ဖြန် ဆက်လုပ်ပါ။", errPlus: "ဤလုပ်ဆောင်ချက်သည် Premium+ အတွက်သာ ဖြစ်သည်။", retry: "ထပ်ကြိုးစားရန်", noMic: "ဤဖုန်းတွင် အသံထည့်သွင်းမှု မပံ့ပိုးပါ။", micDenied: "မိုက်ခရိုဖုန်း ခွင့်ပြုချက် ငြင်းပယ်ခံရသည်။", start: "စတင်ရန်", plusOnly: "Premium+" }
+    id: { lvl: "Level belajar (JLPT)", lvDesc: ["Pemula", "Dasar", "Menengah", "Menengah atas", "Mahir"], voiceT: "Suara LEA", preview: "Dengar contoh", title: "LEA Sensei", sub: "Belajar bahasa Jepang bareng AI", free: "Kaiwa bebas", freeSub: "Ngobrol santai, LEA mengoreksi kalimatmu", lessons: "Pelajaran terstruktur", lessonsSub: "Latihan dialog per tema, ada nilai di akhir", best: "Nilai terbaik", turns: "giliran", ph: "Tulis dalam bahasa Jepang…", say: "Ucapkan", send: "Kirim", mic: "Bicara", better: "Lebih natural", why: "Kenapa", tryHint: "Coba bilang", meaning: "Arti", sound: "Suara", score: "Nilai", good: "Sudah bagus", improve: "Perlu dilatih", again: "Ulangi", finish: "Selesai", back: "Kembali", thinking: "LEA sedang menulis…", left: "Sisa hari ini", errNet: "Tidak bisa terhubung. Coba lagi.", errAi: "AI sedang sibuk. Coba lagi sebentar.", errLimit: "Batas pesan LEA Sensei hari ini sudah habis. Besok bisa lanjut.", errPlus: "Fitur ini khusus Premium+.", retry: "Coba lagi", noMic: "HP ini belum mendukung input suara.", micDenied: "Izin mikrofon ditolak.", start: "Mulai", plusOnly: "Premium+" },
+    en: { lvl: "Study level (JLPT)", lvDesc: ["Beginner", "Elementary", "Intermediate", "Upper-intermediate", "Advanced"], voiceT: "LEA's voice", preview: "Play sample", title: "LEA Sensei", sub: "Learn Japanese with AI", free: "Free conversation", freeSub: "Chat casually, LEA corrects your sentences", lessons: "Structured lessons", lessonsSub: "Dialogue practice by topic, with a score at the end", best: "Best score", turns: "turns", ph: "Write in Japanese…", say: "Play", send: "Send", mic: "Speak", better: "More natural", why: "Why", tryHint: "Try saying", meaning: "Meaning", sound: "Sound", score: "Score", good: "Done well", improve: "To practise", again: "Again", finish: "Finish", back: "Back", thinking: "LEA is writing…", left: "Left today", errNet: "Cannot connect. Try again.", errAi: "The AI is busy. Try again shortly.", errLimit: "You reached today's LEA Sensei message limit. Continue tomorrow.", errPlus: "This feature is for Premium+ only.", retry: "Retry", noMic: "This phone does not support voice input.", micDenied: "Microphone permission denied.", start: "Start", plusOnly: "Premium+" },
+    my: { lvl: "သင်ယူမည့် အဆင့် (JLPT)", lvDesc: ["အစပြု", "အခြေခံ", "အလယ်အလတ်", "အလယ်အလတ်အထက်", "ကျွမ်းကျင်"], voiceT: "LEA ၏ အသံ", preview: "နမူနာ နားထောင်ရန်", title: "LEA Sensei", sub: "AI နှင့်အတူ ဂျပန်စာသင်ပါ", free: "လွတ်လပ်စွာ စကားပြော", freeSub: "ပေါ့ပေါ့ပါးပါး ပြောပါ၊ LEA က သင့်ဝါကျများကို ပြင်ပေးမည်", lessons: "အဆင့်လိုက် သင်ခန်းစာ", lessonsSub: "အကြောင်းအရာအလိုက် စကားပြောလေ့ကျင့်ပြီး အဆုံးတွင် အမှတ်ပေးမည်", best: "အမြင့်ဆုံးအမှတ်", turns: "ကြိမ်", ph: "ဂျပန်လိုရေးပါ…", say: "နားထောင်ရန်", send: "ပို့ရန်", mic: "ပြောရန်", better: "ပိုသဘာဝကျသော", why: "အကြောင်းရင်း", tryHint: "ဒီလိုပြောကြည့်ပါ", meaning: "အဓိပ္ပာယ်", sound: "အသံ", score: "အမှတ်", good: "ကောင်းသည့်အချက်", improve: "ထပ်လေ့ကျင့်ရန်", again: "ထပ်လုပ်ရန်", finish: "ပြီးပြီ", back: "နောက်သို့", thinking: "LEA ရေးနေသည်…", left: "ယနေ့ ကျန်ရှိ", errNet: "ချိတ်ဆက်၍မရပါ။ ထပ်ကြိုးစားပါ။", errAi: "AI အလုပ်များနေသည်။ ခဏနေပြီး ထပ်ကြိုးစားပါ။", errLimit: "ယနေ့ LEA Sensei မက်ဆေ့ချ် ကန့်သတ်ချက် ပြည့်သွားပြီ။ မနက်ဖြန် ဆက်လုပ်ပါ။", errPlus: "ဤလုပ်ဆောင်ချက်သည် Premium+ အတွက်သာ ဖြစ်သည်။", retry: "ထပ်ကြိုးစားရန်", noMic: "ဤဖုန်းတွင် အသံထည့်သွင်းမှု မပံ့ပိုးပါ။", micDenied: "မိုက်ခရိုဖုန်း ခွင့်ပြုချက် ငြင်းပယ်ခံရသည်။", start: "စတင်ရန်", plusOnly: "Premium+" }
   };
   var T = function () { return Object.assign({}, UI.en, UI[host.lang] || {}); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -31,6 +31,9 @@
       ".la-head{display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 8px 6px;background:rgba(251,247,234,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line,rgba(122,110,80,.24))}",
       ".la-ib{width:42px;height:42px;border:0;border-radius:50%;background:none;color:inherit;display:grid;place-items:center;cursor:pointer;flex:0 0 42px}.la-ib:active{background:rgba(23,35,61,.08)}.la-ib.on{color:var(--hanko,#ac3527)}",
       ".la-ttl{flex:1;min-width:0}.la-ttl b{display:block;font:800 17px 'Shippori Mincho',serif}.la-ttl span{display:block;font-size:12px;color:var(--mist,#6d6759);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+      ".la-set{background:var(--card,#fbf7ea);border:1px solid var(--line,rgba(122,110,80,.24));border-radius:18px;padding:12px 13px;margin-bottom:12px}.la-set .la-h{margin:0 0 8px}.la-set .la-h~.la-h{margin-top:12px}",
+      ".la-chips{display:flex;gap:6px}.la-lv{flex:1;border:1px solid var(--line,rgba(122,110,80,.3));background:transparent;color:inherit;border-radius:10px;padding:9px 0;font:700 13px Inter,sans-serif;cursor:pointer}.la-lv.on{background:var(--ai,#17233d);color:#fff;border-color:var(--ai,#17233d)}.la-lvd{font-size:12px;color:var(--mist,#6d6759);margin-top:6px}",
+      ".la-vrow{display:flex;gap:8px}.la-vrow select{flex:1;min-width:0;border:1px solid var(--line,rgba(122,110,80,.3));background:transparent;color:inherit;border-radius:10px;padding:9px 10px;font:600 13.5px Inter,sans-serif}.la-vrow button{border:0;border-radius:10px;padding:9px 13px;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;font:700 12.5px Inter,sans-serif;cursor:pointer}",
       ".la-chip{font:700 10.5px Inter,sans-serif;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;border-radius:99px;padding:3px 9px}",
       ".la-body{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 24px;-webkit-overflow-scrolling:touch}",
       ".la-card{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--card,#fbf7ea);border:1px solid var(--line,rgba(122,110,80,.24));border-radius:18px;padding:13px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer;min-height:68px}.la-card:active{transform:scale(.985)}",
@@ -65,11 +68,12 @@
   function sayBrowser(txt) { // cadangan: suara bawaan HP
     try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = 0.9; var v = speechSynthesis.getVoices().filter(function (x) { return /^ja/i.test(x.lang); })[0]; if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {}
   }
-  function ttsUrl(txt) { // suara GPT lewat worker; hasilnya disimpan sementara supaya putar ulang tidak memanggil server lagi
-    if (ttsCache[txt]) return ttsCache[txt];
-    var pr = window.KakeiboAuth.blob("/api/ai/tts", { text: txt }).then(function (b) { return URL.createObjectURL(b); });
-    ttsCache[txt] = pr; ttsOrder.push(txt);
-    pr.catch(function () { delete ttsCache[txt]; });
+  function ttsUrl(txt) { // suara GPT lewat worker; hasilnya disimpan sementara (per suara) supaya putar ulang tidak memanggil server lagi
+    var ck = voice + "|" + txt;
+    if (ttsCache[ck]) return ttsCache[ck];
+    var pr = window.KakeiboAuth.blob("/api/ai/tts", { text: txt, voice: voice }).then(function (b) { return URL.createObjectURL(b); });
+    ttsCache[ck] = pr; ttsOrder.push(ck);
+    pr.catch(function () { delete ttsCache[ck]; });
     if (ttsOrder.length > 20) { var old = ttsOrder.shift(), op = ttsCache[old]; delete ttsCache[old]; if (op) op.then(function (u) { URL.revokeObjectURL(u); }).catch(function () {}); }
     return pr;
   }
@@ -102,7 +106,8 @@
       (view === "chat" ? '<button class="la-ib' + (sound ? " on" : "") + '" data-a="sound" aria-label="' + esc(T().sound) + '" aria-pressed="' + sound + '">' + ic(sound ? "vol" : "mute") + "</button>" : '<span class="la-chip">' + esc(T().plusOnly) + "</span>") + "</div>";
   }
   function drawHome() {
-    var t = T(), h = head(t.title, t.sub, false) + '<div class="la-body"><button class="la-card hero" data-a="free"><div class="la-ico">💬</div><div class="la-grow"><b>' + esc(t.free) + "</b><span>" + esc(t.freeSub) + '</span></div></button><div class="la-h">' + esc(t.lessons) + '</div><div class="la-note" style="font-size:12.5px;color:var(--mist,#6d6759);margin:-2px 2px 10px">' + esc(t.lessonsSub) + "</div>";
+    var t = T(), li = LEVELS.indexOf(level), sets = '<div class="la-set"><div class="la-h">' + esc(t.lvl) + '</div><div class="la-chips">' + LEVELS.map(function (l) { return '<button class="la-lv' + (l === level ? " on" : "") + '" data-a="lvl" data-l="' + l + '">' + l + "</button>"; }).join("") + '</div><div class="la-lvd">' + esc((t.lvDesc || [])[li] || "") + '</div><div class="la-h">' + esc(t.voiceT) + '</div><div class="la-vrow"><select id="laVoice" aria-label="' + esc(t.voiceT) + '">' + VOICES.map(function (v) { return '<option value="' + v + '"' + (v === voice ? " selected" : "") + ">" + v.charAt(0).toUpperCase() + v.slice(1) + "</option>"; }).join("") + '</select><button data-a="preview">▶ ' + esc(t.preview) + "</button></div></div>",
+      h = head(t.title, t.sub, false) + '<div class="la-body">' + sets + '<button class="la-card hero" data-a="free"><div class="la-ico">💬</div><div class="la-grow"><b>' + esc(t.free) + "</b><span>" + esc(t.freeSub) + '</span></div></button><div class="la-h">' + esc(t.lessons) + '</div><div class="la-note" style="font-size:12.5px;color:var(--mist,#6d6759);margin:-2px 2px 10px">' + esc(t.lessonsSub) + "</div>";
     units().forEach(function (u, n) { var p = prog[u.k]; h += '<button class="la-card" data-a="unit" data-n="' + n + '"><div class="la-ico">' + u.ico + '</div><div class="la-grow"><b>' + esc(uTitle(u)) + "</b>" + (p ? "<span>" + esc(t.best) + ': <b class="la-sc" style="display:inline">' + p.best + "</b> · " + p.tries + "×</span>" : "<span>" + esc(t.start) + " · 6 " + esc(t.turns) + "</span>") + "</div></button>"; });
     el.querySelector(".la-app").innerHTML = h + "</div>";
   }
@@ -128,7 +133,7 @@
   function ask(retry) { // minta giliran LEA berikutnya
     sending = true; hint = ""; drawList();
     var payload = msgs.map(function (m) { return { role: m.role, text: m.text }; });
-    window.KakeiboAuth.api("/api/ai/lea", { lang: aiLang(), unit: unit ? { title: unit.n[1], phrases: unit.p.map(function (p) { return p[0]; }) } : null, messages: payload }).then(function (r) {
+    window.KakeiboAuth.api("/api/ai/lea", { lang: aiLang(), level: level, unit: unit ? { title: unit.n[1], phrases: unit.p.map(function (p) { return p[0]; }) } : null, messages: payload }).then(function (r) {
       sending = false;
       var last = msgs[msgs.length - 1]; if (last && last.role === "user" && r.correction) last.cor = r.correction;
       msgs.push({ role: "assistant", text: r.reply, reading: r.reading, meaning: r.meaning }); hint = r.hint || "";
@@ -154,6 +159,8 @@
     var b = e.target.closest("[data-a]"); if (!b) return; var a = b.dataset.a;
     if (a === "close") close();
     else if (a === "back") go(true);
+    else if (a === "lvl") { if (LEVELS.indexOf(b.dataset.l) >= 0) { level = b.dataset.l; try { localStorage.setItem("kakeibo-lea-level", level); } catch (x) {} drawHome(); } }
+    else if (a === "preview") { prime(); say("こんにちは。一緒に日本語を勉強しましょう。"); }
     else if (a === "free") start(null);
     else if (a === "unit") start(units()[+b.dataset.n]);
     else if (a === "send") send();
@@ -169,6 +176,7 @@
     css(); if (el) return;
     el = document.createElement("div"); el.className = "la-root"; el.innerHTML = '<div class="la-app"></div>';
     el.addEventListener("click", onClick);
+    el.addEventListener("change", function (e) { if (e.target.id === "laVoice" && VOICES.indexOf(e.target.value) >= 0) { voice = e.target.value; stopSay(); try { localStorage.setItem("kakeibo-lea-voice", voice); } catch (x) {} } });
     el.addEventListener("keydown", function (e) { if (e.target.id === "laTxt" && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } else if (e.key === "Escape") { if (view === "chat") go(true); else close(); } });
     el.addEventListener("input", function (e) { if (e.target.id === "laTxt") { e.target.style.height = "auto"; e.target.style.height = Math.min(110, e.target.scrollHeight) + "px"; } });
     document.body.appendChild(el); view = "home"; drawHome();
