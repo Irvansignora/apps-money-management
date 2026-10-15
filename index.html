@@ -846,7 +846,7 @@
     <div id="leaTranscript" class="lea-transcript">Tap orb terus ngomong, misal "catat pengeluaran 2000 yen makan siang"</div>
     <div id="leaLangRow" class="lea-lang-row"></div>
     <div id="leaResultBox"></div>
-    <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">LEA Sensei · 日本語 AI <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Premium+</span></button>
+    <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">Belajar JLPT · LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Gratis · kaiwa Premium+</span></button>
   </div>
 </div>
 
@@ -2535,7 +2535,7 @@ function openChat(opts) {
 }
 // LEA Sensei (tutor AI, khusus Premium+): modul baru dimuat hanya kalau paketnya memenuhi
 function openLeaAI() {
-  if (window.KakeiboAuth && !window.KakeiboAuth.isPlus()) return window.KakeiboAuth.require();
+  // Belajar JLPT gratis; gerbang Premium+ hanya untuk kaiwa AI (dicek di dalam lea-ai.js)
   const go = () => window.KakeiboLeaAI.open({ lang, esc });
   const need = [];
   if (!window.BELAJAR_DATA) need.push("modules/belajar-data.js");
@@ -2545,7 +2545,7 @@ function openLeaAI() {
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=3";
+    sc.src = src + "?v=4";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul LEA Sensei gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
