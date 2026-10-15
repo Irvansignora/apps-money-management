@@ -45,11 +45,24 @@
     document.head.appendChild(s);
   }
 
+  function kanaPct() { // progres kana (hafal / 204) dibaca langsung dari penyimpanan modul Kana
+    try { var s = JSON.parse(localStorage.getItem("kakeibo-kana") || "{}"), k = s.k || {}, m = 0; for (var id in k) if (k[id] && k[id].seen && k[id].b >= 3) m++; return Math.min(100, Math.round(m / 204 * 100)); } catch (e) { return 0; }
+  }
+  function openKana() {
+    var go = function () { window.KakeiboKana.open({ lang: host.lang, esc: host.esc }); };
+    if (window.KakeiboKana) return go();
+    var sc = document.createElement("script"); sc.src = "modules/kana.js?v=1"; sc.onload = go;
+    sc.onerror = function () { alert("Modul kana gagal dimuat. Cek koneksi internet."); };
+    document.head.appendChild(sc);
+  }
+
   function render() {
     var t = T(), h = "", D = units(), esc = host.esc, i = idx();
     if (view === "list") {
       var aiT = { id: ["Kaiwa dengan AI dan pelajaran terstruktur", "Latihan dialog, dikoreksi LEA"], en: ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"], my: ["AI နှင့် စကားပြောလေ့ကျင့်ခြင်းနှင့် အဆင့်လိုက်သင်ခန်းစာ", "စကားပြောလေ့ကျင့်ရန်၊ LEA ပြင်ပေးမည်"] }[host.lang] || ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"];
-      h = '<button type="button" class="bl-card" data-lea-ai style="border:1px dashed var(--hanko)"><div class="bl-ico" style="background:var(--hanko)">🎓</div><div class="bl-grow"><b>LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">Premium+</span></b><div class="bl-ro">' + aiT[0] + '</div></div></button>' + D.map(function (u, n) {
+      var kanaT = { id: ["Hiragana dan katakana dari nol, dengan latihan dan review", "Gratis"], en: ["Hiragana and katakana from scratch, with practice and review", "Free"], my: ["ဟီရဂန နှင့် ကတာကန စတင်သင်ယူရန်၊ လေ့ကျင့်ခန်းနှင့်အတူ", "အခမဲ့"] }[host.lang] || ["Hiragana and katakana from scratch, with practice and review", "Free"];
+      h = '<button type="button" class="bl-card" data-a="kana"><div class="bl-ico" style="background:var(--hanko);color:#fff;font-family:\'Shippori Mincho\',serif">あ</div><div class="bl-grow"><b>Kana ひらがな・カタカナ <span style="font-size:10.5px;background:var(--ai);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">' + kanaT[1] + '</span></b><div class="bl-ro">' + kanaT[0] + '</div><div class="bl-bar"><i style="width:' + kanaPct() + '%"></i></div></div></button>' +
+        '<button type="button" class="bl-card" data-lea-ai style="border:1px dashed var(--hanko)"><div class="bl-ico" style="background:var(--hanko)">🎓</div><div class="bl-grow"><b>LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">Premium+</span></b><div class="bl-ro">' + aiT[0] + '</div></div></button>' + D.map(function (u, n) {
         var d = u.p.filter(function (_, k) { return st.done[pid(u, k)]; }).length;
         return '<button type="button" class="bl-card" data-a="unit" data-n="' + n + '"><div class="bl-ico">' + u.ico + '</div><div class="bl-grow"><b>' + esc(u.n[i] || u.n[1]) +
           '</b><div class="bl-ro">' + d + " / " + u.p.length + " " + t.ph + '</div><div class="bl-bar"><i style="width:' + Math.round(d / u.p.length * 100) + '%"></i></div></div></button>';
@@ -95,7 +108,8 @@
     if (e.target === el) return close();
     var b = e.target.closest("[data-a]"); if (!b) return;
     var a = b.dataset.a, k = +b.dataset.k, u = units()[ui];
-    if (a === "unit") { ui = +b.dataset.n; view = "unit"; render(); }
+    if (a === "kana") openKana();
+    else if (a === "unit") { ui = +b.dataset.n; view = "unit"; render(); }
     else if (a === "back") { view = "list"; render(); }
     else if (a === "say") say(u.p[k][0]);
     else if (a === "qsay") say(qz.q[qz.n].p[0]);
