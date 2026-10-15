@@ -1,4 +1,4 @@
-/* Kakeibo · LEA Sensei: tutor bahasa Jepang berbasis AI (khusus Premium+).
+/* Kakeibo · LEA Sensei: tutor bahasa Jepang berbasis AI (belajar JLPT gratis dan offline; kaiwa AI khusus Premium+).
  * Dua mode: kaiwa bebas dan pelajaran terstruktur (unit dari modul Belajar). Tiap sesi 6 giliran lalu
  * AI memberi nilai dan saran. Dipanggil host: KakeiboLeaAI.open({ lang, esc }). Butuh KakeiboAuth. */
 (function () {
@@ -155,6 +155,7 @@
     ta.value = ""; ta.style.height = ""; stopSay(); prime();
     msgs.push({ role: "user", text: v }); ask();
   }
+  function plusOk() { var A = window.KakeiboAuth; if (A && A.isPlus && A.isPlus()) return true; if (A && A.require) A.require(); return false; }
   function go(home) { if (rec) { try { rec.stop(); } catch (e) {} } stopSay(); view = home ? "home" : view; if (home) drawHome(); }
   function close() { go(false); if (el) { el.remove(); el = null; } }
 
@@ -164,12 +165,12 @@
     if (a === "close") close();
     else if (a === "back") goBack();
     else if (a === "lvl") { if (LEVELS.indexOf(b.dataset.l) >= 0) { level = b.dataset.l; try { localStorage.setItem("kakeibo-lea-level", level); } catch (x) {} drawHome(); } }
-    else if (a === "preview") { prime(); say("こんにちは。一緒に日本語を勉強しましょう。"); }
-    else if (a === "free") start(null);
-    else if (a === "unit") start(units()[+b.dataset.n]);
+    else if (a === "preview") { if (plusOk()) { prime(); say("こんにちは。一緒に日本語を勉強しましょう。"); } }
+    else if (a === "free") { if (plusOk()) start(null); }
+    else if (a === "unit") { if (plusOk()) start(units()[+b.dataset.n]); }
     else if (a === "send") send();
     else if (a === "mic") listen();
-    else if (a === "play") { prime(); say(b.dataset.t); }
+    else if (a === "play") { if (view === "study" || view === "topic" || view === "quiz" || view === "result") { stopSay(); sayBrowser(b.dataset.t); } else { prime(); say(b.dataset.t); } } // kartu belajar: suara bawaan browser (gratis), bukan TTS API
     else if (a === "study") drawStudy();
     else if (a === "slvl") { if (LEVELS.indexOf(b.dataset.l) >= 0) { level = b.dataset.l; try { localStorage.setItem("kakeibo-lea-level", level); } catch (x) {} drawStudy(); } }
     else if (a === "stab") { st.tab = ["vocab", "grammar", "kanji"].indexOf(b.dataset.t) >= 0 ? b.dataset.t : "vocab"; drawStudy(); }
@@ -211,18 +212,107 @@
   function rj(r, reading, sent) { return r || toRomaji(reading, sent); }
   // ---- Belajar JLPT: kotoba, bunpou, kanji, latihan. Daftar topik dari modul lea-study-data.js, isi dibuat AI oleh worker lalu disimpan ----
   var st = { tab: "vocab", item: null, data: null, qs: null, qi: 0, score: 0, picked: -1, seq: 0, retry: null }, sCache = {};
-  function curr() { return (window.LEA_STUDY && window.LEA_STUDY[level]) || { vocab: [], grammar: [] }; }
+  function curr() {
+    var b = (window.LEA_STUDY && window.LEA_STUDY[level]) || { vocab: [], grammar: [] };
+    if (!localReady(level)) return b;
+    var l = localTopics(level); // kotoba & kanji dari data lokal; bunpou tetap dari daftar LEA_STUDY
+    return { vocab: l.vocab, grammar: b.grammar, kanji: l.kanji };
+  }
   function tl(o) { return (o && (o[host.lang] || o.en)) || ""; }
   function topicLabel(it) { return it.k ? it.k : it.p ? it.p : tl(it.t); }
-  function topicSub(it) { return it.k ? it.k.length + " kanji" : it.p ? tl(it.h) : ""; }
+  function topicSub(it) { return it.k ? it.k.length + " kanji" : it.p ? tl(it.h) : (it.w || ""); }
   function body(h) { var a = el && el.querySelector(".la-app"); if (a) a.innerHTML = h; }
-  function getStudy(kind, id, set) {
-    var ck = [kind, id, aiLang(), kind === "quiz" ? set : 0].join("|");
-    if (sCache[ck]) return Promise.resolve(sCache[ck]);
-    return window.KakeiboAuth.api("/api/ai/study", { kind: kind, topic: id, set: set, lang: aiLang() }).then(function (r) { sCache[ck] = r; return r; });
+
+  // ---- Materi lokal (gratis, tanpa API): kotoba & kanji dibaca dari modules/jlpt/n5..n1.js. API hanya dipakai untuk kaiwa dan bunpou ----
+  var VCH = 30, KCH = 10, topicMemo = {};
+  function localReady(lv) { return !!(window.JLPT_LOCAL && window.JLPT_LOCAL[lv]); }
+  function loadLocal(lv, ok, fail) {
+    if (localReady(lv)) return ok();
+    var s = document.createElement("script"); s.src = "modules/jlpt/" + lv.toLowerCase() + ".js";
+    s.onload = function () { if (localReady(lv)) ok(); else fail(); }; s.onerror = fail;
+    document.head.appendChild(s);
   }
+  function localTopics(lv) {
+    if (topicMemo[lv]) return topicMemo[lv];
+    var d = window.JLPT_LOCAL[lv], vs = [], ks = [], i, a, b;
+    for (i = 0; i * VCH < d.v.length; i++) {
+      a = i * VCH; b = Math.min(d.v.length, a + VCH);
+      vs.push({ id: "lv_" + lv + "_" + (i + 1), t: { en: "Set " + (i + 1) + " · " + (a + 1) + "–" + b }, w: d.v.slice(a, a + 4).map(function (r) { return r[1] || r[0]; }).join(" · ") });
+    }
+    for (i = 0; i * KCH < d.k.length; i++) ks.push({ id: "lk_" + lv + "_" + (i + 1), k: d.k.slice(i * KCH, (i + 1) * KCH).map(function (r) { return r[0]; }).join("") });
+    return (topicMemo[lv] = { vocab: vs, kanji: ks });
+  }
+  function lrows(kind, lv, n) { var d = window.JLPT_LOCAL[lv], c = kind === "v" ? VCH : KCH; return (kind === "v" ? d.v : d.k).slice((n - 1) * c, n * c); }
+  function shortM(m) { m = String(m || ""); if (m.length <= 60) return m; var c = m.lastIndexOf(",", 60); return m.slice(0, c > 20 ? c : 60); }
+  function kunDisp(k) { return { kana: k.replace(/-/g, "").replace(/\.(.*)$/, "($1)"), romaji: toRomaji(k.replace(/[.\-]/g, "")) }; }
+  function localContent(kind, lv, n) {
+    var rows = lrows(kind, lv, n), vs = window.JLPT_LOCAL[lv].v;
+    if (kind === "v") return { type: "vocab", items: rows.map(function (r) { return { jp: r[1] || r[0], reading: r[0], romaji: "", meaning: r[2] }; }) };
+    return { type: "kanji", items: rows.map(function (r) {
+      var ex = [], i;
+      for (i = 0; i < vs.length && ex.length < 3; i++) if (vs[i][1].length > 1 && vs[i][1].indexOf(r[0]) >= 0) ex.push({ word: vs[i][1], reading: vs[i][0], romaji: "", meaning: shortM(vs[i][2]) });
+      return { kanji: r[0], meaning: r[1], onyomi: r[2].map(function (k) { return { kana: k, romaji: toRomaji(k) }; }), kunyomi: r[3].map(kunDisp), examples: ex };
+    }) };
+  }
+  function localQuiz(kind, lv, n, set) {
+    var rows = lrows(kind, lv, n), d = window.JLPT_LOCAL[lv], pool = kind === "v" ? d.v : d.k, cnt = Math.min(10, rows.length), off = (((set || 1) - 1) * cnt) % rows.length, qs = [], i;
+    for (i = 0; i < cnt; i++) {
+      var r = rows[(off + i) % rows.length], right = kind === "v" ? shortM(r[2]) : r[1], wrong = [], g = 0;
+      while (wrong.length < 3 && g++ < 300) {
+        var c = pool[Math.floor(Math.random() * pool.length)], m = kind === "v" ? shortM(c[2]) : c[1];
+        if (m && m !== right && wrong.indexOf(m) < 0) wrong.push(m);
+      }
+      qs.push({ q: "「" + (kind === "v" ? (r[1] || r[0]) : r[0]) + "」 = ?", q_romaji: kind === "v" ? toRomaji(r[0]) : "", options: [right].concat(wrong), options_romaji: [], answer: 0,
+        why: kind === "v" ? r[0] + " · " + r[2] : r[2].concat(r[3].map(function (k) { return kunDisp(k).kana; })).join(" · ") + " — " + r[1] });
+    }
+    return { questions: qs };
+  }
+
+  // ---- Bunpou lokal (gratis, tanpa API): isi dari modules/jlpt/grammar.js, daftar pola tetap dari lea-study-data.js ----
+  function loadGrammar() {
+    return new Promise(function (ok, no) {
+      if (window.JLPT_GRAMMAR) return ok();
+      var sc = document.createElement("script"); sc.src = "modules/jlpt/grammar.js";
+      sc.onload = function () { if (window.JLPT_GRAMMAR) ok(); else no(); }; sc.onerror = no;
+      document.head.appendChild(sc);
+    });
+  }
+  function gFind(id) { // cari pola di level mana pun; list = pola selevel, dipakai sebagai pengecoh kuis
+    var i, a, j;
+    for (i = 0; i < LEVELS.length; i++) { a = ((window.LEA_STUDY || {})[LEVELS[i]] || {}).grammar || []; for (j = 0; j < a.length; j++) if (a[j].id === id) return { it: a[j], list: a }; }
+    return null;
+  }
+  function gContent(id) {
+    var g = window.JLPT_GRAMMAR[id], f = gFind(id);
+    return { type: "grammar", pattern: f ? f.it.p : "", meaning: tl(g.m), formation: g.f, explain: tl(g.e), notes: g.n ? tl(g.n) : "",
+      examples: g.x.map(function (x) { return { jp: x.jp, reading: x.r, romaji: "", meaning: tl(x.m) }; }) };
+  }
+  function gQuiz(id) {
+    var G = window.JLPT_GRAMMAR, g = G[id], f = gFind(id), pat = f ? f.it.p : "";
+    var pool = ((f && f.list) || []).map(function (x) { return x.id; }).filter(function (k) { return k !== id && G[k]; });
+    function opts(getter, right) { var o = [right], c = shuffle(pool.slice()), i, v; for (i = 0; i < c.length && o.length < 4; i++) { v = getter(G[c[i]]); if (v && o.indexOf(v) < 0) o.push(v); } return o; }
+    var why = pat + " — " + tl(g.m);
+    var qs = g.x.map(function (x) { return { q: x.jp, q_romaji: toRomaji(x.r, true), options: opts(function (o) { return tl(o.x[Math.floor(Math.random() * o.x.length)].m); }, tl(x.m)), options_romaji: [], answer: 0, why: why }; });
+    qs.push({ q: "「" + pat + "」 = ?", q_romaji: "", options: opts(function (o) { return tl(o.m); }, tl(g.m)), options_romaji: [], answer: 0, why: why });
+    return { questions: shuffle(qs) };
+  }
+  function noData() { var e = new Error("data lokal tidak ditemukan"); e.code = "net"; return e; }
+  function getStudy(kind, id, set) { // materi belajar 100% lokal; tidak ada panggilan API di sini
+    var lm = /^l([vk])_(N[1-5])_(\d+)$/.exec(id);
+    if (lm && localReady(lm[2])) return Promise.resolve(kind === "quiz" ? localQuiz(lm[1], lm[2], +lm[3], set) : localContent(lm[1], lm[2], +lm[3]));
+    if (/^g_/.test(id)) return loadGrammar().then(function () { if (!window.JLPT_GRAMMAR[id]) throw noData(); return kind === "quiz" ? gQuiz(id) : gContent(id); }, function () { throw noData(); });
+    return Promise.reject(noData());
+  }
+
   function drawStudy() {
-    view = "study"; var t = T(), list = curr()[st.tab] || [];
+    view = "study"; var t = T();
+    if (!localReady(level)) { // muat data level ini dulu (sekali, lalu tersimpan di cache browser)
+      var lv0 = level, again = function () { if (view === "study" && level === lv0) drawStudy(); };
+      body(head(t.study, level, true) + '<div class="la-body"><div class="la-typ" style="margin-top:40px">…</div></div>');
+      loadLocal(lv0, again, function () { if (view !== "study") return; st.retry = drawStudy; body(head(t.study, level, true) + '<div class="la-body"><div class="la-err">' + esc(t.errNet) + '</div><button class="la-big" data-a="sretry">' + esc(t.sRetry) + "</button></div>"); });
+      return;
+    }
+    var list = curr()[st.tab] || [];
     var h = head(t.study, level + " · " + ((t.lvDesc || [])[LEVELS.indexOf(level)] || ""), true) + '<div class="la-body"><div class="la-chips">' + LEVELS.map(function (l) { return '<button class="la-lv' + (l === level ? " on" : "") + '" data-a="slvl" data-l="' + l + '">' + l + "</button>"; }).join("") + '</div><div class="la-chips" style="margin:10px 0 12px"><button class="la-lv w' + (st.tab === "vocab" ? " on" : "") + '" data-a="stab" data-t="vocab">' + esc(t.tabV) + '</button><button class="la-lv w' + (st.tab === "grammar" ? " on" : "") + '" data-a="stab" data-t="grammar">' + esc(t.tabG) + '</button><button class="la-lv w' + (st.tab === "kanji" ? " on" : "") + '" data-a="stab" data-t="kanji">' + esc(t.tabKj) + "</button></div>";
     if (st.tab === "kanji" && !list.length) h += '<div class="la-vi"><div class="la-mn">' + esc(t.kanjiSoon) + "</div></div>";
     list.forEach(function (it, n) {
@@ -308,8 +398,7 @@
   window.KakeiboLeaAI = {
     open: function (ctx) {
       host = Object.assign(host, ctx || {});
-      if (!window.KakeiboAuth) return;
-      window.KakeiboAuth.require(function () { mount(); });
+      mount(); // belajar JLPT gratis & offline; fitur kaiwa dicek Premium+ di plusOk()
     },
     isOpen: function () { return !!el; },
     back: function () { if (!el) return false; if (view !== "home") goBack(); else close(); return true; }
