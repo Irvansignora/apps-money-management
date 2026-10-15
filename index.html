@@ -2518,7 +2518,7 @@ function openBelajar() {
   let n = 0;
   ["modules/belajar-data.js", "modules/belajar.js"].forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=2";
+    sc.src = src + "?v=3";
     sc.onload = () => { if (++n === 2) go(); };
     sc.onerror = () => alert("Modul belajar gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
@@ -3340,6 +3340,7 @@ let backExitAt = 0, backArmed = false;
 function closeTopLayer() {
   try { if (window.KakeiboAuth && window.KakeiboAuth.back()) return true; } catch (e) {}
   try { if (window.KakeiboLeaAI && window.KakeiboLeaAI.isOpen() && window.KakeiboLeaAI.back()) return true; } catch (e) {}
+  try { if (window.KakeiboKana && window.KakeiboKana.isOpen() && window.KakeiboKana.back()) return true; } catch (e) {}
   try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
   const crop = document.getElementById("cropCancelBtn");
   if (crop && showCropTool) { crop.click(); return true; }
