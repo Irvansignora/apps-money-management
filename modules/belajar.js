@@ -33,7 +33,7 @@
     if (document.getElementById("belajarCss")) return;
     var s = document.createElement("style"); s.id = "belajarCss";
     s.textContent = ".bl-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;font:inherit;color:inherit;cursor:pointer}" +
-      ".bl-ico{flex:0 0 44px;height:44px;border-radius:12px;background:var(--ai);display:grid;place-items:center;font-size:22px}.bl-grow{flex:1;min-width:0}" +
+      ".bl-ico{flex:0 0 44px;height:44px;border-radius:12px;background:var(--ai);display:grid;place-items:center;font-size:22px;color:#fff}.bl-grow{flex:1;min-width:0}" +
       ".bl-bar{height:5px;border-radius:3px;background:var(--line);margin-top:7px;overflow:hidden}.bl-bar i{display:block;height:100%;background:var(--hanko)}" +
       ".bl-row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}" +
       ".bl-jp{font-family:'Shippori Mincho',serif;font-size:19px;line-height:1.4}.bl-ro{font-size:12px;color:var(--mist);margin-top:2px}.bl-mn{font-size:13.5px;margin-top:6px;line-height:1.4}" +
@@ -48,6 +48,18 @@
   function kanaPct() { // progres kana (hafal / 204) dibaca langsung dari penyimpanan modul Kana
     try { var s = JSON.parse(localStorage.getItem("kakeibo-kana") || "{}"), k = s.k || {}, m = 0; for (var id in k) if (k[id] && k[id].seen && k[id].b >= 3) m++; return Math.min(100, Math.round(m / 204 * 100)); } catch (e) { return 0; }
   }
+  function openJlpt() {
+    var go = function () { window.KakeiboJlpt.open({ lang: host.lang, esc: host.esc }); }, need = [], n = 0;
+    if (!window.LEA_STUDY) need.push("modules/lea-study-data.js");
+    if (!window.KakeiboJlpt) need.push("modules/jlpt.js");
+    if (!need.length) return go();
+    need.forEach(function (src) {
+      var sc = document.createElement("script"); sc.src = src + "?v=1";
+      sc.onload = function () { if (++n === need.length) go(); };
+      sc.onerror = function () { alert("Modul belajar JLPT gagal dimuat. Cek koneksi internet."); };
+      document.head.appendChild(sc);
+    });
+  }
   function openKana() {
     var go = function () { window.KakeiboKana.open({ lang: host.lang, esc: host.esc }); };
     if (window.KakeiboKana) return go();
@@ -61,7 +73,9 @@
     if (view === "list") {
       var aiT = { id: ["Kaiwa dengan AI dan pelajaran terstruktur", "Latihan dialog, dikoreksi LEA"], en: ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"], my: ["AI နှင့် စကားပြောလေ့ကျင့်ခြင်းနှင့် အဆင့်လိုက်သင်ခန်းစာ", "စကားပြောလေ့ကျင့်ရန်၊ LEA ပြင်ပေးမည်"] }[host.lang] || ["Conversation with AI and structured lessons", "Dialogue practice, corrected by LEA"];
       var kanaT = { id: ["Hiragana dan katakana dari nol, dengan latihan dan review", "Gratis"], en: ["Hiragana and katakana from scratch, with practice and review", "Free"], my: ["ဟီရဂန နှင့် ကတာကန စတင်သင်ယူရန်၊ လေ့ကျင့်ခန်းနှင့်အတူ", "အခမဲ့"] }[host.lang] || ["Hiragana and katakana from scratch, with practice and review", "Free"];
+      var jlT = { id: ["Kotoba, bunpou, kanji, dan latihan N5–N1. Gratis dan bisa offline", "Gratis"], en: ["Kotoba, bunpou, kanji and practice N5–N1. Free and works offline", "Free"], my: ["ဝေါဟာရ၊ သဒ္ဒါ၊ ကန်ဂျိနှင့် လေ့ကျင့်ခန်း N5–N1။ အခမဲ့", "အခမဲ့"] }[host.lang] || ["Kotoba, bunpou, kanji and practice N5–N1. Free and works offline", "Free"];
       h = '<button type="button" class="bl-card" data-a="kana"><div class="bl-ico" style="background:var(--hanko);color:#fff;font-family:\'Shippori Mincho\',serif">あ</div><div class="bl-grow"><b>Kana ひらがな・カタカナ <span style="font-size:10.5px;background:var(--ai);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">' + kanaT[1] + '</span></b><div class="bl-ro">' + kanaT[0] + '</div><div class="bl-bar"><i style="width:' + kanaPct() + '%"></i></div></div></button>' +
+        '<button type="button" class="bl-card" data-a="jlpt"><div class="bl-ico" style="color:#fff;font-family:\'Shippori Mincho\',serif">日</div><div class="bl-grow"><b>Belajar JLPT <span style="font-size:10.5px;background:var(--ai);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">' + jlT[1] + '</span></b><div class="bl-ro">' + jlT[0] + '</div></div></button>' +
         '<button type="button" class="bl-card" data-lea-ai style="border:1px dashed var(--hanko)"><div class="bl-ico" style="background:var(--hanko)">🎓</div><div class="bl-grow"><b>LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px;vertical-align:2px">Premium+</span></b><div class="bl-ro">' + aiT[0] + '</div></div></button>' + D.map(function (u, n) {
         var d = u.p.filter(function (_, k) { return st.done[pid(u, k)]; }).length;
         return '<button type="button" class="bl-card" data-a="unit" data-n="' + n + '"><div class="bl-ico">' + u.ico + '</div><div class="bl-grow"><b>' + esc(u.n[i] || u.n[1]) +
@@ -109,6 +123,7 @@
     var b = e.target.closest("[data-a]"); if (!b) return;
     var a = b.dataset.a, k = +b.dataset.k, u = units()[ui];
     if (a === "kana") openKana();
+    else if (a === "jlpt") openJlpt();
     else if (a === "unit") { ui = +b.dataset.n; view = "unit"; render(); }
     else if (a === "back") { view = "list"; render(); }
     else if (a === "say") say(u.p[k][0]);
