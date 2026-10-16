@@ -111,13 +111,28 @@
   function topicSub(it) { return it.k ? it.k.length + " kanji" : it.p ? tl(it.h) : (it.w || ""); }
   function body(h) { var a = el && el.querySelector(".la-app"); if (a) a.innerHTML = h; }
 
-  // ---- Materi lokal (gratis, tanpa API): kotoba & kanji dibaca dari modules/jlpt/n5..n1.js. API hanya dipakai untuk kaiwa dan bunpou ----
-  var VCH = 30, KCH = 10, topicMemo = {};
-  function localReady(lv) { return !!(window.JLPT_LOCAL && window.JLPT_LOCAL[lv]); }
+  // ---- Materi lokal (gratis, tanpa API): kotoba & kanji dibaca dari modules/jlpt/n5..n1.js (arti berbahasa Inggris) ----
+  // Terjemahan arti ke Indonesia dan Myanmar ada di modules/jlpt/tr/<bahasa>-<level>.js. Baru N5 dan N4; level lain tampil berbahasa Inggris.
+  var VCH = 30, KCH = 10, topicMemo = {}, TR_LEVELS = { N5: 1, N4: 1 }, trApplied = {};
+  function dataReady(lv) { return !!(window.JLPT_LOCAL && window.JLPT_LOCAL[lv]); }
+  function localReady(lv) { return dataReady(lv) && trApplied[lv] === host.lang; }
+  function applyTr(lv) { // arti asli (Inggris) disimpan di _e supaya bisa ganti bahasa kapan saja
+    var d = window.JLPT_LOCAL && window.JLPT_LOCAL[lv]; if (!d) return;
+    var m = (window.JLPT_TR || {})[host.lang] || {}, tr = function (s) { return m[s] || s; };
+    d.v.forEach(function (r) { if (r._e === undefined) r._e = r[2]; r[2] = tr(r._e); });
+    d.k.forEach(function (r) { if (r._e === undefined) r._e = r[1]; r[1] = tr(r._e); });
+  }
+  function loadTr(lv, done) {
+    var lang = host.lang, key = lang + lv; window.JLPT_TR_DONE = window.JLPT_TR_DONE || {};
+    if ((lang !== "id" && lang !== "my") || !TR_LEVELS[lv] || window.JLPT_TR_DONE[key]) return done();
+    var s = document.createElement("script"), fin = function () { window.JLPT_TR_DONE[key] = 1; done(); };
+    s.src = "modules/jlpt/tr/" + lang + "-" + lv.toLowerCase() + ".js"; s.onload = fin; s.onerror = fin; document.head.appendChild(s);
+  }
   function loadLocal(lv, ok, fail) {
-    if (localReady(lv)) return ok();
+    var fin = function () { loadTr(lv, function () { applyTr(lv); trApplied[lv] = host.lang; ok(); }); };
+    if (dataReady(lv)) return fin();
     var s = document.createElement("script"); s.src = "modules/jlpt/" + lv.toLowerCase() + ".js";
-    s.onload = function () { if (localReady(lv)) ok(); else fail(); }; s.onerror = fail;
+    s.onload = function () { if (dataReady(lv)) fin(); else fail(); }; s.onerror = fail;
     document.head.appendChild(s);
   }
   function localTopics(lv) {
