@@ -846,7 +846,8 @@
     <div id="leaTranscript" class="lea-transcript">Tap orb terus ngomong, misal "catat pengeluaran 2000 yen makan siang"</div>
     <div id="leaLangRow" class="lea-lang-row"></div>
     <div id="leaResultBox"></div>
-    <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">Belajar JLPT · LEA Sensei <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Gratis · kaiwa Premium+</span></button>
+    <button type="button" data-jlpt style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">Belajar JLPT · 日本語 <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Gratis</span></button>
+    <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">LEA Sensei · 日本語 AI <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Premium+</span></button>
   </div>
 </div>
 
@@ -2518,7 +2519,7 @@ function openBelajar() {
   let n = 0;
   ["modules/belajar-data.js", "modules/belajar.js"].forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=3";
+    sc.src = src + "?v=4";
     sc.onload = () => { if (++n === 2) go(); };
     sc.onerror = () => alert("Modul belajar gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
@@ -2535,23 +2536,39 @@ function openChat(opts) {
 }
 // LEA Sensei (tutor AI, khusus Premium+): modul baru dimuat hanya kalau paketnya memenuhi
 function openLeaAI() {
-  // Belajar JLPT gratis; gerbang Premium+ hanya untuk kaiwa AI (dicek di dalam lea-ai.js)
+  if (window.KakeiboAuth && !window.KakeiboAuth.isPlus()) return window.KakeiboAuth.require();
   const go = () => window.KakeiboLeaAI.open({ lang, esc });
   const need = [];
   if (!window.BELAJAR_DATA) need.push("modules/belajar-data.js");
-  if (!window.LEA_STUDY) need.push("modules/lea-study-data.js");
   if (!window.KakeiboLeaAI) need.push("modules/lea-ai.js");
   if (!need.length) return go();
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=4";
+    sc.src = src + "?v=5";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul LEA Sensei gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
   });
 }
 document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-lea-ai]")) openLeaAI(); });
+// Belajar JLPT (gratis, offline): modul mandiri, tidak butuh login atau paket
+function openJlpt() {
+  const go = () => window.KakeiboJlpt.open({ lang, esc });
+  const need = [];
+  if (!window.LEA_STUDY) need.push("modules/lea-study-data.js");
+  if (!window.KakeiboJlpt) need.push("modules/jlpt.js");
+  if (!need.length) return go();
+  let n = 0;
+  need.forEach(src => {
+    const sc = document.createElement("script");
+    sc.src = src + "?v=1";
+    sc.onload = () => { if (++n === need.length) go(); };
+    sc.onerror = () => alert("Modul belajar JLPT gagal dimuat. Cek koneksi internet.");
+    document.head.appendChild(sc);
+  });
+}
+document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-jlpt]")) openJlpt(); });
 // Notifikasi push: ketuk notifikasi membuka percakapan (?chat=ID); halaman yang sudah terbuka diberi tahu service worker
 try {
   const dp = new URLSearchParams(location.search).get("chat");
@@ -3341,6 +3358,7 @@ function closeTopLayer() {
   try { if (window.KakeiboAuth && window.KakeiboAuth.back()) return true; } catch (e) {}
   try { if (window.KakeiboLeaAI && window.KakeiboLeaAI.isOpen() && window.KakeiboLeaAI.back()) return true; } catch (e) {}
   try { if (window.KakeiboKana && window.KakeiboKana.isOpen() && window.KakeiboKana.back()) return true; } catch (e) {}
+  try { if (window.KakeiboJlpt && window.KakeiboJlpt.isOpen() && window.KakeiboJlpt.back()) return true; } catch (e) {}
   try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
   const crop = document.getElementById("cropCancelBtn");
   if (crop && showCropTool) { crop.click(); return true; }
