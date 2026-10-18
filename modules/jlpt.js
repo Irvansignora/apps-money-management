@@ -112,8 +112,8 @@
   function body(h) { var a = el && el.querySelector(".la-app"); if (a) a.innerHTML = h; }
 
   // ---- Materi lokal (gratis, tanpa API): kotoba & kanji dibaca dari modules/jlpt/n5..n1.js (arti berbahasa Inggris) ----
-  // Terjemahan arti ke Indonesia dan Myanmar ada di modules/jlpt/tr/<bahasa>-<level>.js. Baru N5 dan N4; level lain tampil berbahasa Inggris.
-  var VCH = 30, KCH = 10, topicMemo = {}, TR_LEVELS = { N5: 1, N4: 1 }, trApplied = {};
+  // Terjemahan arti ke Indonesia dan Myanmar ada di modules/jlpt/tr/<bahasa>-<level>.js. Baru N5, N4, dan N3; level lain tampil berbahasa Inggris.
+  var VCH = 30, KCH = 10, topicMemo = {}, TR_LEVELS = { N5: 1, N4: 1, N3: 1 }, trApplied = {};
   function dataReady(lv) { return !!(window.JLPT_LOCAL && window.JLPT_LOCAL[lv]); }
   function localReady(lv) { return dataReady(lv) && trApplied[lv] === host.lang; }
   function applyTr(lv) { // arti asli (Inggris) disimpan di _e supaya bisa ganti bahasa kapan saja
