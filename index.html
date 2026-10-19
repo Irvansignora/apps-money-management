@@ -2562,7 +2562,7 @@ function openJlpt() {
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=3";
+    sc.src = src + "?v=4";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul belajar JLPT gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
