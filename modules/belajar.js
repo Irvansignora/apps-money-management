@@ -54,7 +54,7 @@
     if (!window.KakeiboJlpt) need.push("modules/jlpt.js");
     if (!need.length) return go();
     need.forEach(function (src) {
-      var sc = document.createElement("script"); sc.src = src + "?v=3";
+      var sc = document.createElement("script"); sc.src = src + "?v=4";
       sc.onload = function () { if (++n === need.length) go(); };
       sc.onerror = function () { alert("Modul belajar JLPT gagal dimuat. Cek koneksi internet."); };
       document.head.appendChild(sc);
