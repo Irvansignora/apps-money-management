@@ -172,11 +172,29 @@
   }
 
   // ---- Bunpou lokal (gratis, tanpa API): isi dari modules/jlpt/grammar.js, daftar pola tetap dari lea-study-data.js ----
+  function mergeGrammarMy() { // tambahkan teks Myanmar (modules/jlpt/tr/grammar-my.js) ke data bunpou dan ke petunjuk di daftar pola
+    var M = window.JLPT_GRAMMAR_MY; if (!M) return;
+    var i, a, j, it;
+    for (i = 0; i < LEVELS.length; i++) { a = ((window.LEA_STUDY || {})[LEVELS[i]] || {}).grammar || []; for (j = 0; j < a.length; j++) { it = a[j]; if (M[it.id]) { it.h = it.h || {}; it.h.my = M[it.id].h; } } }
+    var G = window.JLPT_GRAMMAR; if (!G) return;
+    Object.keys(M).forEach(function (id) {
+      var g = G[id], m = M[id]; if (!g) return;
+      g.m.my = m.m; g.e.my = m.e;
+      (g.x || []).forEach(function (x, k) { if (m.x[k]) x.m.my = m.x[k]; });
+      if (m.n && g.n) g.n.my = m.n;
+    });
+  }
+  function loadMy(done) { // dipanggil saat modul dibuka dalam bahasa Myanmar
+    if (host.lang !== "my") return done();
+    if (window.JLPT_GRAMMAR_MY) { mergeGrammarMy(); return done(); }
+    var sc = document.createElement("script"), fin = function () { mergeGrammarMy(); done(); };
+    sc.src = "modules/jlpt/tr/grammar-my.js"; sc.onload = fin; sc.onerror = fin; document.head.appendChild(sc);
+  }
   function loadGrammar() {
     return new Promise(function (ok, no) {
-      if (window.JLPT_GRAMMAR) return ok();
+      if (window.JLPT_GRAMMAR) { mergeGrammarMy(); return ok(); }
       var sc = document.createElement("script"); sc.src = "modules/jlpt/grammar.js";
-      sc.onload = function () { if (window.JLPT_GRAMMAR) ok(); else no(); }; sc.onerror = no;
+      sc.onload = function () { if (window.JLPT_GRAMMAR) { mergeGrammarMy(); ok(); } else no(); }; sc.onerror = no;
       document.head.appendChild(sc);
     });
   }
@@ -312,7 +330,7 @@
     document.body.appendChild(el);
   }
   window.KakeiboJlpt = {
-    open: function (ctx) { host = Object.assign(host, ctx || {}); mount(); drawStudy(); },
+    open: function (ctx) { host = Object.assign(host, ctx || {}); mount(); loadMy(function () { drawStudy(); }); },
     isOpen: function () { return !!el; },
     back: function () { if (!el) return false; goBack(); return true; }
   };
