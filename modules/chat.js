@@ -79,7 +79,7 @@
   var avCol = function (n) { var h = 0, s = String(n || "?"); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return COL[h % COL.length]; };
   var av = function (n, sz) { return '<span class="kc-av" style="--c:' + avCol(n) + ";width:" + (sz || 42) + "px;height:" + (sz || 42) + "px;font-size:" + Math.round((sz || 42) * .42) + 'px">' + esc(Array.from(String(n || "?"))[0] || "?").toUpperCase() + "</span>"; };
   var kp = function () { try { var p = JSON.parse(localStorage.getItem("jp-finance-profile") || "{}"); return { name: String(p.name || "").trim(), photo: /^data:image\//.test(p.photo || "") ? p.photo : "" }; } catch (e) { return { name: "", photo: "" }; } };
-  var avImg = function (src, sz) { return '<span class="kc-av" style="width:' + sz + "px;height:" + sz + 'px;background:#fff"><img src="' + esc(src) + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></span>'; };
+  var avImg = function (src, sz) { return '<span class="kc-av" style="width:' + sz + "px;height:" + sz + 'px;background:#fff"><img src="' + esc(src) + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block" onerror="this.style.display=\'none\'"></span>'; };
   var avP = function (o, sz) { return o && /^data:image\//.test(o.avatar || "") ? avImg(o.avatar, sz) : av(o && o.name, sz); };
   var avMe = function (sz) { var ph = /^data:image\//.test(A.user.avatar || "") ? A.user.avatar : kp().photo; return ph ? avImg(ph, sz) : av(A.user.name, sz); };
   var svgUrl = function (svg) { return 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, "%27").replace(/\(/g, "%28").replace(/\)/g, "%29") + '")'; };
@@ -265,6 +265,9 @@
       ".kc-bar{background:var(--kink);color:#fff;font-size:calc(12.5px*var(--kfs));text-align:center;padding:6px;font-weight:600}",
       ".kc-comp{display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 12px);background:rgba(251,247,234,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--kline)}",
       ".kc-comp textarea{flex:1;font:inherit;font-size:max(16px,calc(16px*var(--kfs)));line-height:1.35;padding:12px 16px;border-radius:24px;border:1px solid var(--kline);resize:none;max-height:120px;background:#fff;color:var(--kink);outline:0}.kc-comp textarea:focus{border-color:var(--kv);box-shadow:0 0 0 1px var(--kv)}",
+      ".kc-att{width:46px;height:46px;flex:0 0 46px;border-radius:50%;border:0;padding:0;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}.kc-att:active{filter:brightness(.92)}.kc-att svg{width:22px;height:22px;display:block;flex:0 0 auto}.kc-comp .kc-att,.kc-comp .kc-send{align-self:flex-end}",
+      ".kc-head .ttl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0 8px}.kc-head .ttl>span:first-child{min-width:0;grid-column:1}.kc-head .ttl .kc-pair{grid-column:2;justify-self:end}.kc-head .ttl .sub{grid-column:1/-1}.kc-pair .kc-sw{flex:0 0 auto;opacity:.7}.kc-pair .kc-fg{flex:0 0 auto}.kc-head .kc-av{flex:0 0 auto}",
+      "@media (max-width:380px){.kc-head .kc-ib{width:38px;height:38px;flex-basis:38px}.kc-head{gap:4px}.kc-pair{padding:3px 6px;gap:3px}.kc-att,.kc-send{width:42px;height:42px;flex-basis:42px}}",
       ".kc-send{width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(150deg,var(--kh2),var(--kh));color:#fff5e8;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 46px;box-shadow:0 8px 16px -6px rgba(var(--kacc2),.6)}.kc-send:active{filter:brightness(.92)}.kc-send:disabled{background:#cfc6ad;box-shadow:none}.kc-send svg{width:22px;height:22px}.kc-mic{background:linear-gradient(135deg,var(--kv),var(--kv-d));box-shadow:none}",
       ".kc-sheet{z-index:5}.kc-sheet>div{background:var(--kcard);border-radius:26px 26px 0 0;box-shadow:0 -12px 34px rgba(23,35,61,.25)}",
       ".kc-call{background:linear-gradient(160deg,#17233d 0%,#2c4568 100%)}"
@@ -303,6 +306,7 @@
     video: '<rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/>',
     grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'
   };
+  var SWAPI = '<svg class="kc-sw" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15M15 4l4 4-4 4M20 16H5M9 12l-4 4 4 4"/></svg>';
   var ic = function (n, s) { s = s || 20; return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + "</svg>"; };
   var chev = ic("chev", 18).replace("<svg", '<svg class="ch"');
   var GMAX = { free: 8, premium: 30 }; // sama dengan GROUP_LIMITS di Worker (server yang menentukan)
@@ -394,7 +398,7 @@
     } else if (v === "chat") {
       var g = peer.group, btn = function (a, icn, label, id) { return '<button class="kc-ib" ' + (id ? 'id="' + id + '" ' : "") + 'data-a="' + a + '" aria-label="' + label + '">' + ic(icn) + "</button>"; };
       h = '<div class="kc-head"><button class="kc-ib" data-a="back" aria-label="Back">' + ic("back") + "</button>" + (g ? '<span data-a="ginfo" style="display:flex;cursor:pointer">' + avG(peer.name, 40) + "</span>" : avP(peer, 40)) +
-        '<div class="ttl"' + (g ? ' data-a="ginfo" style="cursor:pointer"' : "") + "><span" + (g ? ' id="kcGTitle"' : "") + ">" + esc(peer.name) + "</span>" + (g ? "" : '<span class="kc-pair">' + fl(u.lang) + " ⇄ " + fl(peer.lang) + "</span>") + '<div class="sub" id="kcSt">' + (g ? (peer.n ? peer.n + " " + t.gMembers : "") : t.offl) + "</div></div>" +
+        '<div class="ttl"' + (g ? ' data-a="ginfo" style="cursor:pointer"' : "") + "><span" + (g ? ' id="kcGTitle"' : "") + ">" + esc(peer.name) + "</span>" + (g ? "" : '<span class="kc-pair">' + fl(u.lang) + SWAPI + fl(peer.lang) + "</span>") + '<div class="sub" id="kcSt">' + (g ? (peer.n ? peer.n + " " + t.gMembers : "") : t.offl) + "</div></div>" +
         (g ? "" : btn("call", "phone", "Call", "kcCallB") + btn("vcall", "video", "Video call", "kcVCallB")) + btn("media", "grid", "Media") + (g ? btn("ginfo", "info", t.gInfo) : "") + "</div>" +
         '<div class="kc-bar" id="kcBar" style="display:none">' + t.off + '</div><div class="kc-body"><div class="kc-wp" id="kcWp"></div><div class="kc-list" id="kcList"></div></div>' +
         '<form class="kc-comp" id="kcForm"><button type="button" class="kc-att" data-a="photo" aria-label="Photo">' + ic("image") + '</button><input type="file" id="kcFile" accept="image/*" hidden><textarea id="kcTxt" rows="1" maxlength="1000" enterkeyhint="send" placeholder="' + t.typ + '"></textarea><button class="kc-send" id="kcSend" aria-label="send" style="display:none" disabled>' + SEND + '</button><button type="button" class="kc-send kc-mic" id="kcMic" data-a="mic" aria-label="Mic">' + MICI + '</button><div class="kc-recbar"><button type="button" class="kc-att" data-a="reccancel" aria-label="Cancel">' + XI + '</button><span class="kc-rdot"></span><b id="kcRt">0:00</b><span class="kc-rh">' + t.rec + '</span><button type="button" class="kc-send" data-a="recsend" aria-label="Send">' + SEND + "</button></div></form>";
@@ -413,7 +417,26 @@
     tick(); cdT = setInterval(tick, 1000);
   }
 
+  var avTried = false;
+  function autoShareAvatar() { // foto profil lokal ikut diunggah supaya terlihat oleh lawan chat (kecuali pernah dihapus sengaja)
+    try {
+      if (avTried || !A.user || /^data:image\//.test(A.user.avatar || "")) return;
+      if (localStorage.getItem("kc-av-off")) return;
+      var ph = kp().photo; if (!ph) return; avTried = true;
+      squareAvatar(ph, function (d) { if (d) sendAvatar(d); });
+    } catch (e) {}
+  }
+  function syncPeer() { // perbarui foto/nama lawan chat yang sedang dibuka dari daftar kontak terbaru
+    if (view !== "chat" || !peer || peer.group) return;
+    var f = contacts.filter(function (x) { return x.id === peer.id; })[0]; if (!f) return;
+    var ch = (f.avatar || "") !== (peer.avatar || "");
+    peer.avatar = f.avatar || ""; peer.name = f.name; peer.lang = f.lang;
+    if (!ch) return;
+    var hv = root && root.querySelector(".kc-head > .kc-av"); if (hv) hv.outerHTML = avP(peer, 40);
+    try { drawMsgs(false); } catch (e) {}
+  }
   function loadContacts() {
+    autoShareAvatar();
     api("/api/me").then(function (r) { if (r.user && A.user) { A.user.plan = r.user.plan; A.user.until = r.user.until; store(); } }).catch(function () {});
     api("/api/contacts").then(function (r) {
       contacts = r.contacts || [];
@@ -441,7 +464,7 @@
     n.innerHTML = groups.length ? groups.map(groupRow).join("") : emptyBox("群", T().emptyGroups, T().emptyGroupsSub, T().mkGroup, "newgroup") + '<button class="kc-link" style="display:block;margin:0 auto" data-a="joinsheet">' + T().joinGroup + "</button>"; applyQ(); updNav();
   }
   function quietLists() { // ambil daftar yang tidak sedang tampil, supaya badge di navbar akurat
-    if (view !== "chats") api("/api/contacts").then(function (r) { contacts = r.contacts || []; updNav(); }).catch(function () {});
+    if (view !== "chats") api("/api/contacts").then(function (r) { contacts = r.contacts || []; syncPeer(); updNav(); }).catch(function () {});
     if (view !== "groups") api("/api/groups").then(function (r) { groups = r.groups || []; updNav(); }).catch(function () {});
   }
   function pollLists() { // segarkan daftar tiap 15 detik selama layar daftar terbuka
@@ -950,6 +973,7 @@
   function avFail() { var b = $("#kcAvBlock"); if (b) b.innerHTML = avBlock(); err({ code: "avfail" }); }
   function sendAvatar(dataUrl) {
     var n = $("#kcAvNote"); if (n) n.textContent = T().avUp; clearErr();
+    if (dataUrl) { try { localStorage.removeItem("kc-av-off"); } catch (e) {} }
     api("/api/me", { name: A.user.name, lang: A.user.lang, avatar: dataUrl }).then(function (r) {
       A.user = Object.assign(A.user, r.user || { avatar: dataUrl }); store();
       var b = $("#kcAvBlock"); if (b) b.innerHTML = avBlock();
@@ -1080,7 +1104,7 @@
     else if (a === "wpfile") { var wf = $("#kcWpFile"); if (wf) wf.click(); }
     else if (a === "avfile") { var af = $("#kcAvFile"); if (af) af.click(); }
     else if (a === "avk") { var ph = kp().photo; if (ph) { var n0 = $("#kcAvNote"); if (n0) n0.textContent = t.avUp; squareAvatar(ph, function (d) { if (d) sendAvatar(d); else avFail(); }); } }
-    else if (a === "avdel") sendAvatar("");
+    else if (a === "avdel") { try { localStorage.setItem("kc-av-off", "1"); } catch (e) {} sendAvatar(""); }
     else if (a === "usek") { var pn = $("#kcPName"); if (pn) pn.value = b.dataset.n; }
     else if (a === "saveprof") {
       var nm = ($("#kcPName").value || "").trim(); clearErr();
