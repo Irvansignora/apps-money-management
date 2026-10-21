@@ -350,6 +350,11 @@
   .scan-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(238,230,212,.25);
     border-top-color:#eadfc4;animation:spin .8s linear infinite;}
   .scan-overlay .sub{font-size:12px;color:#b9c2d6;max-width:280px;}
+  .engine-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;font:700 11.5px Inter,sans-serif;letter-spacing:.02em;white-space:nowrap}
+  .engine-badge.ai{background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;box-shadow:0 4px 12px -4px rgba(172,53,39,.55)}
+  .engine-badge.ocr{background:rgba(120,130,150,.22);color:#6d6759}
+  .scan-overlay .engine-badge.ocr{background:rgba(255,255,255,.16);color:#eee6d2}
+  .engine-note{font-size:11.5px;line-height:1.4;color:var(--mist);margin-top:6px}
 
   /* crop tool — fokusin/crop struk manual sblm di-OCR */
   .crop-tool{position:fixed;inset:0;z-index:75;background:#0b1220;display:flex;flex-direction:column;}
@@ -1352,7 +1357,7 @@ const I18N = {
     notePlaceholder: "cth. Kirim via Wise ke rekening tujuan", submitTx: "➤ Stempel & Simpan", deleteAria: "Hapus catatan",
     splitBillLabel: "Split Bill", people: "orang", perPerson: "Per orang", myShareOnly: "Bagian saya", fullAmount: "Jumlah penuh",
     scanPhotoBtn: "📷 Foto Langsung", scanFileBtn: "📁 Pilih File",
-    scanBtn: "📷 Scan Struk", scanReading: "Membaca struk…", scanSub: "Scan pertama agak lambat (download data bahasa dulu), abis itu jauh lebih cepat. Cek nominal sebelum simpan ya.",
+    scanBtn: "📷 Scan Struk", engineAI: "Scan AI", engineOCR: "OCR biasa", engineFallback: "Scan AI tidak tersedia (jatah habis atau koneksi bermasalah), jadi memakai OCR biasa. Cek hasilnya dengan teliti.", scanSubAI: "AI sedang membaca fotomu. Cek nominal sebelum simpan ya.", scanReading: "Membaca struk…", scanSub: "Scan pertama agak lambat (download data bahasa dulu), abis itu jauh lebih cepat. Cek nominal sebelum simpan ya.",
     convertingPhoto: "Mengonversi format foto…", heicConvertFailed: "Gagal mengonversi foto HEIC/HEIF ini. Coba ganti setelan format foto kamera HP ke JPEG, atau pakai tombol Take Photo.",
     scanNotFound: "Nominal gak kebaca jelas, isi manual ya.", scanFailed: "Gagal membaca struk, coba lagi atau isi manual.",
     pickItemsTitle: "Pilih Barang Punyamu",
@@ -1549,7 +1554,7 @@ const I18N = {
     notePlaceholder: "e.g. Sent via Wise to home account", submitTx: "➤ Stamp & Save", deleteAria: "Delete entry",
     splitBillLabel: "Split Bill", people: "people", perPerson: "Per person", myShareOnly: "My share", fullAmount: "Full amount",
     scanPhotoBtn: "📷 Take Photo", scanFileBtn: "📁 Choose File",
-    scanBtn: "📷 Scan Receipt", scanReading: "Reading receipt…", scanSub: "The first scan is a bit slower (downloading language data), then it's much faster. Please double-check before saving.",
+    scanBtn: "📷 Scan Receipt", engineAI: "AI scan", engineOCR: "Standard OCR", engineFallback: "AI scan wasn't available (daily limit reached or connection problem), so standard OCR was used. Please double-check the result.", scanSubAI: "AI is reading your photo. Please double-check before saving.", scanReading: "Reading receipt…", scanSub: "The first scan is a bit slower (downloading language data), then it's much faster. Please double-check before saving.",
     convertingPhoto: "Converting photo format…", heicConvertFailed: "Failed to convert this HEIC/HEIF photo. Try switching your phone camera's photo format to JPEG, or use the Take Photo button instead.",
     scanNotFound: "Couldn't read the amount clearly, please enter it manually.", scanFailed: "Failed to read the receipt, try again or enter manually.",
     pickItemsTitle: "Pick Your Items",
@@ -2356,9 +2361,13 @@ const I18N = {
     convoVoiceLabel: "เสียง", convoVoiceAuto: "อัตโนมัติ", convoVoiceFemale: "♀ หญิง", convoVoiceMale: "♂ ชาย",
   },
 };
+// Teks lencana/kartu scan AI: bahasa selain Indonesia yang belum punya terjemahan jatuh ke Inggris (bukan Indonesia)
+const EN_FALLBACK_KEYS = new Set(["engineAI", "engineOCR", "engineFallback", "scanSubAI"]);
 function t(key) {
   const dict = I18N[lang] || I18N.id;
-  return dict[key] !== undefined ? dict[key] : (I18N.id[key] !== undefined ? I18N.id[key] : key);
+  if (dict[key] !== undefined) return dict[key];
+  if (lang !== "id" && EN_FALLBACK_KEYS.has(key) && I18N.en && I18N.en[key] !== undefined) return I18N.en[key];
+  return I18N.id[key] !== undefined ? I18N.id[key] : key;
 }
 function seasonFxLabel(m) { // label chip Animasi Musim: emoji + nama musim (kanji, sama di semua bahasa)
   const fx = window.SeasonFX;
@@ -2499,6 +2508,8 @@ let cropRect = { x: 0, y: 0, w: 0, h: 0 }; // koordinat natural (setelah rotasi)
 let cropDisplayScale = 1;
 let cropDragMode = null; // "move" | "tl" | "tr" | "bl" | "br"
 let cropDragStart = null;
+let scanEngine = null; // "ai" | "ocr": mesin yang dipakai scan terakhir (buat lencana pembeda)
+let scanFellBack = false; // true kalau scan AI gagal/habis jatah lalu jatuh ke OCR biasa
 let cropTarget = "receipt"; // "receipt" | "payslip" — nentuin OCR pipeline mana yg jalan stlh crop
 let scanItems = null; // array {id,label,price,checked} hasil parsing struk
 let showItemPicker = false;
@@ -3774,6 +3785,7 @@ function render() {
           <div class="sheet-title">${esc(t("pickItemsTitle"))}</div>
           <button class="close-btn" id="closeItemPicker" aria-label="${esc(t("closeAria"))}">✕</button>
         </div>
+        <div style="margin:0 0 10px;">${engineBadge()}${engineNote()}</div>
         <div style="font-size:12px;color:var(--mist);margin-bottom:12px;line-height:1.4;">${esc(t("pickItemsSub"))}</div>
 
         <div class="field-label" style="margin:0 0 4px;">
@@ -3821,6 +3833,7 @@ function render() {
           <div class="sheet-title">${esc(t("payslipResultTitle"))}</div>
           <button class="close-btn" id="closePayslipResult" aria-label="${esc(t("closeAria"))}">✕</button>
         </div>
+        ${payslipDraft && !payslipDraft.manual ? `<div style="margin:0 0 10px;">${engineBadge()}${engineNote()}</div>` : ""}
         ${payslipDraft ? `
           ${payslipDraft.manual ? `
             <div class="tax-note" style="margin-bottom:12px;">${esc(t("payslipManualHint"))}</div>
@@ -4090,6 +4103,7 @@ function render() {
           const verdictSubKey = r.verdict === "red" ? "halalVerdictRedSub" : r.verdict === "yellow" ? "halalVerdictYellowSub" : "halalVerdictGreenSub";
           const allMatches = [...r.haramMatches.map(m=>({...m,cat:"red"})), ...r.syubhatMatches.map(m=>({...m,cat:"yellow"}))];
           return `
+          <div style="margin:0 0 10px;">${engineBadge()}${engineNote()}</div>
           <div class="halal-verdict ${r.verdict}">
             <div class="icon">${verdictIcon}</div>
             <div class="txt">
@@ -4606,9 +4620,10 @@ function render() {
     ${scanning ? `
       <div class="scan-overlay" id="scanOverlay">
         <div class="scan-spinner"></div>
+        ${engineBadge()}
         <div>${esc(t("scanReading"))}</div>
         <div class="mono" id="scanProgressPct" style="font-size:22px;font-weight:700;">${scanProgress}%</div>
-        <div class="sub">${esc(t("scanSub"))}</div>
+        <div class="sub">${esc(t(scanEngine === "ai" ? "scanSubAI" : "scanSub"))}</div>
       </div>
     ` : ""}
     ${convertingHeic ? `
@@ -5676,10 +5691,7 @@ function attachEvents() {
       c.getContext("2d").drawImage(cropImgEl, 0, 0);
       const target = cropTarget;
       if (target === "receipt") scanReceiptPhoto = makeReceiptThumbnail(c, 480);
-      const dataUrl = grayscaleContrastFromCanvas(c, 2400);
-      showCropTool = false; cropImgEl = null; render();
-      if (target === "payslip") runPayslipOCRFromDataUrl(dataUrl);
-      else runOCRFromDataUrl(dataUrl);
+      startScan(target, c, 2400);
     });
 
     const cropConfirmBtn = document.getElementById("cropConfirmBtn");
@@ -6532,17 +6544,32 @@ function performCropAndProceed() {
   if (target === "receipt") scanReceiptPhoto = makeReceiptThumbnail(cropCanvas, 480);
   // 3000px (naik dari 2400): font struk/payslip kecil banget, resolusi lebih tinggi
   // ngasih Tesseract lebih banyak piksel per glyph buat dibedain (mis. 3 vs 7, ヲ vs ラ).
-  const dataUrl = grayscaleContrastFromCanvas(cropCanvas, 3000);
-  // Premium+: kirim foto berwarna (maks 1600px) ke AI; kalau gagal otomatis jatuh ke OCR lokal di bawah
-  const aiUrl = window.KakeiboAuth && window.KakeiboAuth.isPlus() ? aiImageFromCanvas(cropCanvas, 1600) : null;
+  startScan(target, cropCanvas, 3000);
+}
+// Satu pintu untuk semua scanner (struk, slip gaji, halal), baik lewat crop maupun "pakai foto penuh":
+// Premium+ -> scan AI (foto berwarna maks 1600px), kalau gagal otomatis jatuh ke OCR Tesseract; selain itu OCR biasa.
+function startScan(target, srcCanvas, ocrDim) {
+  scanFellBack = false;
+  const dataUrl = grayscaleContrastFromCanvas(srcCanvas, ocrDim);
+  const aiUrl = window.KakeiboAuth && window.KakeiboAuth.isPlus() ? aiImageFromCanvas(srcCanvas, 1600) : null;
   showCropTool = false;
   cropImgEl = null;
+  if (aiUrl) { render(); runAIScan(target, aiUrl, dataUrl); return; }
   render();
-  if (aiUrl) { runAIScan(target, aiUrl, dataUrl); return; }
-  if (target === "payslip") runPayslipOCRFromDataUrl(dataUrl);
-  else if (target === "halal") runHalalOCRFromDataUrl(dataUrl);
-  else runOCRFromDataUrl(dataUrl);
+  runOcrByTarget(target, dataUrl);
 }
+function runOcrByTarget(target, dataUrl) {
+  if (target === "payslip") return runPayslipOCRFromDataUrl(dataUrl);
+  if (target === "halal") return runHalalOCRFromDataUrl(dataUrl);
+  return runOCRFromDataUrl(dataUrl);
+}
+// Lencana pembeda: AI (Premium+) vs OCR biasa (Tesseract di browser)
+function engineBadge() {
+  if (!scanEngine) return "";
+  const ai = scanEngine === "ai";
+  return `<span class="engine-badge ${ai ? "ai" : "ocr"}">${ai ? "✨" : "🔍"} ${esc(t(ai ? "engineAI" : "engineOCR"))}</span>`;
+}
+function engineNote() { return scanFellBack && scanEngine === "ocr" ? `<div class="engine-note">${esc(t("engineFallback"))}</div>` : ""; }
 
 function aiImageFromCanvas(cv, maxSide) {
   const k = Math.min(1, maxSide / Math.max(cv.width, cv.height));
@@ -6566,6 +6593,7 @@ async function runAIScan(target, aiUrl, fallbackUrl) {
     if (kind === "halal") return runHalalOCRFromDataUrl(fallbackUrl);
     return runOCRFromDataUrl(fallbackUrl);
   };
+  scanEngine = "ai"; scanFellBack = false;
   scanning = true; scanProgress = 0; render();
   const tick = setInterval(() => {
     scanProgress = Math.min(90, scanProgress + 6);
@@ -6598,11 +6626,13 @@ async function runAIScan(target, aiUrl, fallbackUrl) {
     clearInterval(tick);
     scanning = false;
     if (e && e.code === "limit") alert(AI_SCAN_MSG[lang] || AI_SCAN_MSG.en);
+    scanFellBack = true;
     fallback();
   }
 }
 
 async function runPayslipOCRFromDataUrl(dataUrl) {
+  scanEngine = "ocr";
   scanning = true; scanProgress = 0; render();
   try {
     const Tesseract = await loadTesseract();
@@ -6652,6 +6682,7 @@ async function runPayslipOCRFromDataUrl(dataUrl) {
   }
 }
 async function runHalalOCRFromDataUrl(dataUrl) {
+  scanEngine = "ocr";
   scanning = true; scanProgress = 0; render();
   try {
     const Tesseract = await loadTesseract();
@@ -6682,6 +6713,7 @@ async function runHalalOCRFromDataUrl(dataUrl) {
   }
 }
 async function runOCRFromDataUrl(dataUrl) {
+  scanEngine = "ocr";
   scanning = true; scanProgress = 0; render();
   try {
     const Tesseract = await loadTesseract();
