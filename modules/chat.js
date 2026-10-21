@@ -66,6 +66,8 @@
   Object.assign(UI.id.e, { story: "Tulis sesuatu dulu.", media: "Foto tidak valid atau terlalu besar." });
   Object.assign(UI.en, { stTitle: "Status", stMine: "My status", stAdd: "Add status", stPhoto: "Photo", stText: "Text", stPost: "Post", stTypePh: "Type a status…", stCapPh: "Add a caption…", stViews: "Viewed by", stNoViews: "No views yet.", stDelAsk: "Delete this status?", stSub: "Disappears after 24 hours.", stClose: "Close" });
   Object.assign(UI.en.e, { story: "Write something first.", media: "Photo is invalid or too large." });
+  Object.assign(UI.id, { gPhoto: "Foto grup", gPhotoNew: "Pilih foto baru", gPhotoDel: "Hapus foto", gDesc: "Deskripsi grup", gDescAdd: "Tambah deskripsi grup", gDescPh: "Tulis deskripsi grup…", gDescNote: "Otomatis diterjemahkan ke bahasa tiap anggota.", gDescFrom: "Diterjemahkan dari {l}", gDescOrig: "Lihat asli", gDescTr: "Lihat terjemahan", gDescWait: "Menerjemahkan…" });
+  Object.assign(UI.en, { gPhoto: "Group photo", gPhotoNew: "Choose new photo", gPhotoDel: "Remove photo", gDesc: "Group description", gDescAdd: "Add group description", gDescPh: "Write a group description…", gDescNote: "Automatically translated into each member's language.", gDescFrom: "Translated from {l}", gDescOrig: "Show original", gDescTr: "Show translation", gDescWait: "Translating…" });
   var COL = ["#ac3527", "#223a5c", "#d9822f", "#4a7c59", "#7a5c9e", "#2f7f8a"];
   var A = { tok: null, user: null }, host, root, view, tmp = {}, ws, peer, msgs = [], me, onl = [], retry = 0, closing = true, rt, pingT, typT, peerTyping = false, peerTypT, contacts = [], groups = [], tab = "chats", GI = null, GM = {}, newCnt = 0, newFrom = null, newDone = false, pollT = null, cdT, lastTypeSent = 0;
   try { A = Object.assign(A, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
@@ -291,6 +293,8 @@
       ".kc-set{border:0;box-shadow:none;border-radius:22px;background:var(--kcard)}.kc-sr{position:relative;border-bottom:0;padding:14px 16px;min-height:64px}.kc-sr:not(:last-child)::after{content:'';position:absolute;left:67px;right:16px;bottom:0;height:1px;background:var(--kline)}.kc-sr.col{row-gap:10px}.kc-sr.col::after{left:16px!important}.kc-si{border-radius:14px}",
       ".kc-seg{margin-top:2px;gap:8px}.kc-seg button{border:0;background:rgba(23,35,61,.07);border-radius:14px;padding:10px 0}.kc-seg button[aria-pressed=true]{background:var(--kv);color:#f6efdc}",
       ".kc-pc{border-radius:26px}.kc-pc .kc-av{box-shadow:none}.kc-pcav,.kc-pcav .kc-av{border-radius:32%}",
+      ".kc-gav{overflow:hidden}.kc-gav img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}.kc-ghero .avw{position:relative;display:inline-block}.kc-gcam{position:absolute;right:-8px;bottom:-8px;width:34px;height:34px;border-radius:12px;border:3px solid var(--kbg);background:var(--kh);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}",
+      ".kc-gdesc{margin:0 0 16px;padding:14px 16px;border-radius:20px;background:var(--kcard)}.kc-gdesc .lb{display:flex;align-items:center;justify-content:space-between;font:700 calc(11.5px*var(--kfs)) Inter,sans-serif;color:var(--kmu);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}.kc-gdesc .lb .kc-ib{margin:-6px -8px -6px 0}.kc-gdesc .tx{font-size:calc(14.5px*var(--kfs));line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.kc-gdesc .nt{margin-top:8px;font-size:calc(12px*var(--kfs));color:var(--kmu);line-height:1.4}.kc-gdesc .nt button,.kc-gdesc .add{border:0;background:none;color:var(--kh);font:700 calc(13px*var(--kfs)) Inter,sans-serif;padding:0;cursor:pointer}.kc-gdesc .add{display:flex;align-items:center;gap:6px;font-size:calc(14px*var(--kfs))}textarea.kc-in{resize:none;min-height:112px;line-height:1.45}",
       ".kc-send{width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(150deg,var(--kh2),var(--kh));color:#fff5e8;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 46px;box-shadow:0 8px 16px -6px rgba(var(--kacc2),.6)}.kc-send:active{filter:brightness(.92)}.kc-send:disabled{background:#cfc6ad;box-shadow:none}.kc-send svg{width:22px;height:22px}.kc-mic{background:linear-gradient(135deg,var(--kv),var(--kv-d));box-shadow:none}",
       ".kc-sheet{z-index:5}.kc-sheet>div{background:var(--kcard);border-radius:26px 26px 0 0;box-shadow:0 -12px 34px rgba(23,35,61,.25)}",
       ".kc-call{background:linear-gradient(160deg,#17233d 0%,#2c4568 100%)}"
@@ -334,11 +338,11 @@
   var chev = ic("chev", 18).replace("<svg", '<svg class="ch"');
   var GMAX = { free: 8, premium: 30 }; // sama dengan GROUP_LIMITS di Worker (server yang menentukan)
   var uniq = function (a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); };
-  var avG = function (name, sz) { return '<span class="kc-gav" style="--c:' + avCol(name) + ";width:" + sz + "px;height:" + sz + "px;font-size:" + Math.round(sz * .42) + 'px">' + esc(Array.from(String(name || "?"))[0] || "?").toUpperCase() + "</span>"; };
+  var avG = function (name, sz, img) { return '<span class="kc-gav" style="--c:' + avCol(name) + ";width:" + sz + "px;height:" + sz + "px;font-size:" + Math.round(sz * .42) + 'px">' + (/^data:image\//.test(img || "") ? '<img alt="" src="' + img + '">' : esc(Array.from(String(name || "?"))[0] || "?").toUpperCase()) + "</span>"; };
   var lastTxt = function (l) { var t = T(); return l.kind === "img" ? t.kImg + (l.text ? " · " + l.text : "") : l.kind === "aud" ? t.kAud : l.text; };
   var stamp = function (ts) { return dayKey(ts) === dayKey(Date.now()) ? hm(ts) : dayLabel(ts); };
   var sysText = function (s) { var x = T().sys[s.k] || ""; return x.replace("{n}", s.n || "").replace("{g}", s.g || ""); };
-  var groupPeer = function (r) { return { group: true, gid: r.group.id, id: "g:" + r.group.id, name: r.group.name, n: r.members ? r.members.length : 0 }; };
+  var groupPeer = function (r) { return { group: true, gid: r.group.id, id: "g:" + r.group.id, name: r.group.name, avatar: r.group.avatar || "", n: r.members ? r.members.length : 0 }; };
 
   /* ---------- komponen tampilan ---------- */
   function sheet(inner, cls, key) { // popup dari bawah; hanya satu sheet aktif
@@ -369,7 +373,7 @@
   };
   var groupRow = function (g, i) {
     var pv = g.last ? esc((g.last.mine ? T().you : g.last.from) + ": " + lastTxt(g.last)) : g.n + " " + T().gMembers;
-    return '<button class="kc-li' + (g.unread ? " unread" : "") + '" data-a="openg" data-i="' + i + '" data-n="' + esc(g.name.toLowerCase()) + '">' + avG(g.name, 50) + '<span class="mid"><b>' + esc(g.name) + ' <span class="kc-fl">' + uniq(g.langs || []).slice(0, 4).map(fl).join("") + '</span></b><span class="pv">' + pv + '</span></span><span class="rt">' + (g.last ? '<span class="tm">' + stamp(g.last.ts) + "</span>" : "") + unBd(g.unread) + "</span></button>";
+    return '<button class="kc-li' + (g.unread ? " unread" : "") + '" data-a="openg" data-i="' + i + '" data-n="' + esc(g.name.toLowerCase()) + '">' + avG(g.name, 50, g.avatar) + '<span class="mid"><b>' + esc(g.name) + ' <span class="kc-fl">' + uniq(g.langs || []).slice(0, 4).map(fl).join("") + '</span></b><span class="pv">' + pv + '</span></span><span class="rt">' + (g.last ? '<span class="tm">' + stamp(g.last.ts) + "</span>" : "") + unBd(g.unread) + "</span></button>";
   };
   var searchBox = function () { return '<label class="kc-search">' + ic("search", 18) + '<input id="kcQ" type="search" autocomplete="off" placeholder="' + esc(T().search) + '"></label>'; };
   var emptyBox = function (stampCh, title, sub, btn, act) { return '<div class="kc-emp"><div class="kc-stamp">' + stampCh + "</div><b>" + title + "</b><span>" + sub + "</span>" + (btn ? '<button class="kc-btn sm" style="margin-top:18px" data-a="' + act + '">' + btn + "</button>" : "") + "</div>"; };
@@ -420,7 +424,7 @@
         '<div class="kc-dock"><div id="kcErr"></div><button class="kc-btn" id="kcMk" data-a="mk" data-t="' + t.gCreate + '">' + t.gCreate + "</button></div>";
     } else if (v === "chat") {
       var g = peer.group, btn = function (a, icn, label, id) { return '<button class="kc-ib" ' + (id ? 'id="' + id + '" ' : "") + 'data-a="' + a + '" aria-label="' + label + '">' + ic(icn) + "</button>"; };
-      h = '<div class="kc-head kc-hchat"><button class="kc-ib" data-a="back" aria-label="Back">' + ic("back") + "</button>" + (g ? '<span data-a="ginfo" style="display:flex;cursor:pointer">' + avG(peer.name, 40) + "</span>" : avP(peer, 40)) +
+      h = '<div class="kc-head kc-hchat"><button class="kc-ib" data-a="back" aria-label="Back">' + ic("back") + "</button>" + (g ? '<span data-a="ginfo" style="display:flex;cursor:pointer">' + avG(peer.name, 40, peer.avatar) + "</span>" : avP(peer, 40)) +
         '<div class="ttl"' + (g ? ' data-a="ginfo" style="cursor:pointer"' : "") + "><span" + (g ? ' id="kcGTitle"' : "") + ">" + esc(peer.name) + "</span>" + (g ? "" : '<span class="kc-pair">' + fl(u.lang) + SWAPI + fl(peer.lang) + "</span>") + '<div class="sub" id="kcSt">' + (g ? (peer.n ? peer.n + " " + t.gMembers : "") : t.offl) + "</div></div>" +
         (g ? "" : btn("call", "phone", "Call", "kcCallB") + btn("vcall", "video", "Video call", "kcVCallB")) + btn("media", "grid", "Media") + (g ? btn("ginfo", "info", t.gInfo) : "") + "</div>" +
         '<div class="kc-bar" id="kcBar" style="display:none">' + t.off + '</div><div class="kc-body"><div class="kc-wp" id="kcWp"></div><div class="kc-list" id="kcList"></div></div>' +
@@ -449,7 +453,13 @@
       squareAvatar(ph, function (d) { if (d) sendAvatar(d); });
     } catch (e) {}
   }
+  function refreshGHead() { var hv = root && root.querySelector(".kc-head > span[data-a=ginfo]"); if (hv && peer && peer.group) hv.innerHTML = avG(peer.name, 40, peer.avatar); }
   function syncPeer() { // perbarui foto/nama lawan chat yang sedang dibuka dari daftar kontak terbaru
+    if (view === "chat" && peer && peer.group) {
+      var gg = groups.filter(function (x) { return x.id === peer.gid; })[0];
+      if (gg && (gg.avatar || "") !== (peer.avatar || "")) { peer.avatar = gg.avatar || ""; refreshGHead(); }
+      return;
+    }
     if (view !== "chat" || !peer || peer.group) return;
     var f = contacts.filter(function (x) { return x.id === peer.id; })[0]; if (!f) return;
     var ch = (f.avatar || "") !== (peer.avatar || "");
@@ -488,7 +498,7 @@
   }
   function quietLists() { // ambil daftar yang tidak sedang tampil, supaya badge di navbar akurat
     if (view !== "chats") api("/api/contacts").then(function (r) { contacts = r.contacts || []; syncPeer(); updNav(); }).catch(function () {});
-    if (view !== "groups") api("/api/groups").then(function (r) { groups = r.groups || []; updNav(); }).catch(function () {});
+    if (view !== "groups") api("/api/groups").then(function (r) { groups = r.groups || []; syncPeer(); updNav(); }).catch(function () {});
   }
   function pollLists() { // segarkan daftar tiap 15 detik selama layar daftar terbuka
     if (!root || !root.classList.contains("open") || document.hidden || A.tok === undefined || !A.tok) return;
@@ -512,8 +522,10 @@
     api("/api/groups/info", { id: gid }).then(function (r) {
       if (!peer || peer.gid !== gid) return;
       GI = r; GM = {}; r.members.forEach(function (m) { GM[m.id] = m; });
-      peer.name = r.group.name; peer.n = r.members.length;
+      peer.name = r.group.name; peer.n = r.members.length; peer.avatar = r.group.avatar || "";
+      groups.forEach(function (x) { if (x.id === gid) x.avatar = peer.avatar; });
       var h = $("#kcGTitle"); if (h) h.textContent = peer.name;
+      refreshGHead(); loadGroupDesc();
       online(onl); drawMsgs(); drawGroupInfo();
     }).catch(function (e) { if (e && e.code === "notfound") leftGroup(); });
   }
@@ -570,7 +582,7 @@
   function drawGroupInfo() {
     var n = $("#kcGI"); if (!n || !GI) return;
     var t = T(), g = GI.group, ms = GI.members, uid = A.user.id, own = g.mine;
-    n.innerHTML = '<div class="kc-ghero">' + avG(g.name, 84) + "<h2>" + esc(g.name) + (own ? '<button class="kc-ib sm" data-a="grename" aria-label="' + t.gRename + '">' + ic("edit", 18) + "</button>" : "") + "</h2><p>" + ms.length + " / " + g.max + " " + t.gMembers + '</p><div class="kc-fl big">' + uniq(ms.map(function (m) { return m.lang; })).map(fl).join("") + "</div></div>" +
+    n.innerHTML = '<div class="kc-ghero"><div class="avw">' + avG(g.name, 84, g.avatar) + (own ? '<button class="kc-gcam" data-a="gavpick" aria-label="' + t.gPhoto + '">' + ic("image", 16) + '</button><input type="file" id="kcGAvFile" accept="image/*" hidden>' : "") + "</div><h2>" + esc(g.name) + (own ? '<button class="kc-ib sm" data-a="grename" aria-label="' + t.gRename + '">' + ic("edit", 18) + "</button>" : "") + "</h2><p>" + ms.length + " / " + g.max + " " + t.gMembers + '</p><div class="kc-fl big">' + uniq(ms.map(function (m) { return m.lang; })).map(fl).join("") + "</div></div>" + descBlock(g, own) +
       '<div class="kc-code"><div class="lb">' + t.gInvite + '</div><div class="cd">' + esc(g.invite) + '</div><div class="row"><button class="kc-btn sm" data-a="gshare">' + t.share + '</button><button class="kc-btn sm" data-a="gcopy">' + t.copy + "</button></div></div>" +
       '<div class="kc-h">' + t.gMembers + '</div><div class="kc-set">' + ms.map(function (m) {
         return '<div class="kc-mb">' + avP(m, 44) + '<span class="mid"><b>' + esc(m.name) + (m.id === uid ? ' <i class="kc-tag">' + t.gYou + "</i>" : "") + (m.id === g.owner ? ' <i class="kc-tag own">' + t.gOwner + "</i>" : "") + '</b><span class="pv">' + fl(m.lang) + " " + esc(ln(m.lang)) + "</span></span>" +
@@ -1210,11 +1222,48 @@
     return false;
   }
   function onStoryFile(e) {
+    if (e.target.id === "kcGAvFile") return onGroupAvFile(e);
     if (e.target.id !== "kcStFile") return;
     var f = e.target.files && e.target.files[0]; if (!f || !tmp.sc) return;
     shrinkStory(f, function (r) { if (!r || !tmp.sc) { var n = $("#kcSComp"); if (n) { var e2 = document.createElement("div"); e2.className = "kc-serr"; e2.textContent = T().e.wpbig; n.appendChild(e2); } return; } tmp.sc.kind = "img"; tmp.sc.img = r; stCompDraw(); });
   }
   function onStoryInput(e) { if (e.target.id === "kcStTxt") { var b = $("#kcStPost"); if (b) b.disabled = !e.target.value.trim(); } }
+
+  /* ---------- foto & deskripsi grup (deskripsi diterjemahkan ke bahasa tiap akun) ---------- */
+  var GD = null, GDC = {};
+  function loadGroupDesc() {
+    var g = GI && GI.group; if (!g || !g.desc) { GD = null; return; }
+    var key = g.id + ":" + g.desc_ts + ":" + A.user.lang;
+    if (GD && GD.key === key) return;
+    if (GDC[key]) { GD = GDC[key]; return; }
+    GD = null;
+    if (!g.desc_lang || g.desc_lang === A.user.lang) { GDC[key] = GD = { key: key, text: g.desc, tr: false, orig: false }; return; }
+    api("/api/groups/desc/tr", { id: g.id }).then(function (r) {
+      GDC[key] = { key: key, text: r.text || g.desc, tr: !!r.tr, from: r.from || g.desc_lang, orig: false };
+      if (GI && GI.group.id === g.id && GI.group.desc_ts === g.desc_ts) { GD = GDC[key]; drawGroupInfo(); }
+    }).catch(function () {});
+  }
+  function descBlock(g, own) {
+    var t = T();
+    if (!g.desc) return own ? '<div class="kc-gdesc"><button class="add" data-a="gdesc">' + ic("edit", 15) + " " + t.gDescAdd + '</button><div class="nt">' + t.gDescNote + "</div></div>" : "";
+    var ok = GD && GD.key === g.id + ":" + g.desc_ts + ":" + A.user.lang, wait = !ok && g.desc_lang && g.desc_lang !== A.user.lang;
+    var text = ok && !GD.orig ? GD.text : g.desc, note = "";
+    if (ok && GD.tr) note = t.gDescFrom.replace("{l}", fl(GD.from) + " " + esc(ln(GD.from))) + ' · <button data-a="gdorig">' + (GD.orig ? t.gDescTr : t.gDescOrig) + "</button>";
+    else if (wait) note = t.gDescWait;
+    if (own) note += (note ? "<br>" : "") + t.gDescNote;
+    return '<div class="kc-gdesc"><div class="lb"><span>' + t.gDesc + "</span>" + (own ? '<button class="kc-ib sm" data-a="gdesc" aria-label="' + t.gDesc + '">' + ic("edit", 16) + "</button>" : "") + '</div><div class="tx">' + esc(text) + "</div>" + (note ? '<div class="nt">' + note + "</div>" : "") + "</div>";
+  }
+  function setGroupAvatar(d) {
+    var gid = peer && peer.gid; if (!gid) return;
+    api("/api/groups/avatar", { id: gid, avatar: d }).then(function (r) {
+      GI = r; peer.avatar = r.group.avatar || ""; groups.forEach(function (x) { if (x.id === gid) x.avatar = peer.avatar; });
+      refreshGHead(); drawGroupInfo();
+    }).catch(function (x) { toast(T().e[x && x.code] || T().e.server); });
+  }
+  function onGroupAvFile(e) {
+    var f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f || !peer || !peer.group) return;
+    readFile(f, function (src) { if (!src) return toast(T().e.wpbig); squareAvatar(src, function (d) { if (d) setGroupAvatar(d); else toast(T().e.wpbig); }); });
+  }
 
   /* ---------- aksi ---------- */
   function onClick(e) {
@@ -1297,6 +1346,20 @@
       var rn = ($("#kcRen").value || "").trim(); clearErr(); if (!rn) return err({ code: "gname" }); busy(b, true, "…");
       api("/api/groups/rename", { id: peer.gid, name: rn }).then(function (r) { GI = r; peer.name = r.group.name; var s7 = $("#kcSheet"); if (s7) s7.remove(); var h = $("#kcGTitle"); if (h) h.textContent = peer.name; drawGroupInfo(); }).catch(function (x) { busy(b, false); err(x); });
     }
+    else if (a === "gavpick") {
+      if (GI && GI.group.avatar) sheet("<h3>" + t.gPhoto + '</h3><button class="kc-btn" data-a="gavfile">' + t.gPhotoNew + '</button><button class="kc-btn ghost" style="margin-top:10px" data-a="gavdel">' + t.gPhotoDel + "</button>", "", "gav");
+      else { var gf1 = $("#kcGAvFile"); if (gf1) gf1.click(); }
+    }
+    else if (a === "gavfile") { var sg1 = $("#kcSheet"); if (sg1) sg1.remove(); var gf2 = $("#kcGAvFile"); if (gf2) gf2.click(); }
+    else if (a === "gavdel") { var sg2 = $("#kcSheet"); if (sg2) sg2.remove(); setGroupAvatar(""); }
+    else if (a === "gdesc") {
+      sheet("<h3>" + t.gDesc + '</h3><textarea class="kc-in" id="kcGDesc" rows="5" maxlength="500" placeholder="' + esc(t.gDescPh) + '">' + esc(GI ? GI.group.desc : "") + '</textarea><div class="kc-note" style="margin:-2px 0 10px">' + t.gDescNote + '</div><div id="kcErr"></div><button class="kc-btn" data-a="gdesc2">' + t.save + "</button>", "", "gdesc");
+    }
+    else if (a === "gdesc2") {
+      var dv = ($("#kcGDesc").value || "").trim(); clearErr(); busy(b, true, "…");
+      api("/api/groups/desc", { id: peer.gid, text: dv }).then(function (r) { GI = r; GD = null; var sg3 = $("#kcSheet"); if (sg3) sg3.remove(); loadGroupDesc(); drawGroupInfo(); }).catch(function (x) { busy(b, false); err(x); });
+    }
+    else if (a === "gdorig") { if (GD) { GD.orig = !GD.orig; drawGroupInfo(); } }
     else if (a === "gleave") confirmSheet(t.gLeaveAsk, t.gLeaveYes, "gleave2");
     else if (a === "gleave2") { api("/api/groups/leave", { id: peer.gid }).then(function () { var s8 = $("#kcSheet"); if (s8) s8.remove(); leaveChat(); tab = "groups"; go("groups"); }).catch(function (x) { var s9 = $("#kcSheet"); if (s9) s9.remove(); toast(t.e[x && x.code] || t.e.server); }); }
     else if (a === "wallpaper") openWallpaper();
