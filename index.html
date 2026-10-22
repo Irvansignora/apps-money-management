@@ -852,6 +852,7 @@
     <div id="leaLangRow" class="lea-lang-row"></div>
     <div id="leaResultBox"></div>
     <button type="button" data-jlpt style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">Belajar JLPT · 日本語 <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Gratis</span></button>
+    <button type="button" data-exam style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">Persiapan JFT &amp; SSW · 試験 <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Gratis</span></button>
     <button type="button" data-lea-ai style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;padding:12px;border:1px dashed var(--hanko);border-radius:14px;background:none;color:var(--hanko);font:600 13.5px Inter,sans-serif;cursor:pointer">LEA Sensei · 日本語 AI <span style="font-size:10.5px;background:var(--hanko);color:#fff;border-radius:99px;padding:2px 8px">Premium+</span></button>
   </div>
 </div>
@@ -2580,6 +2581,23 @@ function openJlpt() {
   });
 }
 document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-jlpt]")) openJlpt(); });
+// Persiapan JFT-Basic & SSW + sumber belajar (materi 2 bahasa: Indonesia dan Inggris)
+function openExam() {
+  const go = () => window.KakeiboExam.open({ lang, esc });
+  const need = [];
+  if (!window.EXAM_DATA) need.push("modules/exam-data.js");
+  if (!window.KakeiboExam) need.push("modules/exam.js");
+  if (!need.length) return go();
+  let n = 0;
+  need.forEach(src => {
+    const sc = document.createElement("script");
+    sc.src = src + "?v=2";
+    sc.onload = () => { if (++n === need.length) go(); };
+    sc.onerror = () => alert("Modul persiapan JFT & SSW gagal dimuat. Cek koneksi internet.");
+    document.head.appendChild(sc);
+  });
+}
+document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-exam]")) openExam(); });
 // Notifikasi push: ketuk notifikasi membuka percakapan (?chat=ID); halaman yang sudah terbuka diberi tahu service worker
 try {
   const dp = new URLSearchParams(location.search).get("chat");
@@ -3369,6 +3387,7 @@ function closeTopLayer() {
   try { if (window.KakeiboAuth && window.KakeiboAuth.back()) return true; } catch (e) {}
   try { if (window.KakeiboLeaAI && window.KakeiboLeaAI.isOpen() && window.KakeiboLeaAI.back()) return true; } catch (e) {}
   try { if (window.KakeiboKana && window.KakeiboKana.isOpen() && window.KakeiboKana.back()) return true; } catch (e) {}
+  try { if (window.KakeiboExam && window.KakeiboExam.isOpen() && window.KakeiboExam.back()) return true; } catch (e) {}
   try { if (window.KakeiboJlpt && window.KakeiboJlpt.isOpen() && window.KakeiboJlpt.back()) return true; } catch (e) {}
   try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
   const crop = document.getElementById("cropCancelBtn");
