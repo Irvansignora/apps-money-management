@@ -60,9 +60,23 @@ async function findLinks() {
 }
 
 function readRows(buf) {
-  const wb = XLSX.read(buf, { type: "buffer", cellDates: false });
+  // sheetRows membatasi jumlah baris yang dibaca; jauh di atas jumlah TSK (sekitar 12 ribu)
+  const wb = XLSX.read(buf, { type: "buffer", cellDates: false, sheetRows: 300000 });
   const ws = wb.Sheets[wb.SheetNames[0]];
-  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
+  // Excel instansi sering punya rentang terpakai (!ref) jauh lebih besar dari datanya (misalnya sampai baris 1.048.576).
+  // Mengisi seluruh rentang itu menghabiskan memori, jadi rentangnya dipersempit ke sel yang benar-benar berisi.
+  let maxR = -1, maxC = 0;
+  for (const k of Object.keys(ws)) {
+    if (k[0] === "!") continue;
+    const c = ws[k];
+    if (!c || c.v === undefined || c.v === null || String(c.v).trim() === "") continue;
+    const a = XLSX.utils.decode_cell(k);
+    if (a.r > maxR) maxR = a.r;
+    if (a.c > maxC) maxC = a.c;
+  }
+  if (maxR < 0) return [];
+  ws["!ref"] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxR, c: Math.min(maxC, 60) } });
+  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: false }).map((r) => Array.from(r, (v) => clean(v)));
 }
 function headerRow(rows) {
   for (let i = 0; i < Math.min(rows.length, 20); i++) {
