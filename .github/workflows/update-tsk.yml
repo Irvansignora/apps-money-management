@@ -1,0 +1,39 @@
+name: Update data TSK
+
+# Mengunduh 「登録支援機関登録簿」 resmi dari situs Imigrasi Jepang, mengubahnya menjadi JSON per prefektur
+# (modules/tsk/*.json) lalu commit otomatis jika ada perubahan.
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # setiap Senin 03:00 UTC
+  workflow_dispatch:       # bisa dijalankan manual dari tab Actions
+  push:
+    paths:
+      - "scripts/build-tsk.js"
+      - ".github/workflows/update-tsk.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pasang pembaca Excel
+        run: npm install --no-save xlsx@0.18.5
+      - name: Buat data TSK
+        run: node scripts/build-tsk.js
+      - name: Commit jika ada perubahan
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add modules/tsk
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan data."
+          else
+            git commit -m "chore: update data TSK dari register Imigrasi"
+            git push
+          fi
