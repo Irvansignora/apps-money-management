@@ -26,6 +26,8 @@ jobs:
         run: npm install --no-save xlsx@0.18.5
       - name: Buat data TSK
         run: node scripts/build-tsk.js
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
       - name: Commit jika ada perubahan
         run: |
           git config user.name "github-actions[bot]"
