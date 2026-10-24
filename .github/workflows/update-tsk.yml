@@ -9,6 +9,8 @@ on:
   push:
     paths:
       - "scripts/build-tsk.js"
+      - "scripts/validate-tsk-profiles.js"
+      - "modules/tsk/profiles.json"
       - ".github/workflows/update-tsk.yml"
 
 permissions:
@@ -28,6 +30,8 @@ jobs:
         run: node scripts/build-tsk.js
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+      - name: Validasi profil TSK
+        run: node scripts/validate-tsk-profiles.js
       - name: Commit jika ada perubahan
         run: |
           git config user.name "github-actions[bot]"
