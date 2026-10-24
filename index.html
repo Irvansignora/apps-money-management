@@ -2603,7 +2603,7 @@ document.addEventListener("click", (e) => { if (e.target.closest && e.target.clo
 function openTsk() {
   if (window.KakeiboTsk) return window.KakeiboTsk.open({ lang, esc });
   const sc = document.createElement("script");
-  sc.src = "modules/tsk.js?v=1";
+  sc.src = "modules/tsk.js?v=2";
   sc.onload = () => window.KakeiboTsk.open({ lang, esc });
   sc.onerror = () => alert("Modul Pindah Kerja & TSK gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
