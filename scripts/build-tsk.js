@@ -3,16 +3,20 @@
  *
  * Sumber: 「登録支援機関登録簿」 (Excel) di situs Imigrasi Jepang (ISA):
  *   https://www.moj.go.jp/isa/applications/ssw/nyuukokukanri07_00205.html
- * Lisensi data: Public Data License 1.0 (PDL1.0) dengan wajib mencantumkan sumber dan keterangan bila diolah.
+ * Lisensi data: Public Data License 1.0 (PDL1.0), wajib mencantumkan sumber dan keterangan bila diolah.
  *   Teks atribusi sudah ditampilkan di modul (modules/tsk.js).
  *
  * Pemakaian:
  *   npm i --no-save xlsx@0.18.5
- *   node scripts/build-tsk.js                       -> unduh dari situs ISA lalu tulis modules/tsk/*.json
+ *   node scripts/build-tsk.js                           -> unduh dari situs ISA lalu tulis modules/tsk/*.json
  *   node scripts/build-tsk.js --ja a.xlsx --en b.xlsx   -> pakai file lokal (tanpa unduh)
- *   node scripts/build-tsk.js --dump-headers        -> hanya cetak judul kolom (untuk cek format)
+ *   node scripts/build-tsk.js --dump-headers            -> hanya cetak judul kolom (untuk cek format)
  *
- * Privasi: pendaftar perorangan (bukan badan hukum) hanya ditampilkan sampai tingkat kota; nomor telepon dan
+ * Kolom dikenali lewat judulnya (spasi diabaikan), dan kalau judulnya tidak dikenal, lewat isi datanya
+ * (nomor telepon, email, alamat berawalan nama prefektur). Judul kolom asli + 3 baris contoh disimpan di
+ * modules/tsk/_debug.json supaya mudah memeriksa pemetaan.
+ *
+ * Privasi: pendaftar perorangan (bukan badan hukum) hanya ditampilkan sampai tingkat kota; telepon, email, dan
  * alamat lengkapnya tidak ditulis ke data.
  */
 "use strict";
@@ -37,17 +41,32 @@ const PREFS = [
 const ENTITY_RE = /(株式会社|有限会社|合同会社|合資会社|合名会社|一般社団法人|公益社団法人|一般財団法人|公益財団法人|社団法人|財団法人|協同組合|企業組合|協会|組合|社会福祉法人|医療法人|学校法人|宗教法人|特定非営利活動法人|NPO|行政書士法人|社会保険労務士法人|税理士法人|弁護士法人|司法書士法人|商工会|会議所|公社|大学|機構|センター|㈱|㈲|Co\.|Corp|Inc\.|Ltd|LLC|Limited)/i;
 
 function arg(name) { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : null; }
-const zen2han = (s) => String(s).replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
 const clean = (v) => String(v == null ? "" : v).replace(/\s+/g, " ").trim();
-const tidyAddr = (v) => zen2han(clean(v)).replace(/^〒?\s*\d{3}[-－ー]?\d{4}\s*/, "").replace(/[－‐‑–−]/g, "-");
+const zen2han = (s) => String(s).replace(/\u3000/g, " ").replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+const sq = (v) => zen2han(String(v == null ? "" : v)).replace(/\s+/g, "").toLowerCase(); // judul kolom tanpa spasi (termasuk spasi lebar)
 const normReg = (v) => clean(v).replace(/[‐‑‒–—−ー₋−﹣－]/g, "-");
+const tidyAddr = (v) => zen2han(clean(v)).replace(/^〒?\s*\d{3}[-ー]?\d{4}\s*/, "").replace(/[‐‑–−]/g, "-");
+const MON = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
+const p2 = (n) => String(n).padStart(2, "0");
+function normDate(v) { // ke YYYY-MM-DD (menangani "Friday, April 26, 2019", "令和元年5月1日", "2019/4/26", "4/26/19")
+  const s = zen2han(clean(v)); if (!s) return "";
+  let m = s.match(/([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
+  if (m && MON[m[1].toLowerCase()]) return m[3] + "-" + p2(MON[m[1].toLowerCase()]) + "-" + p2(m[2]);
+  m = s.match(/(令和|平成)\s*(元|\d+)年\s*(\d{1,2})月\s*(\d{1,2})日/);
+  if (m) return (m[1] === "令和" ? 2018 : 1988) + (m[2] === "元" ? 1 : +m[2]) + "-" + p2(m[3]) + "-" + p2(m[4]);
+  m = s.match(/(\d{4})[\/\-.年]\s*(\d{1,2})[\/\-.月]\s*(\d{1,2})/);
+  if (m) return m[1] + "-" + p2(m[2]) + "-" + p2(m[3]);
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) return (m[3].length === 2 ? "20" + m[3] : m[3]) + "-" + p2(m[1]) + "-" + p2(m[2]);
+  return s;
+}
+const splitTokens = (s) => String(s || "").split(/[・、,，\/\n;；]/).map(clean).filter(Boolean);
 
 async function get(url, binary) {
   const r = await fetch(url, { headers: UA });
   if (!r.ok) throw new Error("Gagal mengunduh " + url + " (HTTP " + r.status + ")");
   return binary ? Buffer.from(await r.arrayBuffer()) : r.text();
 }
-
 async function findLinks() {
   const html = await get(PAGE, false);
   const links = [...html.matchAll(/href="([^"]+\.xlsx)"/gi)].map((m) => new URL(m[1], PAGE).href);
@@ -55,16 +74,15 @@ async function findLinks() {
   const d = html.match(/([０-９0-9]{4})年([０-９0-9]{1,2})月([０-９0-9]{1,2})日現在/);
   let updated = null;
   if (d) updated = zen2han(d[1]) + "-" + zen2han(d[2]).padStart(2, "0") + "-" + zen2han(d[3]).padStart(2, "0");
-  // urutan di halaman: Jepang dulu, Inggris kedua
-  return { ja: links[0], en: links[1] || null, updated };
+  return { ja: links[0], en: links[1] || null, updated }; // urutan di halaman: Jepang dulu, Inggris kedua
 }
 
 function readRows(buf) {
-  // sheetRows membatasi jumlah baris yang dibaca; jauh di atas jumlah TSK (sekitar 12 ribu)
+  // sheetRows membatasi baris yang dibaca; jauh di atas jumlah TSK (sekitar 12 ribu)
   const wb = XLSX.read(buf, { type: "buffer", cellDates: false, sheetRows: 300000 });
   const ws = wb.Sheets[wb.SheetNames[0]];
-  // Excel instansi sering punya rentang terpakai (!ref) jauh lebih besar dari datanya (misalnya sampai baris 1.048.576).
-  // Mengisi seluruh rentang itu menghabiskan memori, jadi rentangnya dipersempit ke sel yang benar-benar berisi.
+  // Excel instansi sering punya rentang terpakai (!ref) jauh lebih besar dari datanya. Mengisi seluruh rentang itu
+  // menghabiskan memori, jadi rentangnya dipersempit ke sel yang benar-benar berisi.
   let maxR = -1, maxC = 0;
   for (const k of Object.keys(ws)) {
     if (k[0] === "!") continue;
@@ -80,44 +98,72 @@ function readRows(buf) {
 }
 function headerRow(rows) {
   for (let i = 0; i < Math.min(rows.length, 20); i++) {
-    const r = rows[i].map(clean);
+    const r = rows[i].map(sq);
     if (r.filter(Boolean).length >= 2 && r.some((c) => /登録番号|registration/i.test(c))) return i;
   }
   return -1;
 }
 function pick(header, regs) { for (const re of regs) { const i = header.findIndex((h) => re.test(h)); if (i >= 0) return i; } return -1; }
 function columns(header) {
-  return {
-    reg: pick(header, [/登録番号/, /registration\s*(no|num)/i, /^no\.?$/i]),
-    date: pick(header, [/登録.*年月日/, /date\s*of\s*registration/i, /registration\s*date/i, /date/i]),
-    name: pick(header, [/氏名又は名称/, /名称/, /name\s*of\s*(the\s*)?(registered|organi|company)/i, /^name/i, /name/i]),
-    corp: pick(header, [/法人番号/, /corporate\s*(no|num)/i]),
-    addr: pick(header, [/^住所/, /所在地/, /address/i]),
+  const c = {
+    reg: pick(header, [/登録番号/, /registration(no|num)/i, /^no\.?$/i]),
+    date: pick(header, [/登録.*年月日/, /dateofregistration/i, /registrationdate/i, /年月日/, /date/i]),
+    name: pick(header, [/氏名又は名称/, /氏名または名称/, /名称/, /nameof(the)?(registered|organi|company)/i, /^name/i]),
+    corp: pick(header, [/法人番号/, /corporate(no|num)/i]),
     phone: pick(header, [/電話/, /tel/i, /phone/i]),
-    lang: pick(header, [/対応可能言語/, /言語/, /language/i])
+    email: pick(header, [/メール/, /e-?mail/i, /電子/]),
+    lang: pick(header, [/対応可能言語/, /言語/, /language/i]),
+    field: pick(header, [/特定産業分野/, /産業分野/, /分野/, /業種/, /sector/i, /industry/i])
   };
+  // alamat: satu kolom (住所 / 所在地) atau beberapa bagian (都道府県, 市区町村, 番地, ...)
+  const cand = header.map((h, i) => i).filter((i) => /(住所|所在地|都道府県|市区郡町村|市区町村|番地|丁目|建物|address)/i.test(header[i]) && !/郵便|zip|postal|電話|メール|fax/i.test(header[i]));
+  if (cand.some((i) => /都道府県/.test(header[i]))) c.addrCols = cand;
+  else { const first = cand.find((i) => /^住所/.test(header[i])); const one = first !== undefined ? first : cand[0]; c.addrCols = one === undefined ? [] : [one]; }
+  return c;
+}
+const PHONE_RE = /^\+?[\d\- ()]{9,18}$/;
+function sample(body, i, n) { const out = []; for (const r of body) { const v = clean(r[i]); if (v) { out.push(v); if (out.length >= (n || 400)) break; } } return out; }
+const rate = (vals, fn) => (vals.length ? vals.filter(fn).length / vals.length : 0);
+// Kolom yang judulnya tidak dikenali dicari lewat isi datanya (telepon, email, alamat berawalan prefektur)
+function sniff(body, header, c) {
+  const taken = new Set(); Object.keys(c).forEach((k) => { if (typeof c[k] === "number" && c[k] >= 0) taken.add(c[k]); }); c.addrCols.forEach((x) => taken.add(x));
+  for (let i = 0; i < header.length; i++) {
+    if (taken.has(i)) continue;
+    const vals = sample(body, i); if (vals.length < 20) continue;
+    if (c.email < 0 && rate(vals, (v) => /@/.test(v)) > 0.5) { c.email = i; taken.add(i); continue; }
+    if (c.phone < 0 && !/fax|ファックス/.test(header[i]) && rate(vals, (v) => PHONE_RE.test(zen2han(v))) > 0.6) { c.phone = i; taken.add(i); continue; }
+    if (!c.addrCols.length && rate(vals, (v) => PREFS.some((p) => zen2han(v).replace(/^〒?\d{3}-?\d{4}\s*/, "").indexOf(p[1]) === 0)) > 0.5) { c.addrCols = [i]; taken.add(i); continue; }
+  }
 }
 function parse(rows, label) {
   const hi = headerRow(rows);
   if (hi < 0) throw new Error(label + ": baris judul tidak ditemukan. Jalankan dengan --dump-headers untuk melihat isinya.");
-  const header = rows[hi].map(clean), c = columns(header);
-  if (c.reg < 0 || c.name < 0) throw new Error(label + ": kolom nomor registrasi/nama tidak ditemukan. Judul kolom: " + JSON.stringify(header));
+  const rawHeader = rows[hi].map(clean), header = rows[hi].map(sq), c = columns(header);
+  if (c.reg < 0 || c.name < 0) throw new Error(label + ": kolom nomor registrasi/nama tidak ditemukan. Judul kolom: " + JSON.stringify(rawHeader));
+  const body = rows.slice(hi + 1).filter((r) => r.some((x) => clean(x)));
+  sniff(body, header, c);
   const out = [];
-  for (let i = hi + 1; i < rows.length; i++) {
-    const r = rows[i], reg = normReg(r[c.reg]), name = clean(r[c.name]);
+  for (const r of body) {
+    const reg = normReg(r[c.reg]), name = clean(r[c.name]);
     if (!reg || !name) continue;
-    out.push({ reg, name, date: c.date >= 0 ? clean(r[c.date]) : "", corp: c.corp >= 0 ? clean(r[c.corp]) : "", addr: c.addr >= 0 ? tidyAddr(r[c.addr]) : "", phone: c.phone >= 0 ? clean(r[c.phone]) : "", lang: c.lang >= 0 ? clean(r[c.lang]) : "" });
+    const parts = c.addrCols.map((i) => clean(r[i])).filter((x, k, a) => x && x !== a[k - 1]);
+    out.push({
+      reg, name, date: c.date >= 0 ? normDate(r[c.date]) : "", corp: c.corp >= 0 ? clean(r[c.corp]) : "",
+      addr: tidyAddr(parts.join("")), phone: c.phone >= 0 ? zen2han(clean(r[c.phone])) : "",
+      email: c.email >= 0 ? zen2han(clean(r[c.email])).replace(/\s+/g, "") : "",
+      lang: c.lang >= 0 ? clean(r[c.lang]) : "", field: c.field >= 0 ? clean(r[c.field]) : ""
+    });
   }
-  return { header, cols: c, rows: out };
+  return { header: rawHeader, cols: c, rows: out, sample: body.slice(0, 3).map((r) => r.map(clean)) };
 }
 function prefOf(addr) {
-  const a = zen2han(clean(addr));
-  for (const p of PREFS) if (a.indexOf(p[1]) === 0 || a.replace(/^〒?\d{3}-?\d{4}\s*/, "").indexOf(p[1]) === 0) return p[0];
+  const a = zen2han(clean(addr)).replace(/^〒?\s*\d{3}-?\d{4}\s*/, "");
+  for (const p of PREFS) if (a.indexOf(p[1]) === 0) return p[0];
   for (const p of PREFS) if (a.indexOf(p[1]) >= 0) return p[0];
   return "other";
 }
 function cityOnly(addr) {
-  const a = clean(addr).replace(/^〒?\s*[\d０-９]{3}[-－ー]?[\d０-９]{4}\s*/, "");
+  const a = clean(addr);
   const m = a.match(/^(北海道|.{2,3}[都府県])(.*?[市区町村郡])/);
   return m ? m[1] + m[2] : a.slice(0, 6);
 }
@@ -135,16 +181,18 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
     return;
   }
   const J = parse(rowsJa, "Register Jepang");
-  let nameEn = new Map();
+  const nameEn = new Map(); let E = null;
   if (en) {
-    try { const E = parse(readRows(en), "Register Inggris"); E.rows.forEach((r) => nameEn.set(r.reg, r.name)); }
+    try { E = parse(readRows(en), "Register Inggris"); E.rows.forEach((r) => nameEn.set(r.reg, r.name)); }
     catch (e) { console.warn("PERINGATAN: register Inggris dilewati ->", e.message); }
   }
-  const shards = {}; let total = 0, hidden = 0;
+  const shards = {}, langs = {}, fields = {}; let total = 0, hidden = 0;
   for (const r of J.rows) {
     const slug = prefOf(r.addr), ent = isEntity(r);
     if (!ent) hidden++;
-    (shards[slug] = shards[slug] || []).push([r.reg, r.name, nameEn.get(r.reg) || "", ent ? r.addr : cityOnly(r.addr), ent ? r.phone : "", r.date, r.lang, ent ? 0 : 1]);
+    (shards[slug] = shards[slug] || []).push([r.reg, r.name, nameEn.get(r.reg) || "", ent ? r.addr : cityOnly(r.addr), ent ? r.phone : "", r.date, r.lang, ent ? 0 : 1, ent ? r.email : "", r.field]);
+    splitTokens(r.lang).forEach((t) => { langs[t] = (langs[t] || 0) + 1; });
+    splitTokens(r.field).forEach((t) => { fields[t] = (fields[t] || 0) + 1; });
     total++;
   }
   fs.mkdirSync(OUT, { recursive: true });
@@ -152,11 +200,17 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
     const s = JSON.stringify(obj), fp = path.join(OUT, f);
     if (!fs.existsSync(fp) || fs.readFileSync(fp, "utf8") !== s) fs.writeFileSync(fp, s);
   };
-  // hapus shard lama yang sudah tidak ada
-  for (const f of fs.readdirSync(OUT)) if (f.endsWith(".json") && f !== "index.json" && !shards[f.replace(/\.json$/, "")]) fs.unlinkSync(path.join(OUT, f));
+  for (const f of fs.readdirSync(OUT)) if (f.endsWith(".json") && f !== "index.json" && f !== "_debug.json" && !shards[f.replace(/\.json$/, "")]) fs.unlinkSync(path.join(OUT, f));
   for (const slug of Object.keys(shards)) { shards[slug].sort((a, b) => a[0].localeCompare(b[0])); prefs[slug] = shards[slug].length; write(slug + ".json", shards[slug]); }
   const old = fs.existsSync(path.join(OUT, "index.json")) ? JSON.parse(fs.readFileSync(path.join(OUT, "index.json"), "utf8")) : null;
-  const idx = { updated: updated || (old && old.updated) || new Date().toISOString().slice(0, 10), total, source: PAGE, license: "PDL1.0", cols: { lang: J.cols.lang >= 0, phone: J.cols.phone >= 0, en: nameEn.size > 0 }, prefs };
+  const has = (i) => i >= 0;
+  const idx = {
+    updated: updated || (old && old.updated) || new Date().toISOString().slice(0, 10), total, source: PAGE, license: "PDL1.0",
+    cols: { addr: J.cols.addrCols.length > 0, phone: has(J.cols.phone), email: has(J.cols.email), lang: has(J.cols.lang), field: has(J.cols.field), en: nameEn.size > 0 },
+    prefs, langs, fields
+  };
   write("index.json", idx);
-  console.log("Selesai:", total, "lembaga,", Object.keys(prefs).length, "file,", hidden, "perorangan (kontak disembunyikan). Per:", idx.updated);
+  // catatan teknis untuk memeriksa pemetaan kolom (hanya judul + 3 baris contoh dari register publik)
+  write("_debug.json", { ja: { header: J.header, mapped: J.cols, sample: J.sample }, en: E ? { header: E.header, mapped: E.cols, sample: E.sample } : null });
+  console.log("Selesai:", total, "lembaga,", Object.keys(prefs).length, "file,", hidden, "perorangan (kontak disembunyikan). Per:", idx.updated, "| kolom:", JSON.stringify(idx.cols));
 })().catch((e) => { console.error("GAGAL:", e.message); process.exit(1); });
