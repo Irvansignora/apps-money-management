@@ -44,6 +44,8 @@ function arg(name) { const i = process.argv.indexOf(name); return i >= 0 ? proce
 const clean = (v) => String(v == null ? "" : v).replace(/\s+/g, " ").trim();
 const zen2han = (s) => String(s).replace(/\u3000/g, " ").replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
 const sq = (v) => zen2han(String(v == null ? "" : v)).replace(/\s+/g, "").toLowerCase(); // judul kolom tanpa spasi (termasuk spasi lebar)
+const hn = (v) => sq(v).replace(/^\(?\d+\)?[.)]?/, ""); // judul kolom: tanpa spasi dan tanpa nomor urut di depan
+const EMAIL_RE = /[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)+/;
 const normReg = (v) => clean(v).replace(/[‐‑‒–—−ー₋−﹣－]/g, "-");
 const tidyAddr = (v) => zen2han(clean(v)).replace(/^〒?\s*\d{3}[-ー]?\d{4}\s*/, "").replace(/[‐‑–−]/g, "-");
 const MON = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
@@ -103,22 +105,45 @@ function headerRow(rows) {
   }
   return -1;
 }
+// Register asli memakai judul 2 baris: judul utama (sebagian sel digabung, mis. "４ 住所") dan sub-judul
+// (郵便番号 / 所在地 / 電話番号). Keduanya digabung jadi "住所/所在地" dst. Mengembalikan {header, bodyStart}.
+const SUB_RE = /^(郵便|所在地|電話|名称|住所|氏名|ファックス|fax|メール|電子|postal|zip|address|tel|name|phone|e-?mail)/i;
+function buildHeader(rows, hi) {
+  const main = rows[hi].map(clean), next = rows[hi + 1] || [];
+  const filled = next.filter((x) => clean(x));
+  const isSub = filled.length >= 2 && filled.filter((x) => SUB_RE.test(sq(x))).length >= Math.ceil(filled.length * 0.6);
+  if (!isSub) return { header: main, bodyStart: hi + 1, merged: false };
+  const out = []; let parent = "";
+  for (let i = 0; i < Math.max(main.length, next.length); i++) {
+    const m = clean(main[i]), sub = clean(next[i]);
+    if (m) parent = m;
+    out.push(sub ? (m || parent) + "/" + sub : m);
+    if (!sub && !m) parent = parent; // sel kosong tanpa sub-judul tidak mewarisi
+  }
+  return { header: out, bodyStart: hi + 2, merged: true };
+}
 function pick(header, regs) { for (const re of regs) { const i = header.findIndex((h) => re.test(h)); if (i >= 0) return i; } return -1; }
 function columns(header) {
   const c = {
     reg: pick(header, [/登録番号/, /registration(no|num)/i, /^no\.?$/i]),
     date: pick(header, [/登録.*年月日/, /dateofregistration/i, /registrationdate/i, /年月日/, /date/i]),
-    name: pick(header, [/氏名又は名称/, /氏名または名称/, /名称/, /nameof(the)?(registered|organi|company)/i, /^name/i]),
+    name: pick(header, [/氏名又は名称/, /氏名または名称/, /nameof(the)?(registered|organi|company)/i, /nameortitle/i, /^name/i]),
     corp: pick(header, [/法人番号/, /corporate(no|num)/i]),
     phone: pick(header, [/電話/, /tel/i, /phone/i]),
     email: pick(header, [/メール/, /e-?mail/i, /電子/]),
     lang: pick(header, [/対応可能言語/, /言語/, /language/i]),
-    field: pick(header, [/特定産業分野/, /産業分野/, /分野/, /業種/, /sector/i, /industry/i])
+    field: pick(header, [/特定産業分野/, /産業分野/, /分野/, /業種/, /sector/i, /industry/i]),
+    remark: pick(header, [/備考/, /remarks?/i]),
+    support: pick(header, [/支援業務の内容/, /内容及びその実施方法/, /contentsof/i])
   };
-  // alamat: satu kolom (住所 / 所在地) atau beberapa bagian (都道府県, 市区町村, 番地, ...)
+  if (c.name < 0 && c.reg >= 0) c.name = (c.date >= 0 ? c.date : c.reg) + 1; // urutan resmi: nomor, tanggal, nama
+  // alamat: kolom 住所 (kantor terdaftar) dan 支援を行う事務所 (kantor tempat dukungan diberikan) dipisah
   const cand = header.map((h, i) => i).filter((i) => /(住所|所在地|都道府県|市区郡町村|市区町村|番地|丁目|建物|address)/i.test(header[i]) && !/郵便|zip|postal|電話|メール|fax/i.test(header[i]));
-  if (cand.some((i) => /都道府県/.test(header[i]))) c.addrCols = cand;
-  else { const first = cand.find((i) => /^住所/.test(header[i])); const one = first !== undefined ? first : cand[0]; c.addrCols = one === undefined ? [] : [one]; }
+  const office = cand.filter((i) => /事務所|office/i.test(header[i]));
+  const main = cand.filter((i) => office.indexOf(i) < 0);
+  if (main.some((i) => /都道府県/.test(header[i]))) c.addrCols = main;
+  else { const first = main.find((i) => /住所/.test(header[i])); const one = first !== undefined ? first : main[0]; c.addrCols = one === undefined ? [] : [one]; }
+  c.officeCols = office.length ? [office[0]] : [];
   return c;
 }
 const PHONE_RE = /^\+?[\d\- ()]{9,18}$/;
@@ -126,7 +151,7 @@ function sample(body, i, n) { const out = []; for (const r of body) { const v = 
 const rate = (vals, fn) => (vals.length ? vals.filter(fn).length / vals.length : 0);
 // Kolom yang judulnya tidak dikenali dicari lewat isi datanya (telepon, email, alamat berawalan prefektur)
 function sniff(body, header, c) {
-  const taken = new Set(); Object.keys(c).forEach((k) => { if (typeof c[k] === "number" && c[k] >= 0) taken.add(c[k]); }); c.addrCols.forEach((x) => taken.add(x));
+  const taken = new Set(); Object.keys(c).forEach((k) => { if (typeof c[k] === "number" && c[k] >= 0) taken.add(c[k]); }); c.addrCols.forEach((x) => taken.add(x)); (c.officeCols || []).forEach((x) => taken.add(x));
   for (let i = 0; i < header.length; i++) {
     if (taken.has(i)) continue;
     const vals = sample(body, i); if (vals.length < 20) continue;
@@ -135,23 +160,26 @@ function sniff(body, header, c) {
     if (!c.addrCols.length && rate(vals, (v) => PREFS.some((p) => zen2han(v).replace(/^〒?\d{3}-?\d{4}\s*/, "").indexOf(p[1]) === 0)) > 0.5) { c.addrCols = [i]; taken.add(i); continue; }
   }
 }
+const failInfo = (label, rows, err) => ({ label, error: err.message, firstRows: rows.slice(0, 8).map((r) => r.slice(0, 16)) });
 function parse(rows, label) {
   const hi = headerRow(rows);
-  if (hi < 0) throw new Error(label + ": baris judul tidak ditemukan. Jalankan dengan --dump-headers untuk melihat isinya.");
-  const rawHeader = rows[hi].map(clean), header = rows[hi].map(sq), c = columns(header);
-  if (c.reg < 0 || c.name < 0) throw new Error(label + ": kolom nomor registrasi/nama tidak ditemukan. Judul kolom: " + JSON.stringify(rawHeader));
-  const body = rows.slice(hi + 1).filter((r) => r.some((x) => clean(x)));
+  if (hi < 0) throw Object.assign(new Error(label + ": baris judul tidak ditemukan. Jalankan dengan --dump-headers untuk melihat isinya."), { rows });
+  const bh = buildHeader(rows, hi), rawHeader = bh.header, header = rawHeader.map(hn), c = columns(header);
+  if (c.reg < 0 || c.name < 0) throw Object.assign(new Error(label + ": kolom nomor registrasi/nama tidak ditemukan. Judul kolom: " + JSON.stringify(rawHeader)), { rows });
+  const body = rows.slice(bh.bodyStart).filter((r) => r.some((x) => clean(x)));
   sniff(body, header, c);
-  const out = [];
+  const out = [], join = (r, cols) => tidyAddr(cols.map((i) => clean(r[i])).filter((x, k, a) => x && x !== a[k - 1]).join(""));
   for (const r of body) {
     const reg = normReg(r[c.reg]), name = clean(r[c.name]);
-    if (!reg || !name) continue;
-    const parts = c.addrCols.map((i) => clean(r[i])).filter((x, k, a) => x && x !== a[k - 1]);
+    if (!reg || !name || /^(登録番号|registration)/i.test(sq(reg))) continue;
+    const main = join(r, c.addrCols), off = join(r, c.officeCols || []);
+    const remark = c.remark >= 0 ? clean(r[c.remark]) : "";
+    const em = (c.email >= 0 ? zen2han(clean(r[c.email])) : "").replace(/\s+/g, "") || ((zen2han(remark).match(EMAIL_RE) || [""])[0]);
     out.push({
       reg, name, date: c.date >= 0 ? normDate(r[c.date]) : "", corp: c.corp >= 0 ? clean(r[c.corp]) : "",
-      addr: tidyAddr(parts.join("")), phone: c.phone >= 0 ? zen2han(clean(r[c.phone])) : "",
-      email: c.email >= 0 ? zen2han(clean(r[c.email])).replace(/\s+/g, "") : "",
-      lang: c.lang >= 0 ? clean(r[c.lang]) : "", field: c.field >= 0 ? clean(r[c.field]) : ""
+      addr: off || main, hq: off && main && off !== main ? main : "", phone: c.phone >= 0 ? zen2han(clean(r[c.phone])) : "", email: em,
+      lang: c.lang >= 0 ? clean(r[c.lang]) : "", field: c.field >= 0 ? clean(r[c.field]) : "", remark: remark.slice(0, 160),
+      extra: c.support >= 0 && /[☑☒✔✓■]\s*上記に加え/.test(clean(r[c.support])) ? 1 : 0
     });
   }
   return { header: rawHeader, cols: c, rows: out, sample: body.slice(0, 3).map((r) => r.map(clean)) };
@@ -180,17 +208,20 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
     if (en) { const re = readRows(en), h2 = headerRow(re); console.log("EN header @", h2, JSON.stringify(re[h2] || re.slice(0, 5))); }
     return;
   }
-  const J = parse(rowsJa, "Register Jepang");
-  const nameEn = new Map(); let E = null;
+  let J;
+  try { J = parse(rowsJa, "Register Jepang"); }
+  catch (e) { fs.mkdirSync(OUT, { recursive: true }); fs.writeFileSync(path.join(OUT, "_debug.json"), JSON.stringify({ ja: failInfo("Register Jepang", e.rows || rowsJa, e), en: null })); throw e; }
+  const nameEn = new Map(); let E = null, enFail = null;
   if (en) {
-    try { E = parse(readRows(en), "Register Inggris"); E.rows.forEach((r) => nameEn.set(r.reg, r.name)); }
-    catch (e) { console.warn("PERINGATAN: register Inggris dilewati ->", e.message); }
+    const rowsEn = readRows(en);
+    try { E = parse(rowsEn, "Register Inggris"); E.rows.forEach((r) => nameEn.set(r.reg, r.name)); }
+    catch (e) { enFail = failInfo("Register Inggris", e.rows || rowsEn, e); console.warn("PERINGATAN: register Inggris dilewati ->", e.message); }
   }
   const shards = {}, langs = {}, fields = {}; let total = 0, hidden = 0;
   for (const r of J.rows) {
     const slug = prefOf(r.addr), ent = isEntity(r);
     if (!ent) hidden++;
-    (shards[slug] = shards[slug] || []).push([r.reg, r.name, nameEn.get(r.reg) || "", ent ? r.addr : cityOnly(r.addr), ent ? r.phone : "", r.date, r.lang, ent ? 0 : 1, ent ? r.email : "", r.field]);
+    (shards[slug] = shards[slug] || []).push([r.reg, r.name, nameEn.get(r.reg) || "", ent ? r.addr : cityOnly(r.addr), ent ? r.phone : "", r.date, r.lang, ent ? 0 : 1, ent ? r.email : "", r.field, ent ? r.hq : "", ent ? r.remark : "", r.extra]);
     splitTokens(r.lang).forEach((t) => { langs[t] = (langs[t] || 0) + 1; });
     splitTokens(r.field).forEach((t) => { fields[t] = (fields[t] || 0) + 1; });
     total++;
@@ -206,11 +237,11 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
   const has = (i) => i >= 0;
   const idx = {
     updated: updated || (old && old.updated) || new Date().toISOString().slice(0, 10), total, source: PAGE, license: "PDL1.0",
-    cols: { addr: J.cols.addrCols.length > 0, phone: has(J.cols.phone), email: has(J.cols.email), lang: has(J.cols.lang), field: has(J.cols.field), en: nameEn.size > 0 },
+    cols: { addr: J.cols.addrCols.length > 0 || (J.cols.officeCols || []).length > 0, phone: has(J.cols.phone), email: has(J.cols.email) || J.rows.some((r) => r.email), lang: has(J.cols.lang), field: has(J.cols.field), remark: has(J.cols.remark), en: nameEn.size > 0 },
     prefs, langs, fields
   };
   write("index.json", idx);
   // catatan teknis untuk memeriksa pemetaan kolom (hanya judul + 3 baris contoh dari register publik)
-  write("_debug.json", { ja: { header: J.header, mapped: J.cols, sample: J.sample }, en: E ? { header: E.header, mapped: E.cols, sample: E.sample } : null });
+  write("_debug.json", { ja: { header: J.header, mapped: J.cols, sample: J.sample }, en: E ? { header: E.header, mapped: E.cols, sample: E.sample } : enFail });
   console.log("Selesai:", total, "lembaga,", Object.keys(prefs).length, "file,", hidden, "perorangan (kontak disembunyikan). Per:", idx.updated, "| kolom:", JSON.stringify(idx.cols));
 })().catch((e) => { console.error("GAGAL:", e.message); process.exit(1); });
