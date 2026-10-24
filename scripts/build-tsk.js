@@ -109,18 +109,23 @@ function headerRow(rows) {
 // (郵便番号 / 所在地 / 電話番号). Keduanya digabung jadi "住所/所在地" dst. Mengembalikan {header, bodyStart}.
 const SUB_RE = /^(郵便|所在地|電話|名称|住所|氏名|ファックス|fax|メール|電子|postal|zip|address|tel|name|phone|e-?mail)/i;
 function buildHeader(rows, hi) {
-  const main = rows[hi].map(clean), next = rows[hi + 1] || [];
-  const filled = next.filter((x) => clean(x));
-  const isSub = filled.length >= 2 && filled.filter((x) => SUB_RE.test(sq(x))).length >= Math.ceil(filled.length * 0.6);
-  if (!isSub) return { header: main, bodyStart: hi + 1, merged: false };
-  const out = []; let parent = "";
+  const main = rows[hi].map(clean);
+  // cari baris sub-judul dalam 6 baris setelah judul utama (boleh ada baris kosong di antaranya); berhenti di baris data pertama
+  let j = -1;
+  for (let k = hi + 1; k <= Math.min(hi + 6, rows.length - 1); k++) {
+    const f = rows[k].filter((x) => clean(x)); if (f.length < 2) continue;
+    const hits = f.filter((x) => SUB_RE.test(sq(x))).length;
+    if (hits >= 2 && hits >= Math.ceil(f.length * 0.6)) { j = k; break; }
+    if (hits === 0) break;
+  }
+  if (j < 0) return { header: main, bodyStart: hi + 1, merged: false };
+  const next = rows[j], out = []; let parent = "";
   for (let i = 0; i < Math.max(main.length, next.length); i++) {
     const m = clean(main[i]), sub = clean(next[i]);
     if (m) parent = m;
     out.push(sub ? (m || parent) + "/" + sub : m);
-    if (!sub && !m) parent = parent; // sel kosong tanpa sub-judul tidak mewarisi
   }
-  return { header: out, bodyStart: hi + 2, merged: true };
+  return { header: out, bodyStart: j + 1, merged: true };
 }
 function pick(header, regs) { for (const re of regs) { const i = header.findIndex((h) => re.test(h)); if (i >= 0) return i; } return -1; }
 function columns(header) {
@@ -226,12 +231,13 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
     splitTokens(r.field).forEach((t) => { fields[t] = (fields[t] || 0) + 1; });
     total++;
   }
+  if (total && (shards.other ? shards.other.length : 0) / total > 0.5) console.warn("PERINGATAN: lebih dari 50% TSK tidak terdeteksi prefekturnya. Periksa modules/tsk/_debug.json (judul kolom dan baris contoh).");
   fs.mkdirSync(OUT, { recursive: true });
   const prefs = {}, write = (f, obj) => {
     const s = JSON.stringify(obj), fp = path.join(OUT, f);
     if (!fs.existsSync(fp) || fs.readFileSync(fp, "utf8") !== s) fs.writeFileSync(fp, s);
   };
-  for (const f of fs.readdirSync(OUT)) if (f.endsWith(".json") && f !== "index.json" && f !== "_debug.json" && !shards[f.replace(/\.json$/, "")]) fs.unlinkSync(path.join(OUT, f));
+  for (const f of fs.readdirSync(OUT)) if (f.endsWith(".json") && f !== "index.json" && f !== "_debug.json" && f !== "profiles.json" && !shards[f.replace(/\.json$/, "")]) fs.unlinkSync(path.join(OUT, f));
   for (const slug of Object.keys(shards)) { shards[slug].sort((a, b) => a[0].localeCompare(b[0])); prefs[slug] = shards[slug].length; write(slug + ".json", shards[slug]); }
   const old = fs.existsSync(path.join(OUT, "index.json")) ? JSON.parse(fs.readFileSync(path.join(OUT, "index.json"), "utf8")) : null;
   const has = (i) => i >= 0;
