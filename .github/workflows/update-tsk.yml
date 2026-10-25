@@ -9,6 +9,8 @@ on:
   push:
     paths:
       - "scripts/build-tsk.js"
+      - "scripts/build-tsk-fields.js"
+      - "scripts/tsk-field-sources.json"
       - "scripts/validate-tsk-profiles.js"
       - "modules/tsk/profiles.json"
       - ".github/workflows/update-tsk.yml"
@@ -28,6 +30,13 @@ jobs:
         run: npm install --no-save xlsx@0.18.5
       - name: Buat data TSK
         run: node scripts/build-tsk.js
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Pasang pdftotext
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Tambah info bidang dari daftar anggota dewan sektor
+        run: node scripts/build-tsk-fields.js
+        continue-on-error: true
         env:
           NODE_OPTIONS: --max-old-space-size=4096
       - name: Validasi profil TSK
