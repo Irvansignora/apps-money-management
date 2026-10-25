@@ -18,7 +18,7 @@ if (!j || typeof j.profiles !== "object" || Array.isArray(j.profiles)) { console
 if (j._form && !/^https:\/\//.test(j._form)) errors.push("_form harus berupa URL https");
 const regs = new Map();
 for (const f of fs.readdirSync(DIR)) {
-  if (!f.endsWith(".json") || ["index.json", "_debug.json", "profiles.json"].includes(f)) continue;
+  if (!f.endsWith(".json") || ["index.json", "_debug.json", "_fields_debug.json", "profiles.json", "fields.json"].includes(f)) continue;
   for (const r of JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"))) regs.set(r[0], r);
 }
 if (!regs.size) { console.log("Data register belum ada, pemeriksaan nomor registrasi dilewati."); }
