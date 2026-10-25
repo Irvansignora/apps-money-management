@@ -3,7 +3,7 @@
    Teks UI: Indonesia (id) dan Inggris (en); bahasa lain memakai Inggris. Fitur ini gratis dan tidak memonetisasi lowongan kerja. */
 (function () {
   "use strict";
-  var host = { lang: "id", esc: null }, el = null, tab = "guide", idx = null, idxState = "idle", shards = {}, sel = "all", fl = "all", ff = "all", q = "", shown = 30, loading = 0;
+  var host = { lang: "id", esc: null }, el = null, tab = "guide", idx = null, idxState = "idle", shards = {}, sel = "all", fl = "all", ff = "all", fe = false, fj = false, q = "", shown = 30, loading = 0, prof = null, profState = "idle", fmap = null;
   var SRC = "https://www.moj.go.jp/isa/applications/ssw/nyuukokukanri07_00205.html";
   var PREFS = [
     ["hokkaido", "北海道", "Hokkaido"], ["aomori", "青森県", "Aomori"], ["iwate", "岩手県", "Iwate"], ["miyagi", "宮城県", "Miyagi"], ["akita", "秋田県", "Akita"], ["yamagata", "山形県", "Yamagata"], ["fukushima", "福島県", "Fukushima"],
@@ -23,6 +23,14 @@
     "スペイン語": ["Spanyol", "Spanish"], "フランス語": ["Prancis", "French"], "ドイツ語": ["Jerman", "German"], "日本語": ["Jepang", "Japanese"], "ウズベク語": ["Uzbek", "Uzbek"], "タミル語": ["Tamil", "Tamil"],
     "ラオス語": ["Laos", "Lao"], "ラオ語": ["Laos", "Lao"], "アラビア語": ["Arab", "Arabic"], "トルコ語": ["Turki", "Turkish"]
   };
+  var FIELDS = {
+    "介護": ["Perawatan lansia (kaigo)", "Nursing care"], "ビルクリーニング": ["Kebersihan gedung", "Building cleaning"], "工業製品製造業": ["Manufaktur industri", "Industrial manufacturing"],
+    "建設": ["Konstruksi", "Construction"], "造船・舶用工業": ["Perkapalan", "Shipbuilding"], "自動車整備": ["Perawatan mobil", "Automobile maintenance"], "航空": ["Penerbangan", "Aviation"],
+    "宿泊": ["Perhotelan", "Accommodation"], "自動車運送業": ["Angkutan mobil", "Road transport"], "鉄道": ["Kereta api", "Railway"], "農業": ["Pertanian", "Agriculture"], "漁業": ["Perikanan", "Fishery"],
+    "飲食料品製造業": ["Industri makanan & minuman", "Food & beverage manufacturing"], "外食業": ["Restoran / jasa makan", "Food service"], "林業": ["Kehutanan", "Forestry"], "木材産業": ["Industri kayu", "Wood industry"]
+  };
+  function fieldLabel(k) { var m = FIELDS[k]; return m ? (host.lang === "id" ? m[0] : m[1]) : k; }
+  var SUSP_RE = /休止|廃止|取消|取り消|停止/;
   function splitTok(v) { return String(v || "").split(/[・、,，\/\n;；]/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function langLabel(tk) { var m = LANGMAP[tk]; return m ? (host.lang === "id" ? m[0] : m[1]) : tk; }
   var UI = {
@@ -45,7 +53,7 @@
       askTitle: "Tanyakan ke TSK",
       ask: ["Apakah TSK ini membantu mencarikan perusahaan baru kalau saya ingin pindah kerja? Apakah gratis?", "Bahasa apa yang bisa dilayani untuk konsultasi?", "Apakah ada biaya, uang jaminan, atau denda yang harus saya bayar?", "Kalau mereka mencarikan pekerjaan, apa nomor izin 有料職業紹介 (izin penyalur tenaga kerja) mereka?", "Apa yang terjadi pada dukungan untuk saya setelah saya pindah perusahaan?"],
       fTitle: "Daftar TSK resmi", fSearch: "Cari nama atau nomor registrasi", fAll: "Semua prefektur", fHint: "Pilih prefektur, bahasa, atau ketik minimal 2 karakter.", fCount: "{n} hasil", fMore: "Tampilkan lebih banyak", fLoading: "Memuat data…", fNone: "Tidak ada hasil.",
-      copy: "Salin telepon", copyMail: "Salin email", copied: "Tersalin", map: "Peta", call: "Telepon", mail: "Email", regDate: "Terdaftar", regNo: "No. registrasi", extra: "Dukungan tambahan", hq: "Alamat terdaftar", note: "Catatan TSK", legend: "Tag hijau = bisa bahasa Indonesia. Tag biru “Dukungan tambahan” = TSK menyatakan di register ada dukungan di luar yang diwajibkan hukum.", langs: "Bahasa", fieldsL: "Bidang", allLang: "Semua bahasa", allField: "Semua bidang", noField: "Register resmi tidak mencantumkan bidang pekerjaan tiap TSK. Tanyakan langsung ke TSK sektor apa yang mereka tangani.", noContact: "Register resmi tidak mencantumkan nomor telepon atau email untuk TSK ini.", indiv: "Pendaftar perorangan: hanya kota yang ditampilkan.",
+      copy: "Salin telepon", copyMail: "Salin email", copied: "Tersalin", map: "Peta", call: "Telepon", mail: "Email", regDate: "Terdaftar", regNo: "No. registrasi", susp: "Layanan dihentikan sementara (catatan register)", profT: "Profil dari TSK", profNote: "Diisi oleh TSK sendiri dan belum diverifikasi oleh Imigrasi. Tetap cek nomor registrasinya.", jobChange: "Bantu pindah kerja", fEmail: "Ada email", fJob: "Bantu pindah kerja", noProf: "Register resmi tidak memuat email TSK. Email dan info bantuan pindah kerja hanya muncul untuk TSK yang mengisi profilnya sendiri.", fieldsSrc: "Tag bidang berasal dari daftar anggota dewan sektor resmi. Tidak semua bidang tercakup, jadi TSK tanpa tag belum tentu tidak menangani bidang itu. Sumber:", regForm: "TSK? Daftarkan profilmu", whatsapp: "WhatsApp", site: "Situs", extra: "Dukungan tambahan", hq: "Alamat terdaftar", note: "Catatan TSK", legend: "Tag hijau = bisa bahasa Indonesia. Tag biru “Dukungan tambahan” = TSK menyatakan di register ada dukungan di luar yang diwajibkan hukum.", langs: "Bahasa", fieldsL: "Bidang", allLang: "Semua bahasa", allField: "Semua bidang", noField: "Register resmi tidak mencantumkan bidang pekerjaan tiap TSK. Tanyakan langsung ke TSK sektor apa yang mereka tangani.", noContact: "Register resmi tidak mencantumkan nomor telepon atau email untuk TSK ini.", indiv: "Pendaftar perorangan: hanya kota yang ditampilkan.",
       dataDate: "Data per {d}", noData: "Data TSK belum tersedia. Data muncul setelah pembaruan otomatis pertama selesai. Sementara itu, buka daftar resmi:", official: "Daftar resmi (Imigrasi)",
       disc: "Daftar ini hanya memuat lembaga yang terdaftar. Tidak ada informasi dukungan pindah kerja atau mutu layanan, dan ini bukan rekomendasi. Tanyakan langsung ke TSK.",
       attr: "Sumber: 「登録支援機関登録簿」（出入国在留管理庁ホームページ）", attr2: "diolah oleh Kakeibo",
@@ -73,7 +81,7 @@
       askTitle: "Questions to ask a TSK",
       ask: ["Does this TSK help find a new company if I want to change jobs? Is it free?", "Which languages can you offer consultation in?", "Is there any fee, deposit or penalty I would have to pay?", "If you find jobs for people, what is your 有料職業紹介 (placement licence) number?", "What happens to my support after I move to another company?"],
       fTitle: "Official TSK list", fSearch: "Search by name or registration no.", fAll: "All prefectures", fHint: "Choose a prefecture, a language, or type at least 2 characters.", fCount: "{n} results", fMore: "Show more", fLoading: "Loading data…", fNone: "No results.",
-      copy: "Copy phone", copyMail: "Copy email", copied: "Copied", map: "Map", call: "Call", mail: "Email", regDate: "Registered", regNo: "Reg. no.", extra: "Extra support", hq: "Registered address", note: "TSK note", legend: "Green tag = Indonesian is supported. Blue “Extra support” tag = the TSK states in the register that it offers support beyond what the law requires.", langs: "Languages", fieldsL: "Fields", allLang: "All languages", allField: "All fields", noField: "The official register does not list the job fields of each TSK. Ask the TSK directly which sectors they handle.", noContact: "The official register has no phone number or email for this TSK.", indiv: "Individual registrant: only the city is shown.",
+      copy: "Copy phone", copyMail: "Copy email", copied: "Copied", map: "Map", call: "Call", mail: "Email", regDate: "Registered", regNo: "Reg. no.", susp: "Service suspended (register note)", profT: "Profile from the TSK", profNote: "Filled in by the TSK itself and not verified by Immigration. Still check the registration number.", jobChange: "Helps with job change", fEmail: "Has email", fJob: "Helps with job change", noProf: "The official register has no TSK emails. Emails and job-change info only appear for TSKs that filled in their own profile.", fieldsSrc: "Field tags come from the official sector council member lists. Not every field is covered, so a TSK without a tag may still handle that field. Sources:", regForm: "TSK? Register your profile", whatsapp: "WhatsApp", site: "Website", extra: "Extra support", hq: "Registered address", note: "TSK note", legend: "Green tag = Indonesian is supported. Blue “Extra support” tag = the TSK states in the register that it offers support beyond what the law requires.", langs: "Languages", fieldsL: "Fields", allLang: "All languages", allField: "All fields", noField: "The official register does not list the job fields of each TSK. Ask the TSK directly which sectors they handle.", noContact: "The official register has no phone number or email for this TSK.", indiv: "Individual registrant: only the city is shown.",
       dataDate: "Data as of {d}", noData: "TSK data isn't available yet. It appears once the first automatic update has finished. Meanwhile, open the official list:", official: "Official list (ISA)",
       disc: "This list only shows registered organizations. It has no information about job-change support or service quality, and it is not a recommendation. Ask the TSK directly.",
       attr: "Source: 「登録支援機関登録簿」 (Immigration Services Agency of Japan website)", attr2: "edited by Kakeibo",
@@ -112,7 +120,7 @@
       ".tk-item{padding:13px 2px;border-bottom:1px solid var(--line,rgba(122,110,80,.24))}.tk-item b{display:block;font:700 15px/1.4 'Shippori Mincho',serif;overflow-wrap:anywhere}.tk-item .en{font-size:12.5px;color:var(--mist,#6d6759);margin-top:1px;overflow-wrap:anywhere}",
       ".tk-reg{display:inline-block;margin-top:6px;font:700 11.5px Inter,sans-serif;background:rgba(23,35,61,.08);border-radius:99px;padding:3px 9px}.tk-addr{font-size:13px;margin-top:6px;line-height:1.45;overflow-wrap:anywhere}.tk-meta{font-size:12px;color:var(--mist,#6d6759);margin-top:3px}",
       ".tk-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.tk-chip{display:inline-flex;align-items:center;gap:5px;border:0;border-radius:99px;padding:7px 12px;background:rgba(23,35,61,.08);color:inherit;font:700 12px Inter,sans-serif;cursor:pointer;text-decoration:none}",
-      ".tk-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.tk-tag{font:700 11px Inter,sans-serif;border-radius:99px;padding:3px 9px;background:rgba(23,35,61,.08)}.tk-tag.f{background:rgba(217,130,47,.2);color:#8a5a0c}.tk-tag.id{background:#eaf6ee;color:#25724a}.tk-tag.x{background:#e4ecf8;color:#1f4a8a}.tk-ct{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;overflow-wrap:anywhere}.tk-ct a{color:inherit;font-weight:600}.tk-rn{font-size:11px;color:var(--mist,#6d6759);margin-top:6px}",
+      ".tk-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.tk-tag{font:700 11px Inter,sans-serif;border-radius:99px;padding:3px 9px;background:rgba(23,35,61,.08)}.tk-tag.f{background:rgba(217,130,47,.2);color:#8a5a0c}.tk-tag.id{background:#eaf6ee;color:#25724a}.tk-tag.x{background:#e4ecf8;color:#1f4a8a}.tk-tag.w{background:#fdeceb;color:#ac3527}.tk-tag.j{background:#e4f4ee;color:#16664a}.tk-chip.on{background:var(--ai,#17233d);color:#fff}.tk-prof{margin-top:8px;padding:9px 11px;border-radius:12px;background:rgba(217,130,47,.1);font-size:12.5px;line-height:1.5}.tk-prof b{display:block;font:700 12px Inter,sans-serif;margin-bottom:3px}.tk-item.susp{opacity:.62}.tk-ct{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;overflow-wrap:anywhere}.tk-ct a{color:inherit;font-weight:600}.tk-rn{font-size:11px;color:var(--mist,#6d6759);margin-top:6px}",
       ".tk-btn{width:100%;border:0;border-radius:13px;padding:12px;background:linear-gradient(135deg,#d9822f,#ac3527);color:#fff;font:700 14px Inter,sans-serif;cursor:pointer;margin-top:10px}",
       ".tk-link{display:flex;align-items:center;justify-content:space-between;gap:8px;text-decoration:none;color:inherit;padding:12px 2px;border-bottom:1px solid var(--line,rgba(122,110,80,.24));font:600 13.5px/1.4 Inter,sans-serif}.tk-link small{display:block;font:500 12px Inter,sans-serif;color:var(--mist,#6d6759)}"
     ].join("\n");
@@ -125,7 +133,25 @@
     if (idxState === "loading") return;
     idxState = "loading";
     fetch("modules/tsk/index.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (j) { idx = j; idxState = "ready"; cb(); }).catch(function () { idxState = "missing"; cb(); });
+      .then(function (j) { idx = j; loadProfiles(function () { idxState = "ready"; cb(); }); }).catch(function () { idxState = "missing"; cb(); });
+  }
+  // profil opsional yang diisi TSK sendiri (email, WhatsApp, situs, bidang kerja, bantuan pindah kerja), kunci = nomor registrasi
+  function loadProfiles(cb) {
+    if (profState !== "idle") return cb();
+    profState = "loading";
+    fetch("modules/tsk/profiles.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { prof = j && j.profiles ? j : null; }).catch(function () { prof = null; })
+      .then(function () { return fetch("modules/tsk/fields.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { fmap = j && j.fields ? j : null; }).catch(function () { fmap = null; }); })
+      .then(function () { profState = "done"; cb(); });
+  }
+  function FM(reg) { return fmap && fmap.fields ? (fmap.fields[reg] || []) : []; } // bidang dari daftar anggota dewan sektor resmi
+  function P(reg) { return prof && prof.profiles ? prof.profiles[reg] : null; }
+  function profCount() { return prof && prof.profiles ? Object.keys(prof.profiles).length : 0; }
+  function profFields() {
+    var c = {};
+    Object.keys((prof && prof.profiles) || {}).forEach(function (k) { (prof.profiles[k].fields || []).forEach(function (f) { c[f] = (c[f] || 0) + 1; }); });
+    Object.keys((fmap && fmap.fields) || {}).forEach(function (k) { fmap.fields[k].forEach(function (f) { if (!(prof && prof.profiles && prof.profiles[k] && (prof.profiles[k].fields || []).indexOf(f) >= 0)) c[f] = (c[f] || 0) + 1; }); });
+    return c;
   }
   function loadShard(slug, cb) {
     if (shards[slug]) return cb();
@@ -138,25 +164,35 @@
     neededSlugs().forEach(function (slug) {
       (shards[slug] || []).forEach(function (r) {
         if (fl !== "all" && splitTok(r[6]).indexOf(fl) < 0) return;
-        if (ff !== "all" && splitTok(r[9]).indexOf(ff) < 0) return;
+        var pr = P(r[0]);
+        if (ff !== "all" && splitTok(r[9]).indexOf(ff) < 0 && FM(r[0]).indexOf(ff) < 0 && !(pr && (pr.fields || []).indexOf(ff) >= 0)) return;
+        if (fe && !(r[8] || (pr && pr.email))) return;
+        if (fj && !(pr && pr.jobChange)) return;
         if (!qn || norm(r[0]).indexOf(qn) >= 0 || norm(r[1]).indexOf(qn) >= 0 || norm(r[2]).indexOf(qn) >= 0 || norm(r[3]).indexOf(qn) >= 0) out.push(r);
       });
     });
-    return out;
+    return out.sort(function (a, b) { return (SUSP_RE.test(a[11] || "") ? 1 : 0) - (SUSP_RE.test(b[11] || "") ? 1 : 0); });
   }
   function item(r) {
-    var t = T(), ind = r[7] === 1, tel = String(r[4] || "").replace(/[^\d+]/g, ""), mail = String(r[8] || "").split(/[;,]/)[0].trim();
-    var lg = splitTok(r[6]), fd = splitTok(r[9]);
-    var tags = lg.slice(0, 8).map(function (x) { return '<span class="tk-tag' + (x === "インドネシア語" ? " id" : "") + '">' + E(langLabel(x)) + "</span>"; }).join("") + (lg.length > 8 ? '<span class="tk-tag">+' + (lg.length - 8) + "</span>" : "") +
-      fd.map(function (x) { return '<span class="tk-tag f">' + E(x) + "</span>"; }).join("") + (r[12] === 1 ? '<span class="tk-tag x">' + t.extra + "</span>" : "");
-    var h = '<div class="tk-item"><b>' + E(r[1]) + "</b>" + (r[2] ? '<div class="en">' + E(r[2]) + "</div>" : "") + (tags ? '<div class="tk-tags">' + tags + "</div>" : "") + (r[3] ? '<div class="tk-addr">' + E(r[3]) + "</div>" : "");
+    var t = T(), ind = r[7] === 1, pr = P(r[0]), susp = SUSP_RE.test(r[11] || ""), tel = String(r[4] || "").replace(/[^\d+]/g, ""), mail = String(r[8] || (pr && pr.email) || "").split(/[;,]/)[0].trim();
+    var lg = splitTok(r[6]), fd = splitTok(r[9]).concat(FM(r[0])).concat((pr && pr.fields) || []).filter(function (x, i, a) { return a.indexOf(x) === i; });
+    var tags = (susp ? '<span class="tk-tag w">' + t.susp + "</span>" : "") + (pr && pr.jobChange ? '<span class="tk-tag j">' + t.jobChange + "</span>" : "") +
+      lg.slice(0, 8).map(function (x) { return '<span class="tk-tag' + (x === "インドネシア語" ? " id" : "") + '">' + E(langLabel(x)) + "</span>"; }).join("") + (lg.length > 8 ? '<span class="tk-tag">+' + (lg.length - 8) + "</span>" : "") +
+      fd.map(function (x) { return '<span class="tk-tag f">' + E(fieldLabel(x)) + "</span>"; }).join("") + (r[12] === 1 ? '<span class="tk-tag x">' + t.extra + "</span>" : "");
+    var h = '<div class="tk-item' + (susp ? " susp" : "") + '"><b>' + E(r[1]) + "</b>" + (r[2] ? '<div class="en">' + E(r[2]) + "</div>" : "") + (tags ? '<div class="tk-tags">' + tags + "</div>" : "") + (r[3] ? '<div class="tk-addr">' + E(r[3]) + "</div>" : "");
     if (!ind && tel) h += '<div class="tk-ct">' + ic("phone", 15) + ' <a href="tel:' + E(tel) + '">' + E(r[4]) + "</a></div>";
-    if (!ind && mail) h += '<div class="tk-ct">' + ic("mail", 15) + ' <a href="mailto:' + E(mail) + '">' + E(mail) + "</a></div>";
+    if (mail && (!ind || pr)) h += '<div class="tk-ct">' + ic("mail", 15) + ' <a href="mailto:' + E(mail) + '">' + E(mail) + "</a></div>";
     if (!ind && r[10]) h += '<div class="tk-meta">' + t.hq + ": " + E(r[10]) + "</div>";
     if (!ind && r[11]) h += '<div class="tk-meta">' + t.note + ": " + E(r[11]) + "</div>";
     if (ind) h += '<div class="tk-meta">' + t.indiv + "</div>";
     else if (!tel && !mail) h += '<div class="tk-meta">' + t.noContact + "</div>";
-    h += '<div class="tk-acts">' + (!ind && tel ? '<button class="tk-chip" data-a="copy" data-v="' + E(r[4]) + '">' + ic("copy", 14) + " " + t.copy + "</button>" : "") + (!ind && mail ? '<button class="tk-chip" data-a="copy" data-v="' + E(mail) + '">' + ic("copy", 14) + " " + t.copyMail + "</button>" : "") +
+    if (pr) {
+      var wa = String(pr.whatsapp || "").replace(/[^\d]/g, "");
+      h += '<div class="tk-prof"><b>' + t.profT + "</b>" + (pr.note ? E(host.lang === "id" ? (pr.note.id || pr.note.en || "") : (pr.note.en || pr.note.id || "")) + "<br>" : "") +
+        (wa ? '<a href="https://wa.me/' + wa + '" target="_blank" rel="noopener noreferrer">' + t.whatsapp + "</a> " : "") + (/^https?:\/\//.test(pr.site || "") ? '<a href="' + E(pr.site) + '" target="_blank" rel="noopener noreferrer">' + t.site + "</a>" : "") +
+        '<div class="tk-meta">' + t.profNote + (pr.updated ? " · " + E(pr.updated) : "") + "</div></div>";
+    }
+    h += '<div class="tk-acts">' + (tel && !ind ? '<button class="tk-chip" data-a="copy" data-v="' + E(r[4]) + '">' + ic("copy", 14) + " " + t.copy + "</button>" : "") + (mail && (!ind || pr) ? '<button class="tk-chip" data-a="copy" data-v="' + E(mail) + '">' + ic("copy", 14) + " " + t.copyMail + "</button>" : "") +
       (!ind && tel ? '<a class="tk-chip" href="tel:' + E(tel) + '">' + ic("phone", 14) + " " + t.call + "</a>" : "") +
       (r[3] && !ind ? '<a class="tk-chip" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(r[1] + " " + r[3]) + '">' + ic("pin", 14) + " " + t.map + "</a>" : "") + "</div>" +
       '<div class="tk-rn">' + t.regNo + ": " + E(r[0]) + (r[5] ? " · " + t.regDate + " " + E(r[5]) : "") + "</div></div>";
@@ -165,7 +201,7 @@
   function drawResults() {
     var box = $("#tkRes"); if (!box) return;
     var t = T(), qn = q.trim();
-    if (sel === "all" && fl === "all" && ff === "all" && qn.length < 2) { box.innerHTML = '<div class="tk-note">' + t.fHint + "</div>"; return; }
+    if (sel === "all" && fl === "all" && ff === "all" && !fe && !fj && qn.length < 2) { box.innerHTML = '<div class="tk-note">' + t.fHint + "</div>"; return; }
     var need = neededSlugs().filter(function (s) { return !shards[s]; });
     if (need.length) {
       var my = ++loading; box.innerHTML = '<div class="tk-note">' + t.fLoading + (need.length > 1 ? " 0/" + need.length : "") + "</div>";
@@ -190,13 +226,18 @@
     if (idxState === "missing") return '<div class="tk-blk"><p>' + t.noData + '</p></div><a class="tk-link" target="_blank" rel="noopener noreferrer" href="' + SRC + '"><span>' + t.official + "</span>" + ic("link", 16) + "</a>";
     if (idxState !== "ready") return '<div class="tk-note">' + t.fLoading + "</div>";
     var langOpts = Object.keys(idx.langs || {}).sort(function (a, b) { return (a === "インドネシア語" ? -1 : b === "インドネシア語" ? 1 : idx.langs[b] - idx.langs[a]); });
-    var fieldOpts = Object.keys(idx.fields || {}).sort(function (a, b) { return idx.fields[b] - idx.fields[a]; });
+    var fc = {}; Object.keys(idx.fields || {}).forEach(function (k) { fc[k] = idx.fields[k]; }); var pf = profFields(); Object.keys(pf).forEach(function (k) { fc[k] = (fc[k] || 0) + pf[k]; });
+    var fieldOpts = Object.keys(fc).sort(function (a, b) { return fc[b] - fc[a]; });
     h += '<div class="tk-note">' + t.disc + '</div><div class="tk-row"><select class="tk-sel" id="tkSel" style="flex:1"><option value="all">' + t.fAll + "</option>" +
       PREFS.filter(function (p) { return idx.prefs[p[0]]; }).map(function (p) { return '<option value="' + p[0] + '"' + (sel === p[0] ? " selected" : "") + ">" + E(p[2] + " (" + p[1] + ") · " + idx.prefs[p[0]]) + "</option>"; }).join("") + "</select>";
     if (langOpts.length) h += '<select class="tk-sel" id="tkLang" style="flex:1"><option value="all">' + t.allLang + "</option>" + langOpts.map(function (x) { return '<option value="' + E(x) + '"' + (fl === x ? " selected" : "") + ">" + E(langLabel(x) + " · " + idx.langs[x]) + "</option>"; }).join("") + "</select>";
     h += "</div>";
-    if (fieldOpts.length) h += '<div class="tk-row"><select class="tk-sel" id="tkField" style="flex:1"><option value="all">' + t.allField + "</option>" + fieldOpts.map(function (x) { return '<option value="' + E(x) + '"' + (ff === x ? " selected" : "") + ">" + E(x + " · " + idx.fields[x]) + "</option>"; }).join("") + "</select></div>";
-    else h += '<div class="tk-note">' + t.noField + "</div>";
+    if (fieldOpts.length) h += '<div class="tk-row"><select class="tk-sel" id="tkField" style="flex:1"><option value="all">' + t.allField + "</option>" + fieldOpts.map(function (x) { return '<option value="' + E(x) + '"' + (ff === x ? " selected" : "") + ">" + E(fieldLabel(x) + " · " + fc[x]) + "</option>"; }).join("") + "</select></div>";
+    if (fmap && fmap.sources && fmap.sources.length) h += '<div class="tk-note">' + t.fieldsSrc + " " + fmap.sources.map(function (x) { return E(x.label); }).join("、") + "</div>";
+    else if (!fieldOpts.length) h += '<div class="tk-note">' + t.noField + "</div>";
+    if (profCount()) h += '<div class="tk-acts" style="margin:-2px 0 10px"><button class="tk-chip' + (fe ? " on" : "") + '" data-a="ftog" data-k="email">' + ic("mail", 14) + " " + t.fEmail + '</button><button class="tk-chip' + (fj ? " on" : "") + '" data-a="ftog" data-k="job">' + t.fJob + "</button></div>";
+    else h += '<div class="tk-note">' + t.noProf + "</div>";
+    if (prof && /^https?:\/\//.test(prof._form || "")) h += '<a class="tk-link" target="_blank" rel="noopener noreferrer" href="' + E(prof._form) + '"><span>' + t.regForm + "</span>" + ic("link", 16) + "</a>";
     h += '<div class="tk-row"><input class="tk-in" id="tkQ" type="search" autocomplete="off" placeholder="' + E(t.fSearch) + '" value="' + E(q) + '"></div><div class="tk-note">' + t.legend + '</div><div id="tkRes"></div>';
     h += '<div class="tk-note" style="margin-top:16px">' + t.dataDate.replace("{d}", E(idx.updated || "")) + " · " + idx.total + "<br>" + t.attr + " " + SRC + " " + t.attr2 + ".<br>「登録支援機関登録簿」（出入国在留管理庁ホームページ）（" + SRC + "）をもとにKakeibo作成</div>";
     return h;
@@ -224,6 +265,7 @@
     if (a === "close") close();
     else if (a === "tab") { tab = b.dataset.t; if (tab === "find") { loadIndex(function () { if (el && tab === "find") draw(); }); } draw(); }
     else if (a === "more") { shown += 30; drawResults(); }
+    else if (a === "ftog") { if (b.dataset.k === "email") fe = !fe; else fj = !fj; shown = 30; b.classList.toggle("on"); drawResults(); }
     else if (a === "copy") { var v = b.dataset.v; try { navigator.clipboard.writeText(v); } catch (x) {} var o = b.innerHTML; b.textContent = T().copied; setTimeout(function () { if (b.isConnected) b.innerHTML = o; }, 1200); }
   }
   function onChange(e) { var id = e.target.id; if (id === "tkSel") sel = e.target.value; else if (id === "tkLang") fl = e.target.value; else if (id === "tkField") ff = e.target.value; else return; shown = 30; drawResults(); }
@@ -235,7 +277,7 @@
       css(); if (el) el.remove();
       el = document.createElement("div"); el.className = "tk-root"; el.innerHTML = '<div class="tk-app"></div>';
       el.addEventListener("click", onClick); el.addEventListener("change", onChange); el.addEventListener("input", onInput);
-      document.body.appendChild(el); tab = "guide"; q = ""; sel = "all"; fl = "all"; ff = "all"; shown = 30; draw();
+      document.body.appendChild(el); tab = "guide"; q = ""; sel = "all"; fl = "all"; ff = "all"; fe = false; fj = false; shown = 30; draw();
     },
     isOpen: function () { return !!el; },
     back: function () { if (!el) return false; close(); return true; }
