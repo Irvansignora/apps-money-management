@@ -1,0 +1,23 @@
+[
+  {
+    "fields": ["飲食料品製造業", "外食業"],
+    "label": "食品産業特定技能協議会（農林水産省）",
+    "page": "https://www.maff.go.jp/j/shokusan/sanki/soumu/kyougikai.html",
+    "linkText": "構成員名簿\\s*[(（]\\s*登録支援機関",
+    "nameFallback": true
+  },
+  {
+    "fields": ["自動車運送業"],
+    "label": "自動車運送業分野特定技能協議会（国土交通省）",
+    "page": "https://www.mlit.go.jp/jidosha/jidosha_tk1_000038.html",
+    "linkText": "構成員名簿\\s*[(（]\\s*登録支援機関",
+    "nameFallback": true
+  },
+  {
+    "fields": ["農業"],
+    "label": "農業特定技能協議会（農林水産省）",
+    "page": "https://www.maff.go.jp/j/keiei/foreigner/new.html",
+    "linkText": "加入者一覧表",
+    "nameFallback": false
+  }
+]
