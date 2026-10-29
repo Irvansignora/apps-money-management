@@ -2532,7 +2532,7 @@ function openBelajar() {
   let n = 0;
   ["modules/belajar-data.js", "modules/belajar.js"].forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=5";
+    sc.src = src + "?v=6";
     sc.onload = () => { if (++n === 2) go(); };
     sc.onerror = () => alert("Modul belajar gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
@@ -2548,9 +2548,9 @@ function openChat(opts) {
   document.head.appendChild(sc);
 }
 // LEA Sensei (tutor AI, khusus Premium+): modul baru dimuat hanya kalau paketnya memenuhi
-function openLeaAI() {
+function openLeaAI(c) { // c (opsional): konteks materi untuk "Kelas bareng Sensei", mis. satu set kosakata JFT/SSW
   if (window.KakeiboAuth && !window.KakeiboAuth.isPlus()) return window.KakeiboAuth.require();
-  const go = () => window.KakeiboLeaAI.open({ lang, esc });
+  const go = () => window.KakeiboLeaAI.open({ lang, esc, "class": c && c.items ? c : null });
   const need = [];
   if (!window.BELAJAR_DATA) need.push("modules/belajar-data.js");
   if (!window.KakeiboLeaAI) need.push("modules/lea-ai.js");
@@ -2558,13 +2558,14 @@ function openLeaAI() {
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=5";
+    sc.src = src + "?v=6";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul LEA Sensei gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
   });
 }
 document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-lea-ai]")) openLeaAI(); });
+window.kakeiboSensei = (c) => openLeaAI(c); // dipanggil dari modul belajar lain (JFT/SSW, Belajar Jepang)
 // Belajar JLPT (gratis, offline): modul mandiri, tidak butuh login atau paket
 function openJlpt() {
   const go = () => window.KakeiboJlpt.open({ lang, esc });
@@ -2592,7 +2593,7 @@ function openExam() {
   let n = 0;
   need.forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=2";
+    sc.src = src + "?v=3";
     sc.onload = () => { if (++n === need.length) go(); };
     sc.onerror = () => alert("Modul persiapan JFT & SSW gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
