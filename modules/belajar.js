@@ -45,6 +45,8 @@
     document.head.appendChild(s);
   }
 
+  var SENSEI_LBL = { id: "🎓 Belajar bareng Sensei (tanya jawab)", en: "🎓 Learn with Sensei (Q&A)", my: "🎓 Sensei နှင့်အတူ လေ့လာရန်", bn: "🎓 সেনসেইয়ের সাথে শিখুন", vi: "🎓 Học cùng Sensei (hỏi đáp)", th: "🎓 เรียนกับเซนเซย์ (ถาม-ตอบ)" };
+  function senseiLbl() { return SENSEI_LBL[host.lang] || SENSEI_LBL.en; }
   function kanaPct() { // progres kana (hafal / 204) dibaca langsung dari penyimpanan modul Kana
     try { var s = JSON.parse(localStorage.getItem("kakeibo-kana") || "{}"), k = s.k || {}, m = 0; for (var id in k) if (k[id] && k[id].seen && k[id].b >= 3) m++; return Math.min(100, Math.round(m / 204 * 100)); } catch (e) { return 0; }
   }
@@ -97,7 +99,7 @@
           return '<div class="bl-row"><div class="bl-jp">' + esc(p[0]) + '</div><div class="bl-ro">' + esc(p[1]) + '</div><div class="bl-mn">' + esc(p[2][i] || p[2][1]) + '</div>' +
             '<div class="bl-act"><button type="button" class="bl-btn" data-a="say" data-k="' + k + '" aria-label="Play">🔊</button>' +
             '<button type="button" class="bl-btn' + (st.done[pid(u, k)] ? " on" : "") + '" data-a="done" data-k="' + k + '">' + (st.done[pid(u, k)] ? "✓ " : "") + t.done + "</button></div></div>";
-        }).join("") + '<button type="button" class="bl-primary" data-a="quiz">' + t.quiz + " · 5</button>";
+        }).join("") + '<button type="button" class="bl-primary" data-a="sensei" style="margin-bottom:8px">' + esc(senseiLbl()) + '</button><button type="button" class="bl-primary" data-a="quiz">' + t.quiz + " · 5</button>";
     } else if (qz.n >= qz.q.length) {
       h = '<div class="bl-row" style="text-align:center"><div class="bl-ro">' + t.score + '</div><div class="bl-jp" style="font-size:40px">' + qz.s + " / " + qz.q.length + '</div></div>' +
         '<button type="button" class="bl-primary" data-a="quiz">' + t.again + '</button><button type="button" class="bl-opt" data-a="unit" data-n="' + ui + '">' + t.back + "</button>";
@@ -134,6 +136,7 @@
     else if (a === "jlpt") openJlpt();
     else if (a === "unit") { ui = +b.dataset.n; view = "unit"; render(); }
     else if (a === "back") { view = "list"; render(); }
+    else if (a === "sensei") { var su = units()[ui], si = idx(); if (window.kakeiboSensei) window.kakeiboSensei({ kind: "unit", key: su.k, title: su.n[si] || su.n[1], items: su.p.slice(0, 12).map(function (p) { return { jp: p[0], rd: p[1] || "", mean: p[2][si] || p[2][1] }; }) }); }
     else if (a === "say") say(u.p[k][0]);
     else if (a === "qsay") say(qz.q[qz.n].p[0]);
     else if (a === "done") { var id = pid(u, k); if (st.done[id]) delete st.done[id]; else st.done[id] = 1; save(); render(); }
