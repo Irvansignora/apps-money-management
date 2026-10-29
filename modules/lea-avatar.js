@@ -40,20 +40,20 @@
 
   function markup(u) {
     var f = function (s) { return s.replace(/@/g, u); };
-    return f('<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 372 428" width="100%" height="100%" role="img" aria-label="LEA Sensei" preserveAspectRatio="xMidYMax slice">' +
+    return f('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-66 0 532 560" width="100%" height="100%" role="img" aria-label="LEA Sensei" preserveAspectRatio="xMidYMid slice">' +
       '<defs><linearGradient id="@bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6eed8"/><stop offset="1" stop-color="#e2d0a8"/></linearGradient>' +
       '<linearGradient id="@bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d4466"/><stop offset="1" stop-color="#22354f"/></linearGradient>' +
       '<clipPath id="@mc"><path id="@mcp" d=""/></clipPath></defs>' +
-      '<rect x="-40" y="0" width="480" height="520" fill="url(#@bg)"/>' +
+      '<rect x="-200" y="-100" width="800" height="800" fill="url(#@bg)"/><rect x="-200" y="330" width="800" height="300" fill="#d9c79c" opacity=".55"/>' +
       '<rect x="40" y="58" width="320" height="156" rx="10" fill="url(#@bd)" stroke="#a98a58" stroke-width="9"/>' +
       '<text x="200" y="140" text-anchor="middle" font-size="64" fill="#f4efe0" opacity=".9" font-family="Shippori Mincho,Hiragino Mincho ProN,Yu Mincho,Noto Serif CJK JP,Noto Serif JP,serif" font-weight="700">日本語</text>' +
       '<text x="200" y="190" text-anchor="middle" font-size="19" fill="#f4efe0" opacity=".5" font-family="Shippori Mincho,Hiragino Mincho ProN,Yu Mincho,Noto Serif CJK JP,Noto Serif JP,serif" letter-spacing="8">あいうえお</text>' +
       '<rect x="40" y="217" width="320" height="8" fill="#a98a58" opacity=".85"/>' +
       '<g id="@hb"><path d="M100 262 C84 146 142 104 200 104 C258 104 316 146 300 262 C306 340 294 396 276 420 L124 420 C106 396 94 340 100 262 Z" fill="' + HAIR + '"/></g>' +
       '<g id="@body">' +
-        '<path d="M164 338 L236 338 L240 480 L160 480 Z" fill="#fbf7ea"/>' +
-        '<path d="M26 480 C34 410 94 374 166 340 L202 424 L176 480 Z" fill="' + NAVY + '"/>' +
-        '<path d="M374 480 C366 410 306 374 234 340 L198 424 L224 480 Z" fill="' + NAVY + '"/>' +
+        '<path d="M164 338 L236 338 L240 600 L160 600 Z" fill="#fbf7ea"/>' +
+        '<path d="M-40 600 C-30 430 70 380 166 340 L202 424 L176 600 Z" fill="' + NAVY + '"/>' +
+        '<path d="M440 600 C430 430 330 380 234 340 L198 424 L224 600 Z" fill="' + NAVY + '"/>' +
         '<path d="M166 340 L202 424 L186 372 Z" fill="#2c3f69"/><path d="M234 340 L198 424 L214 372 Z" fill="#2c3f69"/>' +
         '<path d="M176 346 L200 378 L224 346 L214 340 L200 358 L186 340 Z" fill="#fbf7ea"/>' +
       '</g>' +
