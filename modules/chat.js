@@ -68,6 +68,10 @@
   Object.assign(UI.en.e, { story: "Write something first.", media: "Photo is invalid or too large." });
   Object.assign(UI.id, { gPhoto: "Foto grup", gPhotoNew: "Pilih foto baru", gPhotoDel: "Hapus foto", gDesc: "Deskripsi grup", gDescAdd: "Tambah deskripsi grup", gDescPh: "Tulis deskripsi grup…", gDescNote: "Otomatis diterjemahkan ke bahasa tiap anggota.", gDescFrom: "Diterjemahkan dari {l}", gDescOrig: "Lihat asli", gDescTr: "Lihat terjemahan", gDescWait: "Menerjemahkan…" });
   Object.assign(UI.en, { gPhoto: "Group photo", gPhotoNew: "Choose new photo", gPhotoDel: "Remove photo", gDesc: "Group description", gDescAdd: "Add group description", gDescPh: "Write a group description…", gDescNote: "Automatically translated into each member's language.", gDescFrom: "Translated from {l}", gDescOrig: "Show original", gDescTr: "Show translation", gDescWait: "Translating…" });
+  Object.assign(UI.id, { glassT: "Tampilan kaca", glassSub: "Gaya modern untuk Chat dan Belajar. Matikan kalau HP terasa lambat." });
+  Object.assign(UI.en, { glassT: "Glass look", glassSub: "Modern style for Chat and Learn. Turn it off if your phone feels slow." });
+  // Gaya kaca (glassmorphism) hanya untuk layar Chat/Grup dan Belajar; pengaturan disimpan di HP dan dibaca juga oleh modul Belajar
+  function glassOn() { try { return localStorage.getItem("kakeibo-glass") !== "0"; } catch (e) { return true; } }
   var COL = ["#ac3527", "#223a5c", "#d9822f", "#4a7c59", "#7a5c9e", "#2f7f8a"];
   var A = { tok: null, user: null }, host, root, view, tmp = {}, ws, peer, msgs = [], me, onl = [], retry = 0, closing = true, rt, pingT, typT, peerTyping = false, peerTypT, contacts = [], groups = [], tab = "chats", GI = null, GM = {}, newCnt = 0, newFrom = null, newDone = false, pollT = null, cdT, lastTypeSent = 0;
   try { A = Object.assign(A, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
@@ -295,6 +299,20 @@
       ".kc-pc{border-radius:26px}.kc-pc .kc-av{box-shadow:none}.kc-pcav,.kc-pcav .kc-av{border-radius:32%}",
       ".kc-gav{overflow:hidden}.kc-gav img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}.kc-ghero .avw{position:relative;display:inline-block}.kc-gcam{position:absolute;right:-8px;bottom:-8px;width:34px;height:34px;border-radius:12px;border:3px solid var(--kbg);background:var(--kh);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}",
       ".kc-gdesc{margin:0 0 16px;padding:14px 16px;border-radius:20px;background:var(--kcard)}.kc-gdesc .lb{display:flex;align-items:center;justify-content:space-between;font:700 calc(11.5px*var(--kfs)) Inter,sans-serif;color:var(--kmu);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}.kc-gdesc .lb .kc-ib{margin:-6px -8px -6px 0}.kc-gdesc .tx{font-size:calc(14.5px*var(--kfs));line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.kc-gdesc .nt{margin-top:8px;font-size:calc(12px*var(--kfs));color:var(--kmu);line-height:1.4}.kc-gdesc .nt button,.kc-gdesc .add{border:0;background:none;color:var(--kh);font:700 calc(13px*var(--kfs)) Inter,sans-serif;padding:0;cursor:pointer}.kc-gdesc .add{display:flex;align-items:center;gap:6px;font-size:calc(14px*var(--kfs))}textarea.kc-in{resize:none;min-height:112px;line-height:1.45}",
+      ".kc-app.kc-glass{background:radial-gradient(42% 24% at 94% 3%,rgba(201,67,47,.85) 0%,rgba(201,67,47,0) 100%),radial-gradient(56% 30% at -8% 50%,rgba(217,130,47,.5) 0%,rgba(217,130,47,0) 100%),radial-gradient(60% 32% at 108% 96%,rgba(59,110,165,.6) 0%,rgba(59,110,165,0) 100%),linear-gradient(165deg,#121c33 0%,#1f3157 52%,#36294a 100%);color:#fff}",
+      ".kc-glass .kc-page{--kink:#fff;--kmu:rgba(255,255,255,.78);--kline:rgba(255,255,255,.13);--kcard:rgba(255,255,255,.1);--kv-d:#fff}",
+      ".kc-glass .kc-hd{background:none;box-shadow:none;margin-bottom:6px;padding-bottom:10px}.kc-glass .kc-top h1{font-size:calc(34px*var(--kfs));letter-spacing:.01em;text-shadow:0 2px 20px rgba(0,0,0,.3)}.kc-glass .kc-top p{color:rgba(255,255,255,.72)}",
+      ".kc-glass .kc-mebtn .kc-av{box-shadow:0 0 0 2px rgba(255,255,255,.55),0 8px 20px rgba(0,0,0,.4)}",
+      ".kc-glass .kc-sta{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.24)}.kc-glass .kc-sta.new{background:conic-gradient(from 210deg,#ffd27f,#e8662c,#c9432f,#ffd27f);box-shadow:0 8px 20px -6px rgba(232,102,44,.75)}.kc-glass .kc-stp{border-color:#1f3157}",
+      ".kc-glass #kcPeers,.kc-glass #kcGroups{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.22);border-radius:28px;padding:4px 14px;margin-top:8px;box-shadow:0 22px 44px -20px rgba(5,10,25,.75),inset 0 1px 0 rgba(255,255,255,.3)}",
+      ".kc-glass .kc-li{min-height:74px;border-radius:0}.kc-glass .kc-li:active{background:rgba(255,255,255,.08)}.kc-glass .kc-li .kc-av,.kc-glass .kc-li .kc-gav{box-shadow:0 8px 18px -8px rgba(0,0,0,.6)}.kc-glass .kc-li .tm{color:rgba(255,255,255,.66)}",
+      ".kc-glass .kc-li.unread b{font-weight:800}.kc-glass .kc-li.unread .pv{color:#fff}.kc-glass .kc-bd{box-shadow:0 0 0 2px rgba(255,255,255,.18),0 6px 14px -4px rgba(201,67,47,.85)}",
+      ".kc-glass .kc-in{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);color:#fff}.kc-glass .kc-in::placeholder{color:rgba(255,255,255,.6)}",
+      ".kc-glass .kc-sk{background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.13),rgba(255,255,255,.05));background-size:200% 100%}.kc-glass .kc-emp b{color:#fff}.kc-glass .kc-stamp{border-color:rgba(255,255,255,.6);color:rgba(255,255,255,.8)}",
+      ".kc-glass .kc-nav-bg{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.07));border-top:1px solid rgba(255,255,255,.3);box-shadow:0 -12px 32px -12px rgba(5,10,25,.75);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%)}.kc-glass .kc-nb{color:rgba(255,255,255,.62)}.kc-glass .kc-nb.on{color:#fff;filter:drop-shadow(0 0 8px rgba(255,255,255,.55))}",
+      "@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.kc-glass .kc-nav-bg{background:rgba(31,49,87,.97)}}",
+      "@media (prefers-reduced-transparency:reduce){.kc-glass .kc-nav-bg{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(31,49,87,.97)}.kc-glass #kcPeers,.kc-glass #kcGroups{background:rgba(31,49,87,.94)}}",
+      "@media (prefers-contrast:more){.kc-glass #kcPeers,.kc-glass #kcGroups{background:rgba(10,16,34,.92);border-color:#fff}.kc-glass .kc-page{--kmu:#fff}}",
       ".kc-send{width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(150deg,var(--kh2),var(--kh));color:#fff5e8;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 46px;box-shadow:0 8px 16px -6px rgba(var(--kacc2),.6)}.kc-send:active{filter:brightness(.92)}.kc-send:disabled{background:#cfc6ad;box-shadow:none}.kc-send svg{width:22px;height:22px}.kc-mic{background:linear-gradient(135deg,var(--kv),var(--kv-d));box-shadow:none}",
       ".kc-sheet{z-index:5}.kc-sheet>div{background:var(--kcard);border-radius:26px 26px 0 0;box-shadow:0 -12px 34px rgba(23,35,61,.25)}",
       ".kc-call{background:linear-gradient(160deg,#17233d 0%,#2c4568 100%)}"
@@ -402,6 +420,7 @@
       '<div class="kc-h">' + t.setGen + '</div><div class="kc-set"><div class="kc-sr"><span class="kc-si">' + ic("bell") + '</span><span class="t"><b>' + t.notif + '</b><span id="kcPushNote">…</span></span><button class="kc-sw" id="kcPushB" data-a="push" role="switch" aria-checked="false" aria-label="' + esc(t.notif) + '" disabled></button></div>' +
       '<div class="kc-sr col"><span class="kc-si">' + ic("edit") + '</span><span class="t"><b>' + t.fontT + '</b></span><div class="kc-seg" role="group" aria-label="' + esc(t.fontT) + '">' + ["s", "m", "l"].map(function (k) { return '<button type="button" data-a="fs" data-v="' + k + '" aria-pressed="' + (FSK === k) + '">' + t["font" + k.toUpperCase()] + "</button>"; }).join("") + "</div></div>" +
       (window.SeasonFX ? '<div class="kc-sr"><span class="kc-si">' + ic("globe") + '</span><span class="t"><b>' + t.seasonFx + "</b><span>" + t.seasonFxSub + '</span></span><button class="kc-sw" id="kcFxB" data-a="seasonfx" role="switch" aria-checked="' + (window.SeasonFX.getMode() !== "off") + '" aria-label="' + esc(t.seasonFx) + '"></button></div>' : "") +
+      '<div class="kc-sr"><span class="kc-si">' + ic("image") + '</span><span class="t"><b>' + t.glassT + "</b><span>" + t.glassSub + '</span></span><button class="kc-sw" id="kcGlB" data-a="glass" role="switch" aria-checked="' + glassOn() + '" aria-label="' + esc(t.glassT) + '"></button></div>' +
       srow("image", t.wp, "", "wallpaper") + srow("globe", t.profRow, esc(u.name), "profile") + "</div>" +
       '<div class="kc-h">' + t.setPlan + '</div><div class="kc-set">' + srow("crown", t.planT, planLbl(u.plan), "plan") + srow("addu", t.mine, esc(u.invite), "invite") + "</div>" +
       '<div class="kc-set">' + srow("logout", t.out, "", "logout", true) + "</div></div>" + nav("me");
@@ -413,7 +432,8 @@
     if (v === "contacts") v = "chats"; // nama lama
     if (v === "chats" || v === "groups" || v === "me") tab = v;
     var pg = $("#kcPg"); if (pg) pg.remove();
-    view = v; document.documentElement.classList.toggle("kc-conv", v === "chat"); if (v !== "chat") newCnt = 0; else newDone = false;
+    view = v; document.documentElement.classList.toggle("kc-conv", v === "chat");
+    var gap = root && root.querySelector(".kc-app"); if (gap) gap.classList.toggle("kc-glass", (v === "chats" || v === "groups") && glassOn()); if (v !== "chat") newCnt = 0; else newDone = false;
     var t = T(), u = A.user, h = "";
     if (v === "login" || v === "code") h = loginHtml(v);
     else if (v === "chats") h = '<div class="kc-page"><div class="kc-hd">' + top(t.tabChat, t.chatsSub, meBtn()) + '<div class="kc-strow" id="kcStories">' + storyRowHtml() + '</div></div><div id="kcFilter"></div><div id="kcPeers"><div class="kc-sk"></div><div class="kc-sk"></div><div class="kc-sk"></div></div><div id="kcErr"></div></div>' + nav("chats");
@@ -1279,6 +1299,7 @@
     else if (a === "profile" || a === "settings") openProfile();
     else if (a === "newgroup") { var s0 = $("#kcSheet"); if (s0) s0.remove(); go("newgroup"); }
     else if (a === "fs") { FSK = b.dataset.v; try { localStorage.setItem(FSKEY, FSK); } catch (e0) {} applyFs(); Array.prototype.forEach.call(b.parentNode.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); }
+    else if (a === "glass") { var gOn = !glassOn(); try { localStorage.setItem("kakeibo-glass", gOn ? "1" : "0"); } catch (x) {} b.setAttribute("aria-checked", gOn ? "true" : "false"); }
     else if (a === "seasonfx") { var fx = window.SeasonFX; if (fx) { fx.setMode(fx.getMode() === "off" ? "auto" : "off"); b.setAttribute("aria-checked", fx.getMode() !== "off" ? "true" : "false"); } }
     else if (a === "openg") { var g0 = groups[+b.dataset.i]; if (g0) { newCnt = g0.unread || 0; g0.unread = 0; peer = { group: true, gid: g0.id, id: "g:" + g0.id, name: g0.name, n: g0.n }; GI = null; GM = {}; msgs = []; go("chat"); } }
     else if (a === "ginfo") openGroupInfo();
