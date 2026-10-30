@@ -2532,7 +2532,7 @@ function openBelajar() {
   let n = 0;
   ["modules/belajar-data.js", "modules/belajar.js"].forEach(src => {
     const sc = document.createElement("script");
-    sc.src = src + "?v=6";
+    sc.src = src + "?v=7";
     sc.onload = () => { if (++n === 2) go(); };
     sc.onerror = () => alert("Modul belajar gagal dimuat. Cek koneksi internet.");
     document.head.appendChild(sc);
@@ -2542,7 +2542,7 @@ function openChat(opts) {
   const go = () => window.KakeiboChat.open({ lang, esc, ...(opts || {}) });
   if (window.KakeiboChat) return go();
   const sc = document.createElement("script");
-  sc.src = "modules/chat.js?v=12";
+  sc.src = "modules/chat.js?v=13";
   sc.onload = go;
   sc.onerror = () => alert("Modul chat gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
