@@ -7,7 +7,7 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const DIR = process.env.TSK_OUT || path.join(__dirname, "..", "modules", "tsk");
+const DIR = process.env.TSK_OUT || path.join(__dirname, "..", "apps", "web", "public", "modules", "tsk");
 const FIELDS = new Set(["介護", "ビルクリーニング", "工業製品製造業", "建設", "造船・舶用工業", "自動車整備", "航空", "宿泊", "自動車運送業", "鉄道", "農業", "漁業", "飲食料品製造業", "外食業", "林業", "木材産業"]);
 const fp = path.join(DIR, "profiles.json");
 if (!fs.existsSync(fp)) { console.log("profiles.json belum ada, dilewati."); process.exit(0); }

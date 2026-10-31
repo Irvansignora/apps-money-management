@@ -1,0 +1,28 @@
+# Header HTTP untuk semua aset (fitur bawaan Workers Static Assets)
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Halaman & service worker selalu dicek ulang supaya update app langsung sampai
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+/manifest.json
+  Cache-Control: no-cache
+  Content-Type: application/manifest+json
+
+# Modul JS memakai ?v= di index.html; cache sebentar + revalidasi
+/modules/*
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
+
+# Data TSK diperbarui mingguan
+/modules/tsk/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/icon-*
+  Cache-Control: public, max-age=604800

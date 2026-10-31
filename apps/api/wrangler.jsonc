@@ -1,0 +1,45 @@
+{
+  // Backend Kakeibo: auth, chat (WebSocket + Durable Object), AI, push, media & cloud backup.
+  // Worker ini SUDAH live dengan nama "kakeibo-chat"; konfigurasi ini mengambil alih deploy-nya ke Git.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "kakeibo-chat",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "chat.iranza.com", "custom_domain": true }],
+
+  // Variabel biasa (ALLOWED_ORIGIN, AI_MODEL, MAIL_FROM, dst.) masih diatur di dashboard;
+  // keep_vars mencegah wrangler deploy menghapusnya. Secret (API key) tidak pernah disentuh deploy.
+  "keep_vars": true,
+
+  "d1_databases": [
+    { "binding": "DB", "database_name": "kakeibo-chat", "database_id": "5a67cca0-92f2-4ee0-bed0-8bc4fdcd3abe", "migrations_dir": "migrations" }
+  ],
+  "r2_buckets": [
+    { "binding": "FILES", "bucket_name": "kakeibo-storage" }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "ROOM", "class_name": "ChatRoom" }]
+  },
+  // Deklarasi kelas Durable Object (format "exports" yang menggantikan array "migrations").
+  // Cloudflare mencocokkan dengan namespace ChatRoom yang sudah ada, jadi riwayat chat tetap.
+  // Kalau deploy menolak karena storage berbeda, ganti "sqlite" -> "legacy-kv" (lihat docs).
+  "exports": { "ChatRoom": { "type": "durable-object", "storage": "sqlite" } },
+
+  // bersih-bersih D1/R2 + pindah media lama ke R2, tiap hari 18:17 UTC (03:17 JST)
+  "triggers": { "crons": ["17 18 * * *"] },
+  "observability": { "enabled": true },
+
+  "env": {
+    // npm run dev -w apps/api  → semua binding lokal (miniflare), OTP & terjemahan dummy
+    "dev": {
+      "name": "kakeibo-chat-dev",
+      "workers_dev": true,
+      "routes": [],
+      "vars": { "DEV_ECHO_OTP": "1", "ALLOWED_ORIGIN": "http://localhost:8788,http://127.0.0.1:8788", "OTP_PEPPER": "dev" },
+      "d1_databases": [{ "binding": "DB", "database_name": "kakeibo-chat-dev", "database_id": "local-dev", "migrations_dir": "migrations" }],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "kakeibo-storage-dev" }],
+      "durable_objects": { "bindings": [{ "name": "ROOM", "class_name": "ChatRoom" }] }
+    }
+  }
+}

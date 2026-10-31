@@ -1432,6 +1432,11 @@ const I18N = {
     emergencyCustomTitle: "Kontak Tersimpan", emergencyEmpty: "Belum ada kontak tersimpan. Tambahin nomor kedutaan/konsulat negaramu, agensi kerja, atau keluarga di sini.",
     emergencyNamePlaceholder: "cth. Kedutaan Besar / Agensi Kerja", emergencyPhonePlaceholder: "Nomor telepon",
     emergencyNotePlaceholder: "Catatan (opsional)", emergencyAddBtn: "+ Tambah Kontak", emergencyDeleteAria: "Hapus kontak",
+    cloudBackupTitle: "☁️ Cloud Backup", cloudBackupDesc: "Simpan salinan data ke akun Kakeibo-mu (Cloudflare R2). Bisa dipulihkan di HP baru setelah login, cuma kamu yang bisa membukanya.",
+    cloudBackupSaveBtn: "☁️ Backup ke Cloud", cloudBackupSaving: "Menyimpan…", cloudBackupSaved: "Backup tersimpan di cloud.",
+    cloudBackupFail: "Gagal backup ke cloud. Cek internet lalu coba lagi.", cloudBackupEmpty: "Belum ada backup di cloud.", cloudBackupLoading: "Memuat…",
+    cloudBackupRestoreBtn: "Pulihkan", cloudBackupDeleteBtn: "Hapus", cloudBackupDeleteConfirm: "Hapus backup cloud ini?", cloudBackupTxCount: "{n} transaksi",
+    cloudBackupLogin: "Masuk ke akun dulu untuk memakai cloud backup.", cloudBackupUnavailable: "Cloud backup belum aktif di server.",
     backupMenuBtn: "💾 Backup & Restore Data", backupTitle: "Backup & Restore Data",
     backupExportDesc: "Simpan semua data (transaksi, target, profil, dll) ke 1 file. Data cuma tersimpan di HP ini — kalau HP hilang/ganti, data ikut hilang kalau belum di-backup.",
     backupExportBtn: "⬇️ Download Backup", backupImportDesc: "Pulihkan data dari file backup (.json). Ini akan MENIMPA data yang ada sekarang di HP ini.",
@@ -1630,6 +1635,11 @@ const I18N = {
     emergencyCustomTitle: "Saved Contacts", emergencyEmpty: "No saved contacts yet. Add your embassy/consulate, work agency, or family numbers here.",
     emergencyNamePlaceholder: "e.g. Embassy / Work Agency", emergencyPhonePlaceholder: "Phone number",
     emergencyNotePlaceholder: "Note (optional)", emergencyAddBtn: "+ Add Contact", emergencyDeleteAria: "Delete contact",
+    cloudBackupTitle: "☁️ Cloud Backup", cloudBackupDesc: "Save a copy of your data to your Kakeibo account (Cloudflare R2). Restore it on a new phone after signing in; only you can open it.",
+    cloudBackupSaveBtn: "☁️ Back up to Cloud", cloudBackupSaving: "Saving…", cloudBackupSaved: "Backup saved to the cloud.",
+    cloudBackupFail: "Cloud backup failed. Check your connection and try again.", cloudBackupEmpty: "No cloud backups yet.", cloudBackupLoading: "Loading…",
+    cloudBackupRestoreBtn: "Restore", cloudBackupDeleteBtn: "Delete", cloudBackupDeleteConfirm: "Delete this cloud backup?", cloudBackupTxCount: "{n} transactions",
+    cloudBackupLogin: "Sign in first to use cloud backup.", cloudBackupUnavailable: "Cloud backup is not enabled on the server yet.",
     backupMenuBtn: "💾 Backup & Restore Data", backupTitle: "Backup & Restore Data",
     backupExportDesc: "Save all your data (transactions, goals, profile, etc.) to one file. Data only lives on this phone — if it's lost or replaced, unbacked-up data is gone too.",
     backupExportBtn: "⬇️ Download Backup", backupImportDesc: "Restore data from a backup file (.json). This will OVERWRITE the data currently on this phone.",
@@ -2364,7 +2374,9 @@ const I18N = {
   },
 };
 // Teks lencana/kartu scan AI: bahasa selain Indonesia yang belum punya terjemahan jatuh ke Inggris (bukan Indonesia)
-const EN_FALLBACK_KEYS = new Set(["engineAI", "engineOCR", "engineFallback", "scanSubAI", "tskMenuBtn"]);
+const EN_FALLBACK_KEYS = new Set(["engineAI", "engineOCR", "engineFallback", "scanSubAI", "tskMenuBtn",
+  "cloudBackupTitle", "cloudBackupDesc", "cloudBackupSaveBtn", "cloudBackupSaving", "cloudBackupSaved", "cloudBackupFail", "cloudBackupEmpty", "cloudBackupLoading",
+  "cloudBackupRestoreBtn", "cloudBackupDeleteBtn", "cloudBackupDeleteConfirm", "cloudBackupTxCount", "cloudBackupLogin", "cloudBackupUnavailable"]);
 function t(key) {
   const dict = I18N[lang] || I18N.id;
   if (dict[key] !== undefined) return dict[key];
@@ -2659,6 +2671,7 @@ let emergencyDraft = { name: "", phone: "", note: "" };
 
 // ---- backup & restore data ----
 let showBackupScreen = false;
+let cloudBackups = null, cloudBackupState = ""; // daftar backup di cloud (null = belum dimuat); state: "" | loading | saving | error | off
 
 // ---- budget per kategori ----
 let budgets = {}; // { catId: monthlyLimitYen }
@@ -2901,6 +2914,66 @@ function downloadBackup() {
   URL.revokeObjectURL(url);
   try { localStorage.setItem("jp-finance-last-backup-at", String(Date.now())); } catch(e){}
   showBackupReminderBanner = false;
+}
+// ---- cloud backup (R2 lewat backend kakeibo-chat, butuh login) ----
+function cloudBackupHtml() {
+  const signed = !!(window.KakeiboAuth && window.KakeiboAuth.user());
+  let body;
+  if (!signed) body = `<div class="field-label">${esc(t("cloudBackupLogin"))}</div>`;
+  else if (cloudBackupState === "off") body = `<div class="field-label">${esc(t("cloudBackupUnavailable"))}</div>`;
+  else {
+    const list = cloudBackups === null || cloudBackupState === "loading" ? `<div class="field-label">${esc(t("cloudBackupLoading"))}</div>`
+      : !cloudBackups.length ? `<div class="field-label">${esc(t("cloudBackupEmpty"))}</div>`
+      : cloudBackups.map(b => {
+          const d = new Date(b.ts);
+          return `<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line);">
+            <div style="flex:1;min-width:0;font-size:13px;"><b>${esc(localDateStr(d))} ${esc(String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"))}</b><br>
+            <span style="color:var(--mist)">${esc(t("cloudBackupTxCount").replace("{n}", b.tx))} · ${esc((b.size / 1024).toFixed(0))} KB${b.device ? " · " + esc(b.device) : ""}</span></div>
+            <button type="button" class="close-btn" style="width:auto;padding:0 12px;font-size:12.5px;" data-cloud-restore="${esc(b.id)}">${esc(t("cloudBackupRestoreBtn"))}</button>
+            <button type="button" class="close-btn" style="width:auto;padding:0 10px;font-size:12.5px;" data-cloud-del="${esc(b.id)}" aria-label="${esc(t("cloudBackupDeleteBtn"))}">🗑</button>
+          </div>`;
+        }).join("");
+    body = `<button type="button" class="submit-btn" id="cloudBackupSaveBtn" style="margin-top:10px;margin-bottom:12px;" ${cloudBackupState === "saving" ? "disabled" : ""}>${esc(t(cloudBackupState === "saving" ? "cloudBackupSaving" : "cloudBackupSaveBtn"))}</button>
+      ${cloudBackupState === "error" ? `<div class="field-label" style="color:var(--hanko)">${esc(t("cloudBackupFail"))}</div>` : ""}${list}`;
+  }
+  return `<div class="field-label" style="margin-top:24px;font-weight:700;">${esc(t("cloudBackupTitle"))}</div>
+    <div class="field-label">${esc(t("cloudBackupDesc"))}</div>${body}`;
+}
+function cloudApi(path, body) { return window.KakeiboAuth.api(path, body); }
+function loadCloudBackups() {
+  if (!window.KakeiboAuth || !window.KakeiboAuth.user() || cloudBackupState === "loading") return;
+  cloudBackupState = "loading";
+  cloudApi("/api/backup").then(r => { cloudBackups = r.backups || []; cloudBackupState = ""; })
+    .catch(e => { cloudBackups = []; cloudBackupState = e && e.status === 404 ? "off" : "error"; })
+    .then(() => { if (showBackupScreen) render(); });
+}
+function saveCloudBackup() {
+  cloudBackupState = "saving"; render();
+  const device = (navigator.userAgentData && navigator.userAgentData.platform) || (/iphone|ipad/i.test(navigator.userAgent) ? "iOS" : /android/i.test(navigator.userAgent) ? "Android" : "Web");
+  cloudApi("/api/backup", { data: buildBackupObject(), device })
+    .then(r => {
+      cloudBackups = [r.backup].concat(cloudBackups || []); cloudBackupState = "";
+      try { localStorage.setItem("jp-finance-last-backup-at", String(Date.now())); } catch (e) {}
+      showBackupReminderBanner = false;
+      alert(t("cloudBackupSaved"));
+    })
+    .catch(() => { cloudBackupState = "error"; })
+    .then(() => render());
+}
+function restoreCloudBackup(id) {
+  if (!confirm(t("backupImportConfirm"))) return;
+  cloudApi("/api/backup/" + encodeURIComponent(id))
+    .then(obj => {
+      if (!applyBackupObject(obj)) throw new Error("bad");
+      alert(t("backupImportSuccess")); showBackupScreen = false; render();
+    })
+    .catch(() => alert(t("backupImportFail")));
+}
+function deleteCloudBackup(id) {
+  if (!confirm(t("cloudBackupDeleteConfirm"))) return;
+  cloudApi("/api/backup/delete", { id })
+    .then(() => { cloudBackups = (cloudBackups || []).filter(b => b.id !== id); render(); })
+    .catch(() => { cloudBackupState = "error"; render(); });
 }
 function lastBackupAt() {
   try { return Number(localStorage.getItem("jp-finance-last-backup-at") || 0) || 0; } catch (e) { return 0; }
@@ -4394,6 +4467,7 @@ function render() {
         <div class="field-label">${esc(t("backupImportDesc"))}</div>
         <input type="file" id="backupImportInput" accept="application/json" style="display:none;">
         <label for="backupImportInput" class="install-app-btn" style="margin-top:10px;text-align:center;display:block;">${esc(t("backupImportBtn"))}</label>
+        ${cloudBackupHtml()}
       </div>
     </div>
 
@@ -5308,10 +5382,16 @@ function attachEvents() {
   // ---- backup & restore ----
   const closeBackup = document.getElementById("closeBackup");
   const backupBackdrop = document.getElementById("backupBackdrop");
-  if (closeBackup) closeBackup.addEventListener("click", () => { showBackupScreen = false; render(); });
-  if (backupBackdrop) backupBackdrop.addEventListener("click", (e) => { if (e.target === backupBackdrop) { showBackupScreen = false; render(); } });
+  const closeBackupScreen = () => { showBackupScreen = false; cloudBackups = null; if (cloudBackupState !== "off") cloudBackupState = ""; render(); };
+  if (closeBackup) closeBackup.addEventListener("click", closeBackupScreen);
+  if (backupBackdrop) backupBackdrop.addEventListener("click", (e) => { if (e.target === backupBackdrop) closeBackupScreen(); });
   const backupExportBtn = document.getElementById("backupExportBtn");
   if (backupExportBtn) backupExportBtn.addEventListener("click", () => { downloadBackup(); });
+  if (showBackupScreen && cloudBackups === null && cloudBackupState === "") loadCloudBackups();
+  const cloudBackupSaveBtn = document.getElementById("cloudBackupSaveBtn");
+  if (cloudBackupSaveBtn) cloudBackupSaveBtn.addEventListener("click", saveCloudBackup);
+  document.querySelectorAll("[data-cloud-restore]").forEach(b => b.addEventListener("click", () => restoreCloudBackup(b.dataset.cloudRestore)));
+  document.querySelectorAll("[data-cloud-del]").forEach(b => b.addEventListener("click", () => deleteCloudBackup(b.dataset.cloudDel)));
   const backupImportInput = document.getElementById("backupImportInput");
   if (backupImportInput) backupImportInput.addEventListener("change", () => {
     const file = backupImportInput.files && backupImportInput.files[0];

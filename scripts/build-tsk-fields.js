@@ -16,7 +16,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const { execFileSync } = require("child_process");
-const DIR = process.env.TSK_OUT || path.join(__dirname, "..", "modules", "tsk");
+const DIR = process.env.TSK_OUT || path.join(__dirname, "..", "apps", "web", "public", "modules", "tsk");
 const UA = { "user-agent": "Mozilla/5.0 (compatible; KakeiboTSKBuilder/1.0)", "accept-language": "ja,en;q=0.8" };
 const META = ["index.json", "_debug.json", "_fields_debug.json", "profiles.json", "fields.json"];
 

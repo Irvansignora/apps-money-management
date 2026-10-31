@@ -1,0 +1,7 @@
+# Salin ke apps/api/.dev.vars untuk dev lokal (file .dev.vars tidak di-commit).
+# Tanpa kunci di bawah, dev tetap jalan: OTP muncul di respons (DEV_ECHO_OTP=1) dan terjemahan berupa "[lang] teks".
+# OPENAI_API_KEY=
+# ANTHROPIC_API_KEY=
+# RESEND_API_KEY=
+# GOOGLE_CLIENT_ID=
+# ADMIN_KEY=dev-admin

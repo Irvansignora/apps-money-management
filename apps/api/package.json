@@ -1,0 +1,12 @@
+{
+  "name": "@kakeibo/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler d1 migrations apply DB --local --env dev && wrangler dev --env dev --port 8787 --test-scheduled",
+    "deploy": "wrangler deploy --env=\"\"",
+    "db:migrate": "wrangler d1 migrations apply DB --remote --env=\"\"",
+    "r2:create": "wrangler r2 bucket create kakeibo-storage --location apac && wrangler r2 bucket lifecycle add kakeibo-storage stories-expire stories/ --expire-days 3 --force",
+    "tail": "wrangler tail"
+  }
+}

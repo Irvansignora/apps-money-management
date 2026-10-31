@@ -8,7 +8,7 @@
  *
  * Pemakaian:
  *   npm i --no-save xlsx@0.18.5
- *   node scripts/build-tsk.js                           -> unduh dari situs ISA lalu tulis modules/tsk/*.json
+ *   node scripts/build-tsk.js                           -> unduh dari situs ISA lalu tulis apps/web/public/modules/tsk/*.json
  *   node scripts/build-tsk.js --ja a.xlsx --en b.xlsx   -> pakai file lokal (tanpa unduh)
  *   node scripts/build-tsk.js --dump-headers            -> hanya cetak judul kolom (untuk cek format)
  *
@@ -26,7 +26,7 @@ let XLSX;
 try { XLSX = require("xlsx"); } catch (e) { console.error("Paket 'xlsx' belum terpasang. Jalankan: npm i --no-save xlsx@0.18.5"); process.exit(1); }
 
 const PAGE = "https://www.moj.go.jp/isa/applications/ssw/nyuukokukanri07_00205.html";
-const OUT = process.env.TSK_OUT || path.join(__dirname, "..", "modules", "tsk");
+const OUT = process.env.TSK_OUT || path.join(__dirname, "..", "apps", "web", "public", "modules", "tsk");
 const UA = { "user-agent": "Mozilla/5.0 (compatible; KakeiboTSKBuilder/1.0)", "accept-language": "ja,en;q=0.8" };
 
 const PREFS = [
@@ -231,7 +231,7 @@ const isEntity = (r) => !!r.corp || ENTITY_RE.test(r.name);
     splitTokens(r.field).forEach((t) => { fields[t] = (fields[t] || 0) + 1; });
     total++;
   }
-  if (total && (shards.other ? shards.other.length : 0) / total > 0.5) console.warn("PERINGATAN: lebih dari 50% TSK tidak terdeteksi prefekturnya. Periksa modules/tsk/_debug.json (judul kolom dan baris contoh).");
+  if (total && (shards.other ? shards.other.length : 0) / total > 0.5) console.warn("PERINGATAN: lebih dari 50% TSK tidak terdeteksi prefekturnya. Periksa apps/web/public/modules/tsk/_debug.json (judul kolom dan baris contoh).");
   fs.mkdirSync(OUT, { recursive: true });
   const prefs = {}, write = (f, obj) => {
     const s = JSON.stringify(obj), fp = path.join(OUT, f);

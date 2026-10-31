@@ -1,0 +1,96 @@
+name: Deploy ke Cloudflare
+
+# Push ke main -> deploy otomatis. Secrets repo yang dibutuhkan:
+#   CLOUDFLARE_API_TOKEN  (izin: Workers Scripts Edit, D1 Edit, Workers R2 Storage Edit, Workers Routes Edit)
+#   CLOUDFLARE_ACCOUNT_ID
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Yang di-deploy"
+        type: choice
+        options: [semua, web, api]
+        default: semua
+  workflow_call:
+    inputs:
+      target:
+        type: string
+        default: web
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.f.outputs.web }}
+      api: ${{ steps.f.outputs.api }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: f
+        run: |
+          T="${{ inputs.target }}"
+          if [ -n "$T" ]; then
+            [ "$T" = "semua" -o "$T" = "web" ] && echo "web=true" >> "$GITHUB_OUTPUT"
+            [ "$T" = "semua" -o "$T" = "api" ] && echo "api=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CH=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "apps/web apps/api")
+          echo "$CH" | grep -qE '^(apps/web/|package)' && echo "web=true" >> "$GITHUB_OUTPUT"
+          echo "$CH" | grep -qE '^(apps/api/|package)' && echo "api=true" >> "$GITHUB_OUTPUT"
+          true
+
+  api:
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Migrasi D1
+        run: npm run db:migrate
+      - name: Deploy kakeibo-chat
+        run: npm run deploy:api
+
+  web:
+    needs: [changes, api]
+    if: always() && needs.changes.outputs.web == 'true' && needs.api.result != 'failure'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Deploy kakeibo-web
+        run: npm run deploy:web

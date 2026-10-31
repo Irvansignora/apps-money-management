@@ -1,7 +1,7 @@
 name: Update data TSK
 
 # Mengunduh 「登録支援機関登録簿」 resmi dari situs Imigrasi Jepang, mengubahnya menjadi JSON per prefektur
-# (modules/tsk/*.json) lalu commit otomatis jika ada perubahan.
+# (apps/web/public/modules/tsk/*.json), commit otomatis jika ada perubahan, lalu deploy ulang frontend.
 on:
   schedule:
     - cron: "0 3 * * 1"   # setiap Senin 03:00 UTC
@@ -12,7 +12,7 @@ on:
       - "scripts/build-tsk-fields.js"
       - "scripts/tsk-field-sources.json"
       - "scripts/validate-tsk-profiles.js"
-      - "modules/tsk/profiles.json"
+      - "apps/web/public/modules/tsk/profiles.json"
       - ".github/workflows/update-tsk.yml"
 
 permissions:
@@ -21,6 +21,8 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,13 +44,24 @@ jobs:
       - name: Validasi profil TSK
         run: node scripts/validate-tsk-profiles.js
       - name: Commit jika ada perubahan
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add modules/tsk
+          git add apps/web/public/modules/tsk
           if git diff --cached --quiet; then
             echo "Tidak ada perubahan data."
           else
             git commit -m "chore: update data TSK dari register Imigrasi"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+  # push dari GITHUB_TOKEN tidak memicu workflow lain, jadi deploy dipanggil langsung di sini
+  deploy:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      target: web
+    secrets: inherit

@@ -1,0 +1,18 @@
+{
+  "name": "kakeibo-iranza",
+  "private": true,
+  "description": "Kakeibo (帳簿) — catatan keuangan kerja di Jepang. Frontend + backend di Cloudflare (Workers, D1, R2, Durable Objects).",
+  "workspaces": ["apps/web", "apps/api"],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run dev -w apps/api",
+    "deploy:web": "npm run deploy -w apps/web",
+    "deploy:api": "npm run deploy -w apps/api",
+    "db:migrate": "npm run db:migrate -w apps/api",
+    "check": "node --check apps/api/src/index.js && node --check apps/api/src/blob.js && node --check apps/api/src/backup.js && node --check apps/api/src/cron.js && node --check apps/web/public/sw.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  },
+  "engines": { "node": ">=20" }
+}

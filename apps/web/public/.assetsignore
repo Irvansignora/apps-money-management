@@ -1,0 +1,4 @@
+_headers
+.assetsignore
+modules/tsk/_debug.json
+modules/tsk/_fields_debug.json

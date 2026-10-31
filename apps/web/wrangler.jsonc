@@ -1,0 +1,14 @@
+{
+  // Frontend Kakeibo (PWA statis) di Cloudflare Workers Static Assets — pengganti GitHub Pages.
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "kakeibo-web",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "kakeibo.iranza.com", "custom_domain": true }],
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": true }
+}

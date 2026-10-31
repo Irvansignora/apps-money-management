@@ -1,0 +1,8 @@
+{
+  "name": "@kakeibo/web",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy"
+  }
+}
