@@ -9,7 +9,7 @@
     "deploy:web": "npm run deploy -w apps/web",
     "deploy:api": "npm run deploy -w apps/api",
     "db:migrate": "npm run db:migrate -w apps/api",
-    "check": "node --check apps/api/src/index.js && node --check apps/api/src/blob.js && node --check apps/api/src/backup.js && node --check apps/api/src/cron.js && node --check apps/web/public/sw.js"
+    "check": "node --check apps/api/src/index.js && node --check apps/api/src/blob.js && node --check apps/api/src/backup.js && node --check apps/api/src/cron.js && node --check apps/web/public/sw.js && node --check apps/web/public/modules/kk.js"
   },
   "devDependencies": {
     "wrangler": "^4.40.0"

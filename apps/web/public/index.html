@@ -1267,6 +1267,7 @@ const TOOLS = [
   { id: "akun", labelKey: "akunMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>` },
   { id: "estimate", labelKey: "estimateMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M12 20V4"/><path d="M20 20v-7"/></svg>` },
   { id: "dependents", labelKey: "dependentsMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>` },
+  { id: "kk", labelKey: "kkMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.5 1.7-2.2 3-2.2s2.4.7 3 2.2"/><path d="M14 10h4M14 13.5h4"/></svg>` },
   { id: "payday", labelKey: "paydayMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 9h18"/></svg>` },
   { id: "visachecklist", labelKey: "visaChecklistMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11l2 2 4-4"/></svg>` },
   { id: "tsk", labelKey: "tskMenuBtn", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>` },
@@ -1521,7 +1522,7 @@ const I18N = {
     convoMenuBtn: "🗣️ Bicara 2 Arah", convoTitle: "Bicara 2 Arah",
     chatMenuBtn: "💬 Chat Lintas Bahasa", appBannerTitle: "Segera hadir sebagai aplikasi HP", appBannerSub: "Semua fitur akan tersedia di Play Store & App Store",
     belajarMenuBtn: "🎌 Belajar Jepang",
-    tskMenuBtn: "🧭 Pindah Kerja & TSK",
+    tskMenuBtn: "🧭 Pindah Kerja & TSK", kkMenuBtn: "🪪 Terjemahan KK (Pajak)",
     akunMenuBtn: "Akun dan Premium",
     slipCheckTitle: "Cek Slip vs Absensi", slipCheckNoSlip: "Untuk membandingkan, bulan ini perlu: absensi terisi, upah per jam, dan slip gaji yang sudah discan.", slipCheckRecorded: "Jam tercatat", slipCheckExpected: "Estimasi gross dari absensi", slipCheckSlip: "Gross di slip", slipCheckDiff: "Selisih", slipCheckOk: "Sesuai dengan absensimu.", slipCheckLow: "Slip lebih rendah dari estimasi. Tanyakan ke HR/koordinator, mungkin ada jam yang belum dibayar", slipCheckHigh: "Slip lebih tinggi dari estimasi, mungkin ada tunjangan atau bonus.", slipCheckNote: "Hanya indikasi, bukan kepastian. Pembulatan jam, istirahat, tunjangan, dan premi hari libur bisa membuat selisih. Ini bukan nasihat hukum.", wageMonthNote: "Upah ini berlaku khusus bulan {m}. Bulan lain tidak ikut berubah.", wageCarryNote: "Belum diatur untuk {m}, memakai angka bulan sebelumnya. Ketik angka untuk menetapkan khusus bulan ini.",
     convoIntro: "Pilih bahasa tiap orang, lalu tekan tombol mic pas gantian ngomong. Nanti otomatis diterjemahin & dibacain ke bahasa lawan bicara.",
@@ -1724,7 +1725,7 @@ const I18N = {
     convoMenuBtn: "🗣️ Two-Way Talk", convoTitle: "Two-Way Talk",
     chatMenuBtn: "💬 Cross-Language Chat", appBannerTitle: "Coming soon as a mobile app", appBannerSub: "All features will be available on Play Store & App Store",
     belajarMenuBtn: "🎌 Learn Japanese",
-    tskMenuBtn: "🧭 Job Change & TSK",
+    tskMenuBtn: "🧭 Job Change & TSK", kkMenuBtn: "🪪 Family Card Translation",
     akunMenuBtn: "Account and Premium",
     slipCheckTitle: "Payslip vs Attendance Check", slipCheckNoSlip: "To compare, this month needs: attendance filled in, hourly wage, and a scanned payslip.", slipCheckRecorded: "Hours recorded", slipCheckExpected: "Estimated gross from attendance", slipCheckSlip: "Gross on payslip", slipCheckDiff: "Difference", slipCheckOk: "Matches your attendance.", slipCheckLow: "Payslip is lower than estimated. Ask HR or your coordinator; some hours may be unpaid", slipCheckHigh: "Payslip is higher than estimated, possibly allowances or a bonus.", slipCheckNote: "Indication only, not certainty. Rounding, breaks, allowances, and holiday premiums can cause differences. Not legal advice.", wageMonthNote: "This wage applies to {m} only. Other months are not changed.", wageCarryNote: "Not set for {m}; using the previous month's figure. Type a number to set it for this month only.",
     convoIntro: "Pick each person's language, then tap the mic when it's your turn to speak. It'll be translated and read aloud in the other language automatically.",
@@ -2374,7 +2375,7 @@ const I18N = {
   },
 };
 // Teks lencana/kartu scan AI: bahasa selain Indonesia yang belum punya terjemahan jatuh ke Inggris (bukan Indonesia)
-const EN_FALLBACK_KEYS = new Set(["engineAI", "engineOCR", "engineFallback", "scanSubAI", "tskMenuBtn",
+const EN_FALLBACK_KEYS = new Set(["engineAI", "engineOCR", "engineFallback", "scanSubAI", "tskMenuBtn", "kkMenuBtn",
   "cloudBackupTitle", "cloudBackupDesc", "cloudBackupSaveBtn", "cloudBackupSaving", "cloudBackupSaved", "cloudBackupFail", "cloudBackupEmpty", "cloudBackupLoading",
   "cloudBackupRestoreBtn", "cloudBackupDeleteBtn", "cloudBackupDeleteConfirm", "cloudBackupTxCount", "cloudBackupLogin", "cloudBackupUnavailable"]);
 function t(key) {
@@ -2619,6 +2620,16 @@ function openTsk() {
   sc.src = "modules/tsk.js?v=5";
   sc.onload = () => window.KakeiboTsk.open({ lang, esc });
   sc.onerror = () => alert("Modul Pindah Kerja & TSK gagal dimuat. Cek koneksi internet.");
+  document.head.appendChild(sc);
+}
+// Terjemahan Kartu Keluarga → Jepang untuk dokumen tanggungan pajak (扶養控除)
+function openKk() {
+  const go = () => window.KakeiboKK.open({ lang, esc, profileName: (profile && profile.name) || "" });
+  if (window.KakeiboKK) return go();
+  const sc = document.createElement("script");
+  sc.src = "modules/kk.js?v=1";
+  sc.onload = go;
+  sc.onerror = () => alert("Modul Terjemahan KK gagal dimuat. Cek koneksi internet.");
   document.head.appendChild(sc);
 }
 // Notifikasi push: ketuk notifikasi membuka percakapan (?chat=ID); halaman yang sudah terbuka diberi tahu service worker
@@ -2901,6 +2912,7 @@ function buildBackupObject() {
     transactions, rates, currency, profile, savingsGoals, otCalc, lang, payslips,
     balanceHidden, visaChecklist, savedRecipients, emergencyContacts, budgets, dependents,
     attendance, wageSettings, receiptHistory,
+    kartuKeluarga: (() => { try { return JSON.parse(localStorage.getItem("jp-finance-kk") || "null"); } catch (e) { return null; } })(),
   };
 }
 function downloadBackup() {
@@ -3022,6 +3034,7 @@ function applyBackupObject(obj) {
   if (obj.attendance && typeof obj.attendance === "object") { attendance = obj.attendance; saveAttendance(); }
   if (obj.wageSettings && typeof obj.wageSettings === "object") { wageSettings = Object.assign({ hourlyWage: "", rent: "", utilities: "", months: {} }, obj.wageSettings); saveWageSettings(); }
   if (Array.isArray(obj.receiptHistory)) { receiptHistory = obj.receiptHistory; saveReceiptHistory(); }
+  if (obj.kartuKeluarga && Array.isArray(obj.kartuKeluarga.members)) { try { localStorage.setItem("jp-finance-kk", JSON.stringify(obj.kartuKeluarga)); } catch (e) {} }
   return true;
 }
 
@@ -3472,6 +3485,7 @@ function closeTopLayer() {
   try { if (window.KakeiboLeaAI && window.KakeiboLeaAI.isOpen() && window.KakeiboLeaAI.back()) return true; } catch (e) {}
   try { if (window.KakeiboKana && window.KakeiboKana.isOpen() && window.KakeiboKana.back()) return true; } catch (e) {}
   try { if (window.KakeiboTsk && window.KakeiboTsk.isOpen() && window.KakeiboTsk.back()) return true; } catch (e) {}
+  try { if (window.KakeiboKK && window.KakeiboKK.isOpen() && window.KakeiboKK.back()) return true; } catch (e) {}
   try { if (window.KakeiboExam && window.KakeiboExam.isOpen() && window.KakeiboExam.back()) return true; } catch (e) {}
   try { if (window.KakeiboJlpt && window.KakeiboJlpt.isOpen() && window.KakeiboJlpt.back()) return true; } catch (e) {}
   try { if (window.KakeiboChat && window.KakeiboChat.isOpen() && window.KakeiboChat.back()) return true; } catch (e) {}
@@ -5474,6 +5488,7 @@ function attachEvents() {
     akun: () => { openChat({ view: "account" }); },
     belajar: () => { openBelajar(); },
     tsk: () => { openTsk(); },
+    kk: () => { openKk(); },
   };
   document.querySelectorAll("[data-tool]").forEach(el => {
     el.addEventListener("click", () => {

@@ -20,6 +20,9 @@ Setelah migrasi:
   di HP baru setelah login. Free simpan 3 terakhir, Premium 15, Premium+ 30.
 - **Cron harian** membersihkan sesi/tiket/OTP kedaluwarsa, story lama + file R2-nya, dan
   penghitung kuota lama.
+- **Terjemahan Kartu Keluarga → Jepang** (menu 🪪): isi manual atau Scan AI (Premium+, `kind: "kk"`),
+  hasil dokumen A4 「家族関係証明書（家族カード）翻訳文」 dengan pernyataan penerjemah, untuk lampiran
+  親族関係書類 klaim tanggungan (扶養控除) saat nenmatsu chōsei / kakutei shinkoku. Data KK hanya di HP.
 - Endpoint `GET /api/health` untuk cek cepat (menampilkan apakah R2 aktif).
 
 Kontrak API ke frontend **tidak berubah** (upload masih base64 JSON), jadi aplikasi yang

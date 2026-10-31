@@ -459,6 +459,7 @@ async function googleLogin(env, body) {
 var SCAN_PROMPTS = {
   payslip: 'This is a Japanese payslip (\u7D66\u4E0E\u660E\u7D30). Return ONLY JSON: {"month":"YYYY-MM or null (the salary month; if the period is e.g. 2026/08/01~2026/08/31 use 2026-08)","gross":int|null,"totalDeduction":int|null,"net":int|null,"base":int|null,"overtime":int|null,"kenkoHoken":int|null,"kouseiNenkin":int|null,"koyoHoken":int|null,"shotokuzei":int|null,"juminzei":int|null}. Amounts are integer yen (net = \u5DEE\u5F15\u652F\u7D66\u984D, gross = \u7DCF\u652F\u7D66\u984D, totalDeduction = \u63A7\u9664\u5408\u8A08, base = \u57FA\u672C\u7D66, overtime = total of overtime/\u6B8B\u696D allowances, kenkoHoken = \u5065\u5EB7\u4FDD\u967A, kouseiNenkin = \u539A\u751F\u5E74\u91D1, koyoHoken = \u96C7\u7528\u4FDD\u967A, shotokuzei = \u6240\u5F97\u7A0E, juminzei = \u4F4F\u6C11\u7A0E). Use null when a value is not printed. Never guess.',
   receipt: 'This is a Japanese shop receipt. Return ONLY JSON: {"items":[{"label":"item name as printed (short)","price":int,"taxRate":8 or 10}],"taxExclusive":bool,"total":int|null}. price = the line amount in yen as printed (after quantity). taxRate: 8 if the line has the reduced-rate mark (* or \u203B or \u8EFD) or is plainly food/drink to take away, otherwise 10. taxExclusive = true only if prices are shown before tax and tax is added at the end. Exclude subtotal, total, tax, change, cash, card, points, bag fee, phone and date lines.',
+  kk: 'This is an Indonesian family card (KARTU KELUARGA). Transcribe it exactly as printed (keep UPPERCASE Indonesian words, do NOT translate). Return ONLY JSON: {"no":"16-digit No. KK","kepala":"Nama Kepala Keluarga","alamat":"Alamat","rtrw":"RT/RW e.g. 003/005","desa":"Desa/Kelurahan","kec":"Kecamatan","kab":"Kabupaten/Kota as printed","prov":"Provinsi","kodepos":"Kode Pos","tglKeluar":"issue date DD-MM-YYYY (Dikeluarkan Tanggal)","pejabat":"name of the signing official or empty","members":[{"nama":"","nik":"16 digits","jk":"LAKI-LAKI or PEREMPUAN","tempat":"Tempat Lahir","tgl":"DD-MM-YYYY","agama":"","pendidikan":"","pekerjaan":"","status":"Status Perkawinan","tglKawin":"DD-MM-YYYY or empty","hubungan":"Status Hubungan Dalam Keluarga","wn":"WNI or WNA","paspor":"","kitap":"","ayah":"Nama Ayah","ibu":"Nama Ibu"}]}. The card has two tables with the same row numbers: merge them by row number so each member has all fields. Use "" for empty cells or "-". Never invent values you cannot read.',
   halal: 'This is a food package label. Return ONLY JSON: {"text":"the full ingredient list (\u539F\u6750\u6599\u540D) and allergen/additive text transcribed exactly as printed, in the original language, one item per line"}. Do not translate and do not add anything not printed.'
 };
 var toInt = (v, max = 1e8) => Number.isFinite(+v) && v !== null && v !== "" && +v >= 0 && +v < max ? Math.round(+v) : void 0;
@@ -474,6 +475,19 @@ function cleanScan(kind, o) {
   if (kind === "receipt") {
     const items = (Array.isArray(o.items) ? o.items : []).slice(0, 80).map((it) => ({ label: String(it && it.label || "").trim().slice(0, 60), price: toInt(it && it.price, 1e7), taxRate: it && +it.taxRate === 10 ? 10 : 8 })).filter((it) => it.label && it.price > 0);
     return { items, taxExclusive: o.taxExclusive === true, total: toInt(o.total) ?? null };
+  }
+  if (kind === "kk") {
+    const str = (v, n = 80) => String(v == null ? "" : v).replace(/\s+/g, " ").trim().replace(/^-$/, "").slice(0, n);
+    const KK_HEAD = ["no", "kepala", "alamat", "rtrw", "desa", "kec", "kab", "prov", "kodepos", "tglKeluar", "pejabat"];
+    const KK_MEMBER = ["nama", "nik", "jk", "tempat", "tgl", "agama", "pendidikan", "pekerjaan", "status", "tglKawin", "hubungan", "wn", "paspor", "kitap", "ayah", "ibu"];
+    const out = {};
+    for (const k of KK_HEAD) out[k] = str(o[k], k === "alamat" ? 160 : 80);
+    out.members = (Array.isArray(o.members) ? o.members : []).slice(0, 15).map((m) => {
+      const r = {};
+      for (const k of KK_MEMBER) r[k] = str(m && m[k]);
+      return r;
+    }).filter((m) => m.nama);
+    return { kk: out };
   }
   return { text: String(o.text || "").slice(0, 4e3) };
 }
@@ -613,7 +627,7 @@ async function aiRoute(env, me, key, body) {
       const kind = String(body.kind || ""), img = String(body.image || "");
       if (!SCAN_PROMPTS[kind] || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(img) || img.length > 3e6) return json({ error: "media" }, 400);
       if (await usedN(env, me.id, dayKey("aiscan")) >= L.aiScanDay) return json({ error: "limit", what: "aiscan", max: L.aiScanDay }, 403);
-      const out = await openaiJson(env, [{ role: "user", content: [{ type: "text", text: SCAN_PROMPTS[kind] }, { type: "image_url", image_url: { url: img, detail: "high" } }] }], 1200, 0);
+      const out = await openaiJson(env, [{ role: "user", content: [{ type: "text", text: SCAN_PROMPTS[kind] }, { type: "image_url", image_url: { url: img, detail: "high" } }] }], kind === "kk" ? 3e3 : 1200, 0);
       await bumpN(env, me.id, dayKey("aiscan"));
       return json(cleanScan(kind, out));
     }
