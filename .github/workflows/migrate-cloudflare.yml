@@ -1,0 +1,111 @@
+name: Migrasi ke Cloudflare (sekali jalan)
+
+# Menjalankan seluruh migrasi: cadangan D1 → R2, migrasi skema, deploy backend, cek data user tetap utuh,
+# pindah domain kakeibo.iranza.com dari GitHub Pages ke Worker, deploy frontend, verifikasi.
+# Butuh secrets repo: CLOUDFLARE_API_TOKEN (Workers Scripts/Routes Edit, D1 Edit, R2 Edit, Zone DNS Edit
+# untuk iranza.com, Account Settings Read) dan CLOUDFLARE_ACCOUNT_ID.
+on:
+  push:
+    branches: [claude/migrate-cloudflare-w1gsyt]
+    paths: [".github/workflows/migrate-cloudflare.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: migrate-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      DB: kakeibo-chat
+      BUCKET: kakeibo-storage
+      ZONE: iranza.com
+      HOST: kakeibo.iranza.com
+    steps:
+      - name: Cek secrets
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Secrets CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID belum diisi (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+
+      - name: Hitung data sebelum migrasi
+        id: before
+        run: |
+          q() { npx wrangler d1 execute $DB --remote --json --command "$1" -c apps/api/wrangler.jsonc --env="" | node -pe 'Object.values(JSON.parse(require("fs").readFileSync(0))[0].results[0])[0]'; }
+          echo "users=$(q 'SELECT COUNT(*) FROM users')" >> "$GITHUB_OUTPUT"
+          echo "sessions=$(q 'SELECT COUNT(*) FROM sessions WHERE expires_at > unixepoch()*1000')" >> "$GITHUB_OUTPUT"
+          echo "contacts=$(q 'SELECT COUNT(*) FROM contacts')" >> "$GITHUB_OUTPUT"
+          echo "media=$(q 'SELECT COUNT(*) FROM media')" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+      - name: Buat bucket R2 (APAC) + aturan kedaluwarsa story
+        working-directory: apps/api
+        run: |
+          npx wrangler r2 bucket create $BUCKET --location apac || echo "bucket sudah ada"
+          npx wrangler r2 bucket lifecycle add $BUCKET stories-expire stories/ --expire-days 3 --force || true
+
+      - name: Cadangan penuh D1 ke R2 (privat, tidak jadi artifact publik)
+        working-directory: apps/api
+        run: |
+          F=d1-backup-$(date -u +%Y%m%dT%H%M%SZ).sql
+          npx wrangler d1 export $DB --remote --output /tmp/$F --env=""
+          ls -l /tmp/$F
+          npx wrangler r2 object put $BUCKET/ops/$F --file /tmp/$F --content-type application/sql --remote
+
+      - name: Migrasi skema D1
+        run: npm run db:migrate
+
+      - name: Deploy backend kakeibo-chat
+        run: npm run deploy:api
+
+      - name: Verifikasi backend + data user tetap utuh
+        run: |
+          sleep 5
+          H=$(curl -fsS https://chat.iranza.com/api/health); echo "$H"
+          echo "$H" | grep -q '"r2":true' || { echo "::error::R2 belum aktif di backend"; exit 1; }
+          q() { npx wrangler d1 execute $DB --remote --json --command "$1" -c apps/api/wrangler.jsonc --env="" | node -pe 'Object.values(JSON.parse(require("fs").readFileSync(0))[0].results[0])[0]'; }
+          U=$(q 'SELECT COUNT(*) FROM users'); C=$(q 'SELECT COUNT(*) FROM contacts'); M=$(q 'SELECT COUNT(*) FROM media')
+          echo "users ${{ steps.before.outputs.users }} -> $U | contacts ${{ steps.before.outputs.contacts }} -> $C | media ${{ steps.before.outputs.media }} -> $M"
+          [ "$U" -ge "${{ steps.before.outputs.users }}" ] && [ "$C" -ge "${{ steps.before.outputs.contacts }}" ] && [ "$M" -ge "${{ steps.before.outputs.media }}" ] || { echo "::error::Jumlah data berkurang!"; exit 1; }
+          # sesi lama harus tetap diterima: endpoint terautentikasi menjawab 401 untuk token palsu (bukan 500)
+          S=$(curl -s -o /dev/null -w "%{http_code}" -H "authorization: Bearer cek-token-palsu" https://chat.iranza.com/api/me)
+          [ "$S" = "401" ] || { echo "::error::/api/me menjawab $S"; exit 1; }
+          D=$(curl -s https://chat.iranza.com/api/config); echo "config: $D"
+
+      - name: Pindah DNS kakeibo.iranza.com dari GitHub Pages
+        run: |
+          api() { curl -fsS -H "authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "content-type: application/json" "$@"; }
+          ZID=$(api "https://api.cloudflare.com/client/v4/zones?name=$ZONE" | node -pe 'JSON.parse(require("fs").readFileSync(0)).result[0].id')
+          api "https://api.cloudflare.com/client/v4/zones/$ZID/dns_records?name=$HOST" > /tmp/rec.json
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync("/tmp/rec.json")).result;
+            console.log("record sekarang:", r.map(x => x.type + " " + x.content).join(", ") || "(tidak ada)");
+            const gh = r.filter(x => /github\.io\.?$/i.test(x.content) || /^185\.199\.11[0-1]\.153$|^185\.199\.10[89]\.153$/.test(x.content) || /^2606:50c0:/i.test(x.content));
+            require("fs").writeFileSync("/tmp/del.txt", gh.map(x => x.id).join("\n"));'
+          for id in $(cat /tmp/del.txt); do api -X DELETE "https://api.cloudflare.com/client/v4/zones/$ZID/dns_records/$id" >/dev/null && echo "hapus record $id"; done
+
+      - name: Deploy frontend kakeibo-web (custom domain)
+        run: npm run deploy:web
+
+      - name: Verifikasi frontend live di Cloudflare
+        run: |
+          for i in $(seq 1 30); do
+            HDR=$(curl -sI https://$HOST/ || true)
+            if echo "$HDR" | grep -qi "^cf-ray" && ! echo "$HDR" | grep -qi "server: GitHub.com"; then break; fi
+            sleep 10
+          done
+          echo "$HDR"
+          echo "$HDR" | grep -qi "server: GitHub.com" && { echo "::error::Domain masih ke GitHub Pages"; exit 1; }
+          curl -fsS https://$HOST/modules/kk.js | head -c 200; echo
+          curl -fsS https://$HOST/ | grep -q "cloudBackupHtml" && echo "index.html versi baru ✓"
