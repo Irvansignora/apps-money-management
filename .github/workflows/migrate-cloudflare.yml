@@ -1,6 +1,6 @@
 name: Migrasi ke Cloudflare (sekali jalan)
 
-# Menjalankan seluruh migrasi: cadangan D1 → R2, migrasi skema, deploy backend, cek data user tetap utuh,
+# Menjalankan seluruh migrasi: preflight bentrok, cadangan D1 → R2, migrasi skema, deploy backend, cek data user tetap utuh,
 # pindah domain kakeibo.iranza.com dari GitHub Pages ke Worker, deploy frontend, verifikasi.
 # Butuh secrets repo: CLOUDFLARE_API_TOKEN (Workers Scripts/Routes Edit, D1 Edit, R2 Edit, Zone DNS Edit
 # untuk iranza.com, Account Settings Read) dan CLOUDFLARE_ACCOUNT_ID.
@@ -38,6 +38,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+
+      - name: Preflight — cek bentrok dengan Worker lain (LEA, payroll, dll.)
+        run: node scripts/cf-preflight.mjs
 
       - name: Hitung data sebelum migrasi
         id: before
